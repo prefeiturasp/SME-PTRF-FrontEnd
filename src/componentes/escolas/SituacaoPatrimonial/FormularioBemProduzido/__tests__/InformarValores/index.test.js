@@ -145,14 +145,31 @@ const mockBemProduzidoDespesas = [
 const mockUseNavigate = jest.fn();
 const mockSalvarRascunhoInformarValores = jest.fn();
 
+const mockUseParams = jest.fn().mockReturnValue({});
+
 jest.mock("../../hooks/usePostExluirDespesaBemProduzidoEmLote");
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockUseNavigate,
   useSearchParams: jest.fn(),
+  useParams: () => mockUseParams(),
 }));
 jest.mock("../../../../../Globais/Modal/CustomModalConfirm", () => ({
   CustomModalConfirm: jest.fn(),
+}));
+
+jest.mock("../../Modais/DeletarBemProduzidoModal", () => ({
+  DeletarBemProduzidoModal: ({ showModal }) => (
+    showModal ? <div data-testid="modal-deletar">Modal Aberto</div> : null
+  ),
+}));
+
+jest.mock("../../hooks/useGetStatusDelecaoBemProduzido", () => ({
+  useGetStatusDelecaoBemProduzido: () => ({
+    error: null,
+    isLoading: false,
+    isError: false,
+  }),
 }));
 
 const rootReducer = combineReducers({
@@ -181,6 +198,10 @@ describe("InformarValores", () => {
       addListener: jest.fn(),
       removeListener: jest.fn(),
     }));
+
+    jest.clearAllMocks();
+    mockUseParams.mockReturnValue({});
+
   });
 
   it("Deve solicitar confirmação ao clicar em Excluir despesa e excluir quando confirmado", async () => {
@@ -441,5 +462,75 @@ describe("InformarValores", () => {
     fireEvent.click(buttonCancelar);
 
     expect(mockUseNavigate).toHaveBeenCalledWith("/lista-situacao-patrimonial");
+  });
+
+  it("Não deve renderizar o botão de excluir quando não houver uuid", () => {
+    mockUseParams.mockReturnValue({ uuid: undefined });
+
+    const despesasParaTeste = mockBemProduzidoDespesas.map((d) => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
+
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRecursosPropriosComValores={jest.fn()}
+              setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonExcluir = screen.queryByRole("button", { name: /Excluir bem/i });
+    expect(buttonExcluir).not.toBeInTheDocument();
+  });
+
+  it("Deve renderizar e abrir o modal de exclusão ao clicar no botão de excluir bem", async () => {
+    mockUseParams.mockReturnValue({ uuid: "123-uuid" });
+    
+    const despesasParaTeste = mockBemProduzidoDespesas.map((d) => ({
+      ...d.despesa,
+      bem_produzido_despesa_uuid: d.bem_produzido_despesa_uuid,
+      bem_produzido_uuid: d.bem_produzido_uuid,
+    }));
+
+    const { container } = render(
+      <MemoryRouter>
+        <Provider store={mockStore}>
+          <QueryClientProvider client={queryClient}>
+            <InformarValores
+              uuid={null}
+              podeEditar={true}
+              despesas={despesasParaTeste}
+              salvarRacuscunho={jest.fn()}
+              setHabilitaClassificarBem={jest.fn()}
+              setRecursosPropriosComValores={jest.fn()}
+              setRateiosComValores={jest.fn()}
+              rateiosComValores={[]}
+            />
+          </QueryClientProvider>
+        </Provider>
+      </MemoryRouter>
+    );
+
+    const buttonExcluir = screen.getByRole("button", { name: /Excluir bem/i });
+    expect(buttonExcluir).toBeInTheDocument();
+
+    fireEvent.click(buttonExcluir);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("modal-deletar")).toBeInTheDocument();
+    });
   });
 });

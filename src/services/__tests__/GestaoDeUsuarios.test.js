@@ -24,6 +24,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const URL_GRUPOS = '/api/grupos/';
@@ -34,7 +35,7 @@ const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
 describe('Testes para funções de análise', () => {
-    
+
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -147,6 +148,62 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(result);
     });
 
+    test('getUsuarios deve chamar a API corretamente com o parâmetro "e_servidor" igual a true', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const uuidUnidadeBase = 'DRE'
+        const currentPage = '1'
+        const filter = {
+            search: 'teste',
+            grupo: 'teste',
+            tipoUsuario: 'teste',
+            nomeUnidade: 'teste',
+            apenasUsuariosDaUnidade: true,
+            tipoUsuario: 'servidor'
+        }
+        const params = {
+            uuid_unidade_base: uuidUnidadeBase,
+            page: currentPage,
+            search: filter.search,
+            groups__id: filter.grupo,
+            e_servidor: filter.tipoUsuario === 'servidor' ? true : filter.tipoUsuario === 'nao-servidor' ? false : null,
+            unidades__nome: filter.nomeUnidade,
+            unidades__uuid: filter.apenasUsuariosDaUnidade && uuidUnidadeBase !== 'SME' ? uuidUnidadeBase : null,
+            visoes__nome: filter.apenasUsuariosDaUnidade && uuidUnidadeBase === 'SME' ? 'SME' : null
+        }
+        const result = await getUsuarios(uuidUnidadeBase, filter, currentPage);
+        const url = URL_USUARIOS
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params})
+        expect(result).toEqual(result);
+    });
+
+    test('getUsuarios deve chamar a API corretamente com o parâmetro "e_servidor" igual a false', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const uuidUnidadeBase = 'DRE'
+        const currentPage = '1'
+        const filter = {
+            search: 'teste',
+            grupo: 'teste',
+            tipoUsuario: 'teste',
+            nomeUnidade: 'teste',
+            apenasUsuariosDaUnidade: true,
+            tipoUsuario: 'nao-servidor'
+        }
+        const params = {
+            uuid_unidade_base: uuidUnidadeBase,
+            page: currentPage,
+            search: filter.search,
+            groups__id: filter.grupo,
+            e_servidor: filter.tipoUsuario === 'servidor' ? true : filter.tipoUsuario === 'nao-servidor' ? false : null,
+            unidades__nome: filter.nomeUnidade,
+            unidades__uuid: filter.apenasUsuariosDaUnidade && uuidUnidadeBase !== 'SME' ? uuidUnidadeBase : null,
+            visoes__nome: filter.apenasUsuariosDaUnidade && uuidUnidadeBase === 'SME' ? 'SME' : null
+        }
+        const result = await getUsuarios(uuidUnidadeBase, filter, currentPage);
+        const url = URL_USUARIOS
+        expect(api.get).toHaveBeenCalledWith(url, {...authHeader(), params})
+        expect(result).toEqual(result);
+    });
+
     test('getUsuarioById deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const usuarioId = '1234'
@@ -214,7 +271,7 @@ describe('Testes para funções de análise', () => {
         expect(api.get).toHaveBeenCalledWith(url, {/*...authHeader(),*/ params}) // TODO: implementar corretamente com header
         expect(result).toEqual(result);
     });
-    
+
     test('patchHabilitarAcesso deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
         const result = await patchHabilitarAcesso(payload);
@@ -222,7 +279,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(result);
     });
-    
+
     test('patchDesabilitarAcesso deve chamar a API corretamente', async () => {
         api.patch.mockResolvedValue({ data: mockData })
         const result = await patchDesabilitarAcesso(payload);
@@ -230,7 +287,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(result);
     });
-        
+
     test('getUnidadesDisponiveisInclusao deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const username = '1234'
@@ -246,7 +303,7 @@ describe('Testes para funções de análise', () => {
         expect(api.get).toHaveBeenCalledWith(url, {/*...authHeader(),*/ params}) // TODO: implementar corretamente com header
         expect(result).toEqual(result);
     });
-    
+
     test('postIncluirUnidade deve chamar a API corretamente', async () => {
         api.post.mockResolvedValue({ data: mockData })
         const result = await postIncluirUnidade(payload);

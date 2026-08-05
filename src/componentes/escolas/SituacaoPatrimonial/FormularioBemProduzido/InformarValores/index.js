@@ -13,7 +13,9 @@ import { useDispatch } from "react-redux";
 import { CustomModalConfirm } from "../../../../Globais/Modal/CustomModalConfirm";
 import { BarraAcaoEmLote } from "./BarraAcaoEmLote";
 import { usePostExluirDespesaBemProduzidoEmLote } from "../hooks/usePostExluirDespesaBemProduzidoEmLote";
+import { ButtonExcluirBemProduzido } from "../components/ButtonExcluirBemProduzido";
 import "./index.scss";
+import { DeletarBemProduzidoModal } from "../Modais/DeletarBemProduzidoModal";
 
 export const InformarValores = ({
   uuid,
@@ -36,6 +38,7 @@ export const InformarValores = ({
   const [despesasSelecionadas, setDespesasSelecionadas] = useState([]);
   const [total, setTotal] = useState(0);
   const [formValues, setFormValues] = useState({});
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const { mutationPost: mutationPostExcluirLote } =
     usePostExluirDespesaBemProduzidoEmLote(setDespesasSelecionadas);
@@ -672,12 +675,21 @@ export const InformarValores = ({
             >
               Cancelar
             </button>
+
+            <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>           
+
             <button className="btn btn-outline-success float-right">
               {uuid ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>
         </Form>
       </div>
+
+      <DeletarBemProduzidoModal 
+        showModal={ showModalDelete }
+        setShowModal={ setShowModalDelete } 
+      />
+
     </div>
   );
 };

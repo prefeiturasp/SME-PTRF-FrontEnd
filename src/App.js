@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Rotas } from "./rotas";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -11,6 +11,8 @@ import { ToastContainer } from "react-toastify";
 import Modal from "./componentes/Globais/Modal/Modal";
 import { useTheme } from "./context/Tema";
 import { useRecursoSelecionadoContext } from "./context/RecursoSelecionado";
+import { authService } from "./services/auth.service";
+import Loading from "./utils/Loading";
 
 export const App = () => {
   const pathName = useLocation().pathname;
@@ -25,13 +27,45 @@ export const App = () => {
     }
   }, [recursoSelecionado, theme]);
 
+  const PUBLIC_PATHS = ["/login", "/login-suporte", "/esqueci-minha-senha/", "/sobre"];
+  const isPublicPath = PUBLIC_PATHS.includes(pathName) || pathName.match(/\/redefinir-senha\//);
+
+  // Enquanto true, a tela fica em loading para evitar renderizar com permissões
+  // desatualizadas do localStorage antes do "/me" responder.
+  const [carregandoPermissoes, setCarregandoPermissoes] = useState(
+    () => !isPublicPath && authService.isLoggedIn()
+  );
+
+  // Atualiza permissões e grupos do usuário a cada reload da página.
+  // Dependência vazia ([]) garante execução apenas no mount — não a cada navegação,
+  // evitando chamadas repetidas ao backend durante a sessão.
+  useEffect(() => {
+    if (!isPublicPath && authService.isLoggedIn()) {
+      authService.refreshUserData().finally(() => setCarregandoPermissoes(false));
+    } else {
+      setCarregandoPermissoes(false);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <ToastContainer />
       <section role="main" id="main" className="row">
-        {pathName === "/login" ||
+        {!isPublicPath && carregandoPermissoes ? (
+          <div style={{ justifySelf: "center", alignItems: "center", width: "100%" }}>
+            <Loading
+              style={{ paddingTop: "200px" }}
+              corGrafico="black"
+              corFonte="dark"
+              marginTop="0"
+              marginBottom="0"
+            />
+          </div>
+        ) : pathName === "/login" ||
         pathName === "/login-suporte" ||
         pathName === "/esqueci-minha-senha/" ||
+        pathName === "/sobre" ||
         pathName.match(/\/redefinir-senha\/[a-zA-Z0-9]/) ? (
           <Rotas />
         ) : pathName.match(/\/visualizacao-da-ata\/[a-zA-Z0-9]/) ||

@@ -18,14 +18,18 @@ import { TextoDocumentoConsolidadoPC } from "./TextoDocumentoConsolidadoPC";
 
 
 export const AvisoCapitalModal = (propriedades) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+
+    const bodyText = `<p>A relação de bens de capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da
+    Prefeitura de São Paulo e, portanto, contém itens que não podem ser adquiridos com recursos do ${recursoSelecionado?.nome_exibicao || 'Não Informado'}.</p>`
+
     return (
         <ModalBootstrap
             dataQa="modal-despesa-aviso-capital"
             show={propriedades.show}
             onHide={propriedades.handleClose}
             titulo="Aviso"
-            bodyText="<p>A relação de bens de
-capital é a mesma utilizada no Sistema de Bens Patrimoniais Móveis (SBPM) da Prefeitura de São Paulo e, portanto, contém itens que não podem ser adquiridos com recursos do PTRF.</p>"
+            bodyText={bodyText}
             primeiroBotaoOnclick={propriedades.handleClose}
             primeiroBotaoTexto="Estou Ciente"
         />
@@ -54,7 +58,7 @@ export const DeletarModal = (propriedades) => {
             dataQa="modal-despesa-excluir-despesa"
             show={propriedades.show}
             onHide={propriedades.handleClose}
-            titulo="Deseja excluir esta Despesa?"
+            titulo={propriedades.titulo ?? "Deseja excluir esta Despesa?"}
             bodyText={propriedades.texto}
             primeiroBotaoOnclick={propriedades.onDeletarTrue}
             primeiroBotaoTexto="OK"
@@ -281,7 +285,7 @@ export const SaldoInsuficiente = (propriedades) => {
 };
 
 export const TipoAplicacaoRecursoNaoAceito = (propriedades) => {
-    
+
     const listaRecursosNaoAceito = () => {
         return (
             <>
@@ -305,7 +309,7 @@ export const TipoAplicacaoRecursoNaoAceito = (propriedades) => {
         )
     }
 
-    
+
     return (
         <ModalBootstrapTipoRecursoNaoAceito
             show={propriedades.show}
@@ -611,7 +615,7 @@ export const ModalAtaNaoPreenchida = (propriedades) => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
 
     const texto_documento_consolidado_pc = useMemo(() => new TextoDocumentoConsolidadoPC(recursoSelecionado?.habilita_exibicao_de_lauda), [recursoSelecionado?.habilita_exibicao_de_lauda]);
-    
+
     const text_fazer = texto_documento_consolidado_pc.texto_acao_concreta();
 
     return (
@@ -675,7 +679,7 @@ export const ModalPublicarRelatorioConsolidadoPendente = (propriedades) => {
         return (
             <>
                 <p>
-                    O consolidado não pode ser gerado. 
+                    O consolidado não pode ser gerado.
                 </p>
 
                 <p className="mt-3">
@@ -683,7 +687,7 @@ export const ModalPublicarRelatorioConsolidadoPendente = (propriedades) => {
                 </p>
 
                 <p className="mt-3">
-                Após o preenchimento desse campo, o consolidado estará disponível para geração. 
+                Após o preenchimento desse campo, o consolidado estará disponível para geração.
                 </p>
             </>
         )
@@ -778,7 +782,7 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
                         propriedades.redirecionaJustifica()
                         }}>Editar Justificativa</Button>
                     </div>
-                    
+
 
                     <p className="mt-3">
                         Preencha o campo "Motivo da retificação" (disponível nas opções Editar Retificação ou Editar ata).
@@ -792,7 +796,7 @@ export const ModalPublicarRetificacaoPendente = (propriedades) => {
                 </>
             )
         }
-    
+
         return (
             <ModalBootstrapConfirmarPublicacao
                 show={propriedades.show}

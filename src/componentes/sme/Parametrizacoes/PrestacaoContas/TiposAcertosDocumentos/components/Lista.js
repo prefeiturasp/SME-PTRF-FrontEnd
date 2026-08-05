@@ -133,10 +133,6 @@ export const Lista = () => {
 
     return (
         <>
-            {/* <p>
-                Exibindo <span className="total">{totalAcertos}</span> tipos de acertos em documentos
-            </p> */}
-
             {isLoading ? (
                 <div className="mt-5">
                     <Loading

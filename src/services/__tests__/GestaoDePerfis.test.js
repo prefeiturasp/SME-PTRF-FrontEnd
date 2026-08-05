@@ -26,6 +26,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 
@@ -35,7 +36,7 @@ const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
 describe('Testes para funções de análise', () => {
-    
+
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -78,6 +79,16 @@ describe('Testes para funções de análise', () => {
         const uuid_unidade = 'teste'
         const result = await getUsuarioStatus(username, e_servidor, uuid_unidade);
         const url = `/api/usuarios/status/?username=${username}&servidor=${e_servidor}${uuid_unidade ? "&unidade=" + uuid_unidade : "" }`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getUsuarioStatus deve chamar a API corretamente sem unidade nos parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const username = 'teste'
+        const e_servidor = 'teste'
+        const result = await getUsuarioStatus(username, e_servidor);
+        const url = `/api/usuarios/status/?username=${username}&servidor=${e_servidor}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });
@@ -129,12 +140,31 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(result);
     });
 
+    test('getUsuarioUnidadesVinculadas deve chamar a API corretamente sem o parâmetro "unidade_logada_uuid"', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const usuario_id = 'teste'
+        const visao = 'teste'
+        const result = await getUsuarioUnidadesVinculadas(usuario_id, visao);
+        const url = `/api/usuarios/${usuario_id}/unidades-e-permissoes-na-visao/${visao}/`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
     test('getUnidadesPorTipo deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const tipo_unidade = 'teste'
         const dre_uuid = 'teste'
         const result = await getUnidadesPorTipo(tipo_unidade, dre_uuid);
         const url = `/api/unidades/?tipo_unidade=${tipo_unidade}${dre_uuid ? "&dre__uuid=" + dre_uuid : ""}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getUnidadesPorTipo deve chamar a API corretamente sem o parâmetro "dre_uuid"', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const tipo_unidade = 'teste'
+        const result = await getUnidadesPorTipo(tipo_unidade);
+        const url = `/api/unidades/?tipo_unidade=${tipo_unidade}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });
@@ -207,6 +237,15 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(result);
     });
 
+    test('getUsuariosFiltros deve chamar a API corretamente somente com o parâmetro "visao"', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const visao_selecionada='DRE'
+        const result = await getUsuariosFiltros(visao_selecionada);
+        const url = `/api/usuarios/?visao=${visao_selecionada}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
     test('getUsuarios deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const visao_selecionada='DRE'
@@ -217,6 +256,15 @@ describe('Testes para funções de análise', () => {
         const unidade_selecionada="teste"
         const result = await getUsuarios(visao_selecionada, nome, group, tipo_de_usuario, unidade_nome, unidade_selecionada);
         const url = `/api/usuarios/?visao=${visao_selecionada}${'&unidade_uuid='+unidade_selecionada}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getUsuarios deve chamar a API corretamente somente com o parâmetro "visao"', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const visao_selecionada='DRE'
+        const result = await getUsuarios(visao_selecionada);
+        const url = `/api/usuarios/?visao=${visao_selecionada}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });

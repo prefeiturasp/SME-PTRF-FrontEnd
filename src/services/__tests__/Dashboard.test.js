@@ -13,6 +13,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 
@@ -22,7 +23,7 @@ const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
 describe('Testes para funções de análise', () => {
-    
+
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -59,6 +60,16 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(result);
     });
 
+    test('getAcoesAssociacaoPorPeriodoConta deve chamar a API corretamente sem conta nos parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const associacao_uuid = '1234'
+        const periodo_uuid = '1234'
+        const result = await getAcoesAssociacaoPorPeriodoConta(associacao_uuid, periodo_uuid);
+        const url = `/api/associacoes/${associacao_uuid}/painel-acoes/?periodo_uuid=${periodo_uuid}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
     test('getTabelas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getTabelas(associacao_uuid);
@@ -72,6 +83,14 @@ describe('Testes para funções de análise', () => {
         const periodo_uuid = '1234'
         const result = await getContas(associacao_uuid, periodo_uuid);
         const url = `/api/associacoes/${associacao_uuid}/contas/?periodo_uuid=${periodo_uuid}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getContas deve chamar a API corretamente sem periodo_uuid nos parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const result = await getContas(associacao_uuid);
+        const url = `/api/associacoes/${associacao_uuid}/contas/`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });

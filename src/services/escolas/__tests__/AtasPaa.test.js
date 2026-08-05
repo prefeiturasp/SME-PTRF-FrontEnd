@@ -8,6 +8,7 @@ import { TOKEN_ALIAS } from '../../auth.service.js';
 
 jest.mock('../../api', () => ({
   get: jest.fn(),
+  registerUnauthorizedHandler: jest.fn(),
 }));
 
 const mockToken = 'fake-token';

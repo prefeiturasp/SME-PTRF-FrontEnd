@@ -2,9 +2,10 @@ import { Fragment, useState, useEffect } from "react";
 import "./style.css";
 import DetalhamentoRecursosProprios from "../DetalhamentoRecursosProprios";
 import { DetalhamentoAcoesPdde } from "../DetalhamentoAcoesPdde";
-
+import {visoesService} from "../../../../../services/visoes.service";
 import ReceitasPrevistasPTRF from "./ReceitasPrevistasPTRF";
 import ReceitasPrevistasPDDE from "./ReceitasPrevistasPDDE";
+import ReceitasPrevistasOutrosRecursosLegado from "./ReceitasPrevistasOutrosRecursosLegado";
 import ReceitasPrevistasOutrosRecursos from "./ReceitasPrevistasOutrosRecursos";
 
 const mapDestinoParaTab = (destino) => {
@@ -13,6 +14,8 @@ const mapDestinoParaTab = (destino) => {
       return "detalhamento-das-acoes-pdde";
     case "recursos-proprios":
       return "detalhamento-de-recursos-proprios";
+    case "outros-recursos":
+      return "outros-recursos";
     default:
       return "receitas-previstas";
   }
@@ -23,37 +26,74 @@ const ReceitasPrevistas = ({ receitasDestino = null, paa }) => {
     mapDestinoParaTab(receitasDestino),
   );
 
-  const tabs = [
-    {
-      id: "receitas-previstas",
-      label: "Receitas Previstas",
-      component: (
-        <>
+  // Ao ativar defitivamente a flag, deve-se excluir apenas os componentes (ReceitasPrevistasOutrosRecursosLegado
+  // e TabelaRecursosPropriosLegado) e excluir apenas o "else"
+  const FLAG_PAA_RECEITAS_PREVISTA =  visoesService.featureFlagAtiva("paa-receitas-prevista") 
+
+  let tabs = []
+
+  if(FLAG_PAA_RECEITAS_PREVISTA) {
+      tabs = [
+      {
+        id: "receitas-previstas",
+        label: "Ações PTRF",
+        component: (
           <ReceitasPrevistasPTRF />
-          <ReceitasPrevistasPDDE setActiveTab={setActiveTab} />
-          <ReceitasPrevistasOutrosRecursos setActiveTab={setActiveTab}/>
-        </>
-      ),
-    },
-    {
-      id: "detalhamento-das-acoes-pdde",
-      label: "Detalhamento das ações PDDE",
-      component: (
-        <>
-          <DetalhamentoAcoesPdde />
-        </>
-      ),
-    },
-    {
-      id: "detalhamento-de-recursos-proprios",
-      label: "Detalhamento de Recursos Próprios",
-      component: (
-        <>
+        ),
+      },
+      {
+        id: "detalhamento-das-acoes-pdde",
+        label: "Ações PDDE",
+        component: (
+            <DetalhamentoAcoesPdde />
+        ),
+      },
+      {
+        id: "detalhamento-de-recursos-proprios",
+        label: "Recursos Próprios",
+        component: (
           <DetalhamentoRecursosProprios />
-        </>
-      ),
-    },
-  ];
+        ),
+      },
+
+      {
+        id: "outros-recursos",
+        label: "Outros Recursos",
+        component: (
+          <ReceitasPrevistasOutrosRecursos />
+        ),
+      },
+    ];
+  } else {
+    tabs = [
+      {
+        id: "receitas-previstas",
+        label: "Receitas Previstas",
+        component: (
+          <>
+            <ReceitasPrevistasPTRF tituloMenu="Receitas Previstas" />
+            <ReceitasPrevistasPDDE setActiveTab={setActiveTab} />
+            <ReceitasPrevistasOutrosRecursosLegado setActiveTab={setActiveTab}/>
+          </>
+        ),
+      },
+      {
+        id: "detalhamento-das-acoes-pdde",
+        label: "Detalhamento das ações PDDE",
+        component: (
+          <DetalhamentoAcoesPdde />
+        ),
+      },
+      {
+        id: "detalhamento-de-recursos-proprios",
+        label: "Detalhamento de Recursos Próprios",
+        component: (
+          <DetalhamentoRecursosProprios tituloMenu="Detalhamento de Recursos Próprios"/>
+        ),
+      },
+    ];
+  }
+
 
   useEffect(() => {
     if (receitasDestino) {

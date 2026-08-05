@@ -1,7 +1,11 @@
 import React, {Fragment} from "react";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 
 
 export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const habilitaAprovacaoComRessalvas = recursoSelecionado?.habilita_aprovacao_com_ressalvas || false;    
+
     const listaVaziaAprovadas = (status_pc) => {
         if(status_pc === "aprovadas"){
             return (
@@ -12,7 +16,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
     }
 
     const listaVaziaAprovadasRessalva = (status_pc) => {
-        if(status_pc === "aprovadas_ressalva"){
+        if(status_pc === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas){
             return (
                 <p className="lista-vazia">Nenhuma prestação de contas aprovada com ressalva.</p>
             )
@@ -53,26 +57,15 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
     return (
         <>
             {status === "aprovadas" &&
-                <p className="titulo-tabelas">
-                    a) <span className="titulo-tabelas-aprovadas"><strong>APROVAR</strong></span> as prestações de contas das Associações das unidades abaixo relacionadas,
-                    analisadas sob aspecto de exatidão numérica e obediência à legislação, conforme inciso
-                    I do art. 36 da Portaria SME nº 6.634/2021:
-                </p>
+                <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_a }} />
             }
 
-            {status === "aprovadas_ressalva" &&
-                <p className="titulo-tabelas">
-                    b) <span className="titulo-tabelas-aprovadas"><strong>APROVAR COM RESSALVAS</strong></span> as prestações de contas das Associações das unidades abaixo relacionadas,
-                    analisadas sob aspecto de exatidão numérica e obediência à legislação, conforme inciso
-                    II do art. 36 da Portaria SME nº 6.634/2021:
-                </p>
+            {status === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas &&
+                <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_b }} />
             }
 
             {status === "reprovadas" &&
-                <p className="titulo-tabelas">
-                    c) <span className="titulo-tabelas-reprovadas"><strong>REJEITAR</strong></span> as prestações de contas das Associações das unidades abaixo relacionadas,
-                    conforme inciso III do art. 36 da Portaria SME nº 6.634/2021:
-                </p>
+                <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_c }} />
             }
 
 
@@ -112,7 +105,7 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
             
             }
 
-            {infoContas && infoContas.contas && infoContas.contas.length > 0 && status === "aprovadas_ressalva"
+            {infoContas && infoContas.contas && infoContas.contas.length > 0 && status === "aprovadas_ressalva" && habilitaAprovacaoComRessalvas
                 ?
 
                     infoContas.contas.map((conta, index) => 
@@ -184,12 +177,8 @@ export const TabelaAprovadas = ({infoContas, status, exibirUltimoItem}) => {
             
             }
 
-            {exibirUltimoItem &&
-                <p className="titulo-tabelas">
-                    d) Submeter ao Sr. Diretor Regional de Educação, a presente Ata, com o parecer conclusivo desta Comissão
-                    atendendo ao inciso IV, do art. 34 da Portaria SME nº 6.634/2021, manter sob custódia até a publicação
-                    do despacho no DOC.
-                </p>
+            {exibirUltimoItem && recursoSelecionado?.textos_ata?.letra_d &&
+                <div className="titulo-tabelas" dangerouslySetInnerHTML={{__html: recursoSelecionado?.textos_ata?.letra_d }} />
             }
             
         </>

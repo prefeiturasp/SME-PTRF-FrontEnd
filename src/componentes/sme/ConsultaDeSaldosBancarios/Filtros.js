@@ -54,12 +54,18 @@ export const Filtros = ({
                   ))}
             </select>
           </div>
-          <div className="form-group col-2">
+          <div className="form-group col-2 d-flex align-items-end justify-content-end">
+            <button
+              onClick={limpaFiltros}
+              type="button"
+              className="btn btn-outline-success mr-2"
+            >
+              Limpar
+            </button>
             <button
               onClick={handleSubmitFiltros}
               type="button"
-              className="btn btn-success float-right"
-              style={{ marginTop: "1.9em" }}
+              className="btn btn-success"
             >
               Filtrar
             </button>

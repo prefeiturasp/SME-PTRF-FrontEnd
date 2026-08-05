@@ -1,5 +1,8 @@
 # SME-PTRF-FrontEnd
 
+<!-- BADGES:START -->
+<!-- BADGES:END -->
+
 Esse é o repositório de código da aplicação web Sig-Escola, um sistema integrado de gestão que visa:
 
 - Apoiar os processos de gestão e prestação de contas de recursos financeiros das unidades educacionais da Rede Municipal de Educação de São Paulo,

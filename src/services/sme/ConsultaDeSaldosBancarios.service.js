@@ -8,12 +8,28 @@ const authHeader = ()=>({
     }
 });
 
-export const getPeriodos = async () => {
-    return (await api.get(`/api/periodos/`, authHeader())).data
-};
+export const getPeriodos = async (parameters = {}) => {
+    const params = new URLSearchParams();
 
-export const getTiposDeConta = async () => {
-    return (await api.get(`/api/tipos-conta/`, authHeader())).data
+    if (parameters.solicitacao_sme) {
+        params.append('solicitacao_sme', parameters.solicitacao_sme);
+    }
+
+    const paramsToString = params.toString();
+    const url = paramsToString ? `/api/periodos/?${paramsToString}` : '/api/periodos/';
+    return (await api.get(url, authHeader())).data;
+}
+
+export const getTiposDeConta = async (recurso_uuid = '') => {
+    const params = new URLSearchParams();
+
+    if (recurso_uuid) {
+        params.append('recurso_uuid', recurso_uuid);
+    }
+
+    const query = params.toString() ? `?${params.toString()}` : '';
+
+    return (await api.get(`/api/tipos-conta/${query}`, authHeader())).data
 };
 
 export const getSaldosPorTipoDeUnidade = async (periodo_uuid, conta_uuid) => {

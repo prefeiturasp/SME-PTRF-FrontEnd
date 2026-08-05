@@ -320,6 +320,7 @@ export const RelatorioConsolidadoApuracao = () => {
                                 execucaoFinanceira={execucaoFinanceira}
                                 valorTemplate={valorTemplate}
                                 comparaValores={comparaValores}
+                                exibe_devolucao_ao_tesouro={execucaoFinanceira.existe_lancamentos_devolucao_ao_tesouro}
                             />
                             <JustificativaDiferenca
                                 comparaValores={comparaValores}
