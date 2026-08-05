@@ -16,6 +16,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 
@@ -25,7 +26,6 @@ const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
 describe('Testes para funções de análise', () => {
-    
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -42,6 +42,64 @@ describe('Testes para funções de análise', () => {
             }
         };
     };
+
+    it('getDownloadArquivo deve baixar o arquivo corretamente na API', async () => {
+        const mockBlob = new Blob(['dummy content'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const mockResponse = { data: mockBlob };
+        const nome_do_arquivo_com_extensao = 'teste'
+        const arquivo_download_uuid = 'teste'
+
+        const createElementSpy = jest.spyOn(document, 'createElement');
+
+        jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+
+        Object.defineProperty(window, 'URL', {
+            value: {
+                createObjectURL: jest.fn(() => mockBlob),
+            },
+            writable: true,
+        });
+
+        api.get.mockResolvedValue(mockResponse);
+        const mockCreateObjectURL = jest.fn(() => 'blob:http://dummy-url');
+        window.URL.createObjectURL = mockCreateObjectURL;
+
+        await getDownloadArquivo(nome_do_arquivo_com_extensao, arquivo_download_uuid);
+
+        expect(api.get).toHaveBeenCalledWith(
+            `/api/arquivos-download/download-arquivo/?arquivo_download_uuid=${arquivo_download_uuid}`,
+            expect.objectContaining({
+            responseType: 'blob',
+            timeout: 30000,
+            ...authHeader()
+        }));
+
+        expect(mockCreateObjectURL).toHaveBeenCalled();
+        expect(createElementSpy).toHaveBeenCalledWith('a');
+        expect(HTMLAnchorElement.prototype.click).toHaveBeenCalledTimes(1);
+
+        mockCreateObjectURL.mockRestore();
+        createElementSpy.mockRestore();
+
+    });
+
+    it('getDownloadArquivo deve capturar o erro no catch e retornar error.response quando a API falhar', async () => {
+        const mockErrorResponse = {
+            status: 500,
+            data: { message: 'Erro interno no servidor' },
+        };
+
+        const mockError = {
+            response: mockErrorResponse,
+        };
+
+        api.get.mockRejectedValueOnce(mockError);
+
+        const result = await getDownloadArquivo();
+
+        expect(result).toEqual(mockErrorResponse);
+
+    });
 
     test('getArquivosDownload deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
@@ -63,44 +121,24 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
+    test('getArquivosDownloadFiltros deve chamar a API corretamente sem parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const identificador = ''
+        const status = ''
+        const ultima_atualizacao = ''
+        const visto = ''
+        const result = await getArquivosDownloadFiltros();
+        const url = `/api/arquivos-download/?identificador=${identificador}&status=${status}&ultima_atualizacao=${ultima_atualizacao}&lido=${visto}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(mockData);
+    });
+
     test('getStatus deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getStatus();
         const url = `/api/arquivos-download/status/`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
-    });
-
-    it('getDownloadArquivo  deve baixar o arquivo corretamente na API', async () => {
-        const mockBlob = new Blob(['dummy content'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-        const mockResponse = { data: mockBlob };
-        const nome_do_arquivo_com_extensao = 'teste'
-        const arquivo_download_uuid = 'teste'
-
-        api.get.mockResolvedValue(mockResponse);
-        const mockCreateObjectURL = jest.fn(() => 'blob:http://dummy-url');
-        window.URL.createObjectURL = mockCreateObjectURL;
-
-        const mockCreateElement = jest.spyOn(document, 'createElement').mockImplementation(() => {
-            return { setAttribute: jest.fn(), click: jest.fn(), href: '' };
-        });
-
-        await getDownloadArquivo(nome_do_arquivo_com_extensao, arquivo_download_uuid);
-
-        expect(api.get).toHaveBeenCalledWith(
-            `/api/arquivos-download/download-arquivo/?arquivo_download_uuid=${arquivo_download_uuid}`,
-            expect.objectContaining({
-            responseType: 'blob',
-            timeout: 30000,
-            ...authHeader()
-        }));
-
-        expect(mockCreateObjectURL).toHaveBeenCalled();
-        expect(mockCreateElement).toHaveBeenCalledWith('a');
-
-        mockCreateObjectURL.mockRestore();
-        mockCreateElement.mockRestore();
-        
     });
 
     test('deleteArquivo deve chamar a API corretamente', async () => {
@@ -111,7 +149,7 @@ describe('Testes para funções de análise', () => {
         expect(api.delete).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
-    
+
     test('putMarcarDesmarcarLido deve chamar a API corretamente', async () => {
         api.put.mockResolvedValue({ data: mockData })
         const result = await putMarcarDesmarcarLido(payload);
@@ -119,7 +157,7 @@ describe('Testes para funções de análise', () => {
         expect(api.put).toHaveBeenCalledWith(url, payload, authHeader())
         expect(result).toEqual(mockData);
     });
-    
+
     test('getQuantidadeNaoLidas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const result = await getQuantidadeNaoLidas();

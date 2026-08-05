@@ -1,14 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Typography } from 'antd';
 import { UpOutlined, DownOutlined } from "@ant-design/icons";
 import { useGetResumoPrioridades } from './hooks/useGetResumoPrioridades';
+import { getTextosPaaUe } from '../../../../../../services/escolas/Paa.service';
+import { visoesService } from '../../../../../../services/visoes.service';
+import './resumo.scss';
 
 export const Resumo = () => {
 
     // Controlar as linhas expandidas
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const [informeBloqueioPrioridades, setInformeBloqueioPrioridades] = useState('');
+    const exibeInformeBloqueioPrioridades = visoesService.featureFlagAtiva('informe-bloqueio-prioridades-paa');
 
     const { isFetching: isLoadingResumoPrioridades, resumoPrioridades } = useGetResumoPrioridades();
+
+    useEffect(() => {
+        if (!exibeInformeBloqueioPrioridades) {
+            return;
+        }
+
+        const carregaTextos = async () => {
+            try {
+                const textosPaaResponse = await getTextosPaaUe();
+                setInformeBloqueioPrioridades(textosPaaResponse?.informe_bloqueio_prioridades || '');
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        carregaTextos();
+    }, [exibeInformeBloqueioPrioridades]);
 
     const renderTipoRecurso = (text, record) => {
         // Se for PTRF Total ou filho de PTRF Total, aplica a cor de PTRF
@@ -247,6 +268,11 @@ export const Resumo = () => {
             <Typography.Title level={5} className='my-4'>
                 Resumo de recursos
             </Typography.Title>
+            {exibeInformeBloqueioPrioridades && informeBloqueioPrioridades && (
+                <div className="col-12 container-texto-introdutorio mb-4 px-3">
+                    <div dangerouslySetInnerHTML={{ __html: informeBloqueioPrioridades }} />
+                </div>
+            )}
 
             <Table
                 loading={isLoadingResumoPrioridades}

@@ -11,7 +11,7 @@ import { visoesService } from "../../../../../services/visoes.service";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePaaContext } from "../PaaContext";
 
-const ReceitasPrevistasPTRF = () => {
+const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
   const queryClient = useQueryClient();
 
   const { paa, refetch: refetchPaa, isFetching: isFetchingPaa } = usePaaContext();
@@ -83,9 +83,8 @@ const ReceitasPrevistasPTRF = () => {
         />
       )}
 
-      <>
         <Flex gutter={8} justify="space-between" className="mb-4">
-          <h4 className="mb-0">Receitas Previstas</h4>
+          <h4 className="mb-0">{tituloMenu}</h4>
           <Flex align="center">
             {!!paa?.uuid && paa?.status !== "EM_RETIFICACAO" && (
               <>
@@ -138,7 +137,6 @@ const ReceitasPrevistasPTRF = () => {
             totalRecursosProprios={totalRecursosProprios}
           />
         </Spin>
-      </>
     </div>
   );
 };

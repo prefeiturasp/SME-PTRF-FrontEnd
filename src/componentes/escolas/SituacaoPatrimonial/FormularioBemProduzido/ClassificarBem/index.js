@@ -20,6 +20,8 @@ import {
   parsetFormattedProcessoIncorporacao,
 } from "../../../../../utils/Mascaras";
 import { BarraAvisoValorTotalBemProduzido } from "../components/BarraAvisoValorTotalBemProduzido";
+import { ButtonExcluirBemProduzido } from "../components/ButtonExcluirBemProduzido";
+import { DeletarBemProduzidoModal } from "../Modais/DeletarBemProduzidoModal";
 
 const { Text } = Typography;
 
@@ -37,6 +39,7 @@ export const ClassificarBem = ({
   const navigate = useNavigate();
   const [especificacoes, setEspecificacoes] = useState([]);
   const [form] = Form.useForm();
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   const calcularTotalClassificado = useCallback((_items = []) => {
     const total = _items.reduce((acc, item) => {
@@ -408,6 +411,9 @@ export const ClassificarBem = ({
           >
             Cancelar
           </button>
+
+          <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>             
+
           <button
             className="btn btn-outline-success float-right"
             type="button"
@@ -417,6 +423,12 @@ export const ClassificarBem = ({
           </button>
         </Flex>
       </Form>
+
+      <DeletarBemProduzidoModal 
+        showModal={ showModalDelete }
+        setShowModal={ setShowModalDelete } 
+      />
+
     </div>
   );
 };

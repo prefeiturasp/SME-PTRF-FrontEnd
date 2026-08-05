@@ -17,6 +17,7 @@ export const TextosPaa = () => {
         'texto_pagina_paa_ue': 'Explicação sobre o PAA',
         'texto_atividades_previstas': 'Atividades previstas',
         'texto_levantamento_prioridades': 'Levantamento de prioridades',
+        'informe_bloqueio_prioridades': 'Informe de bloqueio de prioridades',
         'introducao_do_paa_ue_1': 'Introdução do PAA 1',
         'introducao_do_paa_ue_2': 'Introdução do PAA 2',
         'conclusao_do_paa_ue_1': 'Conclusão do PAA 1',
@@ -27,6 +28,7 @@ export const TextosPaa = () => {
         texto_pagina_paa_ue: '',
         texto_atividades_previstas: '',
         texto_levantamento_prioridades: '',
+        informe_bloqueio_prioridades: '',
         introducao_do_paa_ue_1: '',
         introducao_do_paa_ue_2: '',
         conclusao_do_paa_ue_1: '',
@@ -48,6 +50,7 @@ export const TextosPaa = () => {
             texto_pagina_paa_ue: textosPaa.texto_pagina_paa_ue,
             texto_atividades_previstas: textosPaa.texto_atividades_previstas,
             texto_levantamento_prioridades: textosPaa.texto_levantamento_prioridades,
+            informe_bloqueio_prioridades: textosPaa.informe_bloqueio_prioridades,
             introducao_do_paa_ue_1: textosPaa.introducao_do_paa_ue_1,
             introducao_do_paa_ue_2: textosPaa.introducao_do_paa_ue_2,
             conclusao_do_paa_ue_1: textosPaa.conclusao_do_paa_ue_1,
@@ -77,7 +80,8 @@ export const TextosPaa = () => {
     };
 
     const handleSubmitEditor = useCallback(async (textoEditor) => {
-        const textosPaaUe = ['texto_pagina_paa_ue', 'texto_atividades_previstas', 'texto_levantamento_prioridades', 'introducao_do_paa_ue_1', 
+        const textosPaaUe = ['texto_pagina_paa_ue', 'texto_atividades_previstas', 'texto_levantamento_prioridades',
+                             'informe_bloqueio_prioridades', 'introducao_do_paa_ue_1',
                              'introducao_do_paa_ue_2', 'conclusao_do_paa_ue_1', 'conclusao_do_paa_ue_2'];
 
         if (textosPaaUe.includes(tipoDeTexto)) {

@@ -21,6 +21,7 @@ jest.mock('../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const mockToken = 'fake-token';
@@ -29,7 +30,7 @@ const associacao_uuid = '1234'
 const payload = { teste: 'teste' }
 
 describe('Testes para funções de análise', () => {
-    
+
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -121,6 +122,29 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(result);
     });
 
+    test('getNotificacoesFiltros deve chamar a API corretamente com todos os parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        let tipo='teste'
+        let remetente='teste'
+        let categoria='teste'
+        let lido='teste'
+        let data_inicio='2025-04-08'
+        let data_fim='2025-04-08'
+        let recurso = 1
+        const result = await getNotificacoesFiltros(tipo, remetente, categoria, lido, data_inicio, data_fim, recurso);
+        const url = `/api/notificacoes/?tipo=${tipo}&remetente=${remetente}&categoria=${categoria}&lido=${lido}&data_inicio=${data_inicio}&data_fim=${data_fim}&recurso=${recurso}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getNotificacoesFiltros deve chamar a API corretamente sem parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const result = await getNotificacoesFiltros();
+        const url = `/api/notificacoes/?`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
     test('getNotificacoesFiltrosPaginacao deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         let tipo = 'teste'
@@ -133,6 +157,15 @@ describe('Testes para funções de análise', () => {
         let recurso = 1
         const result = await getNotificacoesFiltrosPaginacao(tipo, remetente, categoria, lido, data_inicio, data_fim, page, recurso);
         const url = `/api/notificacoes/?${tipo ? 'tipo=' + tipo : ""}${remetente ? '&remetente='+remetente: ""}${categoria ? '&categoria='+categoria : ""}${lido ? '&lido='+lido : ""}${data_inicio ? '&data_inicio='+data_inicio : ""}${data_fim ? '&data_fim='+data_fim : ""}&recurso=${recurso}&page=${page}`
+        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(result);
+    });
+
+    test('getNotificacoesFiltrosPaginacao deve chamar a API corretamente sem parâmetros', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        let page = '1'
+        const result = await getNotificacoesFiltrosPaginacao(undefined, undefined, undefined, undefined, undefined, undefined, undefined,page);
+        const url = `/api/notificacoes/?&page=${page}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(result);
     });

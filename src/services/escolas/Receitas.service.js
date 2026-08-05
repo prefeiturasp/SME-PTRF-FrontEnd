@@ -4,7 +4,7 @@ import { ASSOCIACAO_UUID } from "../auth.service";
 
 const authHeader = ()=>({
     headers: {
-        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,  
+        'Authorization': `JWT ${localStorage.getItem(TOKEN_ALIAS)}`,
         'Content-Type': 'application/json'
     }
 });
@@ -81,8 +81,12 @@ export const getPeriodoFechadoReceita = async (palavra, aplicacao_recurso, acao_
     return (await api.get(`api/rateios-despesas/totais/?search=${palavra}&aplicacao_recurso=${aplicacao_recurso}&acao_associacao__uuid=${acao_associacao__uuid}&despesa__status=${despesa__status}&associacao__uuid=${localStorage.getItem(ASSOCIACAO_UUID)}`, authHeader())).data
 };
 
-export const getListaMotivosEstorno = async () => {
-    return (await api.get(`/api/motivos-estorno/`, authHeader())).data
+export const getListaMotivosEstorno = async (recurso_uuid="") => {
+    let url = `/api/motivos-estorno/`;
+    if(recurso_uuid){
+        url += `?recurso_uuid=${recurso_uuid}`;
+    }
+    return (await api.get(url, authHeader())).data
 };
 
 export const marcarLancamentoExcluido = async (uuid_analise_lancamento) => {

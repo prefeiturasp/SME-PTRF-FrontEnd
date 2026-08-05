@@ -15,7 +15,9 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
     const texto_emissao = texto_documento_consolidado_pc.texto_emissao();
 
     const getTexto = (ehRetificacao) => {
-        const baseLegal = "conforme incisos III e IV do art. 34 da Portaria SME nº 6.634/2021"
+        const baseLegal = recursoSelecionado?.textos_ata?.introducao
+        const textParametrizavel = baseLegal ? `, ${baseLegal}` : "."
+        const textoAposPeriodo = ehRetificacao ? ", em virtude dos seguintes motivos:" : textParametrizavel
 
         const textoBase = `${retornaDadosAtaFormatado("data_reuniao")}, às ${retornaDadosAtaFormatado("hora_reuniao")},
          reuniu-se a ${comissaoResponsavelPCNome} da Diretoria Regional de Educação 
@@ -25,12 +27,11 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
         const textoObjetivo = `para análise das prestações de contas ${ehRetificacao ? "RETIFICADAS" : ""} 
         dos recursos transferidos pelo ${recursoSelecionado?.nome}, 
         período de ${retornaDadosAtaFormatado("periodo.data_inicio_realizacao_despesas")} a 
-        ${retornaDadosAtaFormatado("periodo.data_fim_realizacao_despesas")}, 
-        ${ehRetificacao ? "em virtude dos seguintes motivos:" : `${baseLegal} e deliberou:`}`
+        ${retornaDadosAtaFormatado("periodo.data_fim_realizacao_despesas")}${textoAposPeriodo}`
 
         const motivosRetificacao = ehRetificacao ? motivoRetificacao : ""
 
-        const deliberacaoRetificacao = ehRetificacao ? `Após análise, ${baseLegal}, a Comissão deliberou:` : ""
+        const deliberacaoRetificacao = ehRetificacao ? `Após análise${textParametrizavel}` : ""
 
         return <>
             <p className="texto-dinamico-superior">{textoBase} {textoObjetivo}</p>

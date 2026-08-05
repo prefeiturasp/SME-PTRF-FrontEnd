@@ -196,6 +196,7 @@ export const RelatorioConsolidadoEmTela = () => {
                                         valorTemplate={valorTemplate}
                                         haDiferencaPrevisaoExecucaoRepasse={haDiferencaPrevisaoExecucaoRepasse}
                                         tipoConta={execucaoFinanceiraConta.tipo_conta}
+                                        exibe_devolucao_ao_tesouro={execucaoFinanceira.existe_lancamentos_devolucao_ao_tesouro}
                                     />
                                     <JustificativaDiferenca
                                         execucaoFinanceira={execucaoFinanceiraConta}

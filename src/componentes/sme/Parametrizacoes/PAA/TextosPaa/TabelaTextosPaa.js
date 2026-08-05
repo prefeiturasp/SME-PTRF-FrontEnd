@@ -23,6 +23,10 @@ const TabelaTextosPaa = ({acoesTemplate}) => {
                     <td>{acoesTemplate('texto_levantamento_prioridades')}</td>
                 </tr>
                 <tr>
+                    <td>Informe de bloqueio de prioridades</td>
+                    <td>{acoesTemplate('informe_bloqueio_prioridades')}</td>
+                </tr>
+                <tr>
                     <td>Introdução da aba Relatórios</td>
                     <td>
                         <div className="d-flex flex-column">

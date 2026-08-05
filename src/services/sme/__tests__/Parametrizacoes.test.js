@@ -161,6 +161,7 @@ jest.mock('../../api', () => ({
     patch: jest.fn(),
     post: jest.fn(),
     delete: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 
@@ -1588,10 +1589,19 @@ describe('Testes para funções de análise', () => {
 
     test('getMotivosEstorno deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
-        const motivo = 'Erro de digitação';
-        const result = await getMotivosEstorno(motivo);
-        const url = `/api/motivos-estorno/?motivo=${motivo}`;
-        expect(api.get).toHaveBeenCalledWith(url, authHeader());
+        const filter = {
+            motivo: 'Erro de digitação',
+            recurso_uuid: 'recurso-123',
+        };
+        const result = await getMotivosEstorno(filter);
+        const url = `/api/motivos-estorno/`;
+        expect(api.get).toHaveBeenCalledWith(url, {
+            ...authHeader(),
+            params: {
+                motivo: filter.motivo,
+                recurso_uuid: filter.recurso_uuid,
+            },
+        });
         expect(result).toEqual(mockData);
     });
 

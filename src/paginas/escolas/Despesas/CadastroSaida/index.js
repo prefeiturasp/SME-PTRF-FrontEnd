@@ -1,8 +1,14 @@
-import React, {useContext, useEffect} from "react";
+import React from "react";
 import {PaginasContainer} from "../../../PaginasContainer";
-import {CadastroSaidaForm} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas/CadastroSaidaForm";
+import {CadastroSaidaForm as CadastroSaidaFormLegado} from "../../../../componentes/escolas/Despesas/CadastroDeDespesas/CadastroSaidaForm";
+import {CadastroSaidaForm as CadastroSaidaFormPipeline} from "../../../../componentes/escolas/Despesas/CadastroDeDespesasPipeline/CadastroSaidaForm";
+import {visoesService} from "../../../../services/visoes.service";
+import {FEATURE_FLAGS} from "../../../../constantes/featureFlags";
 
 export const CadastroSaida = () => {
+    const CadastroSaidaForm = visoesService.featureFlagAtiva(FEATURE_FLAGS.DESPESAS_PIPELINE)
+        ? CadastroSaidaFormPipeline
+        : CadastroSaidaFormLegado;
 
     return (
         <PaginasContainer>
@@ -14,6 +20,5 @@ export const CadastroSaida = () => {
                 />
             </div>
         </PaginasContainer>
-
     );
-}
+};

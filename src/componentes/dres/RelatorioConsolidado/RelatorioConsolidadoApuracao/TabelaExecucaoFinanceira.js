@@ -1,6 +1,11 @@
 import React from "react";
 
-export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, comparaValores}) =>{
+export const TabelaExecucaoFinanceira = ({
+    execucaoFinanceira, 
+    valorTemplate, 
+    comparaValores,
+    exibe_devolucao_ao_tesouro
+}) =>{
 
     return(
         <>
@@ -84,13 +89,15 @@ export const TabelaExecucaoFinanceira = ({execucaoFinanceira, valorTemplate, com
                         <td>{execucaoFinanceira.saldo_reprogramado_proximo_periodo_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_proximo_periodo_livre) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_proximo_periodo_total ? valorTemplate(execucaoFinanceira.saldo_reprogramado_proximo_periodo_total) :'-'}</td>
                     </tr>
-                    <tr>
-                        <td>Devolução para o tesouro</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>{execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total ? valorTemplate(execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total) :'-'}</td>
-                    </tr>
+                    { exibe_devolucao_ao_tesouro && (
+                        <tr>
+                            <td>Devolução para o tesouro</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>{execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total ? valorTemplate(execucaoFinanceira.devolucoes_ao_tesouro_no_periodo_total) :'-'}</td>
+                        </tr>
+                    ) }
                     </tbody>
                 </table>
             }

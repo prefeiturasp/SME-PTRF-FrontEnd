@@ -4,6 +4,7 @@ import { TOKEN_ALIAS } from '../auth.service.js';
 
 jest.mock('../api', () => ({
     get: jest.fn(),
+    registerUnauthorizedHandler: jest.fn(),
 }));
 
 const mockToken = 'fake-token';
@@ -40,6 +41,36 @@ describe('Testes para funções de análise', () => {
         );
         expect(mockLink.click).toHaveBeenCalled();
         expect(window.URL.revokeObjectURL).toHaveBeenCalledWith('blob:doc-final-url');
+
+        jest.restoreAllMocks();
+    });
+
+    it('downloadDocumentoFinalPaa deve mandar retificacao igual a "true" como parâmetro', async () => {
+        const mockBlob = new Blob(['content'], { type: 'application/pdf' });
+        api.get.mockResolvedValue({ data: mockBlob });
+
+        const paaUuid = 'paa-uuid';
+        await downloadDocumentoFinalPaa(paaUuid, { retificacao: true });
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/paa/${paaUuid}/documento-final/`,
+            expect.objectContaining({ responseType: 'blob', timeout: 30000, params: { retificacao: 'true' } }),
+        );
+
+        jest.restoreAllMocks();
+    });
+
+    it('downloadDocumentoFinalPaa deve mandar retificacao igual a "false" como parâmetro', async () => {
+        const mockBlob = new Blob(['content'], { type: 'application/pdf' });
+        api.get.mockResolvedValue({ data: mockBlob });
+
+        const paaUuid = 'paa-uuid';
+        await downloadDocumentoFinalPaa(paaUuid, { retificacao: false });
+
+        expect(api.get).toHaveBeenCalledWith(
+            `api/paa/${paaUuid}/documento-final/`,
+            expect.objectContaining({ responseType: 'blob', timeout: 30000, params: { retificacao: 'false' } }),
+        );
 
         jest.restoreAllMocks();
     });

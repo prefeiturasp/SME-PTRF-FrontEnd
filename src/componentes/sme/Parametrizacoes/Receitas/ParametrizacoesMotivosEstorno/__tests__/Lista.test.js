@@ -1,249 +1,288 @@
-import React, {act} from "react";
-import { render, screen, fireEvent, waitFor, renderHook, within } from "@testing-library/react";
-import { Lista } from "../Lista";
-import { MotivosEstornoContext } from "../context/MotivosEstorno";
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Lista } from "../components/Lista";
+import { useMotivosEstornoContext } from "../hooks/useMotivosEstornoContext";
+import { useGetMotivosEstorno } from "../hooks/useGetMotivosEstorno";
 import { usePostMotivoEstorno } from "../hooks/usePostMotivoEstorno";
 import { usePatchMotivoEstorno } from "../hooks/usePatchMotivoEstorno";
 import { useDeleteMotivoEstorno } from "../hooks/useDeleteMotivoEstorno";
-import { useGetMotivosEstorno } from "../hooks/useGetMotivosEstorno";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
 
+jest.mock("../hooks/useMotivosEstornoContext");
 jest.mock("../hooks/useGetMotivosEstorno");
 jest.mock("../hooks/usePostMotivoEstorno");
 jest.mock("../hooks/usePatchMotivoEstorno");
 jest.mock("../hooks/useDeleteMotivoEstorno");
 
-jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
-  RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+jest.mock("primereact/datatable", () => ({
+    DataTable: ({ value, children, paginator, rows }) => {
+        const React = require("react");
+        const columns = React.Children.toArray(children);
+
+        return (
+            <div data-testid="datatable" data-paginator={paginator} data-rows={rows}>
+                {value.map((rowData) => (
+                    <div data-testid="datatable-row" key={rowData.uuid}>
+                        {columns.map((column) => (
+                            <div key={column.props.field}>
+                                {column.props.body
+                                    ? column.props.body(rowData)
+                                    : rowData[column.props.field]}
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        );
+    },
 }));
 
-const mockContextValue = {
-  initialStateFormModal: {
-    "id": "",
-    "motivo": "",
-    "operacao": "create",
-    "uuid": "",
-  },
-  stateFormModal: {
-    "id": "",
-    "motivo": "",
-    "operacao": "create",
-    "uuid": "",
-  },
-  showModalConfirmacaoExclusao: false,
-  rowsPerPage: 10,
-  setShowModalConfirmacaoExclusao: jest.fn(),
-  setStateFormModal: jest.fn(),
-  setShowModalForm: jest.fn(),
+jest.mock("primereact/column", () => ({
+    Column: () => null,
+}));
+
+jest.mock("../../../../../Globais/UI/Button", () => ({
+    EditIconButton: (props) => <button type="button" {...props}>Editar</button>,
+}));
+
+jest.mock("../../../../../Globais/Mensagens/MsgImgCentralizada", () => ({
+    MsgImgCentralizada: ({ texto }) => <div>{texto}</div>,
+}));
+
+jest.mock("../../../../../../utils/Loading", () => ({
+    __esModule: true,
+    default: () => <div data-testid="loading">Loading</div>,
+}));
+
+jest.mock("../components/ModalForm", () => ({
+    __esModule: true,
+    default: ({ handleSubmitFormModal }) => (
+        <div data-testid="modal-form">
+            <button
+                type="button"
+                onClick={() =>
+                    handleSubmitFormModal({
+                        motivo: "Novo motivo",
+                        recurso_uuid: "recurso-1",
+                        uuid: "",
+                    })
+                }
+            >
+                submit-create
+            </button>
+            <button
+                type="button"
+                onClick={() =>
+                    handleSubmitFormModal({
+                        motivo: "Motivo editado",
+                        recurso_uuid: "recurso-2",
+                        uuid: "motivo-1",
+                    })
+                }
+            >
+                submit-edit
+            </button>
+        </div>
+    ),
+}));
+
+jest.mock("../../../../../Globais/ModalAntDesign/ModalConfirmarExclusao", () => ({
+    ModalConfirmarExclusao: ({ open, onOk, onCancel, titulo, bodyText }) =>
+        open ? (
+            <div data-testid="modal-confirmacao">
+                <span>{titulo}</span>
+                <span>{bodyText}</span>
+                <button type="button" onClick={onOk}>confirmar exclusao</button>
+                <button type="button" onClick={onCancel}>cancelar exclusao</button>
+            </div>
+        ) : null,
+}));
+
+jest.mock("../../../../../Globais/ToastCustom", () => ({
+    toastCustom: {
+        ToastCustomError: jest.fn(),
+    },
+}));
+
+const motivoEstorno = {
+    id: 1,
+    uuid: "motivo-1",
+    motivo: "Motivo teste",
+    recurso: "recurso-1",
 };
 
-describe("Lista Component", () => {
-  let mutationPostMock = { mutate: jest.fn() };
-  let mutationPatchMock = { mutate: jest.fn() };
+describe("Lista", () => {
+    const setStateFormModal = jest.fn();
+    const handleCloseModalConfirmacaoExclusao = jest.fn();
+    const mockMutationPostMutate = jest.fn();
+    const mockMutationPatchMutate = jest.fn();
+    const mockMutationDeleteMutate = jest.fn();
 
-  const queryClient = new QueryClient()
-  const wrapper = ({ children }) => (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  )
+    beforeEach(() => {
+        jest.clearAllMocks();
 
-
-  beforeEach(() => {
-    useGetMotivosEstorno.mockReturnValue({ isLoading: false, data: [], count: 0 });
-    usePostMotivoEstorno.mockReturnValue({ mutationPost: mutationPostMock });
-    usePatchMotivoEstorno.mockReturnValue({ mutationPatch: mutationPatchMock });
-    useDeleteMotivoEstorno.mockReturnValue({ mutationDelete: { mutate: jest.fn() } });
-  });
-
-  test("exibe carregamento quando isLoading é true", () => {
-    useGetMotivosEstorno.mockReturnValue({ isLoading: true, data: [], count: 0 });
-    render(
-      <MotivosEstornoContext.Provider value={mockContextValue}>
-        <Lista />
-      </MotivosEstornoContext.Provider>
-    );
-    expect(screen.getByText(/carregando/i)).toBeInTheDocument();
-  });
-
-  test("exibe mensagem de nenhum resultado quando a lista está vazia", () => {
-    render(
-      <MotivosEstornoContext.Provider value={mockContextValue}>
-        <Lista />
-      </MotivosEstornoContext.Provider>
-    );
-    expect(screen.getByText(/Nenhum resultado encontrado./i)).toBeInTheDocument();
-  });
-
-  test("exibe tabela quando há dados", () => {
-    useGetMotivosEstorno.mockReturnValue({
-      isLoading: false,
-      data: [{ motivo: "Teste", uuid: "123", id: 1 }],
-      count: 1,
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: {
+                id: "",
+                uuid: "",
+                motivo: "",
+                recurso_uuid: "",
+                isOpen: false,
+            },
+            setStateFormModal,
+            rowsPerPage: 10,
+            showModalConfirmacaoExclusao: {
+                is_open: false,
+                motivo_uuid: "",
+            },
+            handleCloseModalConfirmacaoExclusao,
+        });
+        useGetMotivosEstorno.mockReturnValue({
+            isLoading: false,
+            data: [motivoEstorno],
+            count: 1,
+        });
+        usePostMotivoEstorno.mockReturnValue({
+            mutationPost: { mutate: mockMutationPostMutate },
+        });
+        usePatchMotivoEstorno.mockReturnValue({
+            mutationPatch: { mutate: mockMutationPatchMutate },
+        });
+        useDeleteMotivoEstorno.mockReturnValue({
+            mutationDelete: { mutate: mockMutationDeleteMutate },
+        });
     });
 
-    render(
-      <MotivosEstornoContext.Provider value={mockContextValue}>
-        <Lista />
-      </MotivosEstornoContext.Provider>
-    );
+    it("deve renderizar loading quando estiver carregando", () => {
+        useGetMotivosEstorno.mockReturnValue({
+            isLoading: true,
+            data: [],
+            count: 0,
+        });
 
-    expect(screen.getByText((_, element) => element.textContent === 'Exibindo 1 motivo(s) de estorno')).toBeInTheDocument();
-    expect(screen.getByText(/Teste/i)).toBeInTheDocument();
-  });
+        render(<Lista />);
 
-  test("deve abrir o modal de confirmação de exclusão", async () => {
-    render(
-      <MotivosEstornoContext.Provider
-        value={{ ...mockContextValue, showModalConfirmacaoExclusao: true }}
-      >
-        <Lista />
-      </MotivosEstornoContext.Provider>
-    );
-    expect(screen.getByText(/Excluir Motivo de Estorno/i)).toBeInTheDocument();
-    expect(screen.getByText(/Deseja realmente excluir este motivo de estorno?/i)).toBeInTheDocument();
-  })
-
-  test("chama função de exclusão ao confirmar exclusão", async () => {
-    useGetMotivosEstorno.mockReturnValue({
-      isLoading: false,
-      data: [{ motivo: "Teste", uuid: "123", id: 1 }],
-      count: 1,
-    });
-    
-    const mockDelete = jest.fn();
-
-    useDeleteMotivoEstorno.mockReturnValue({ mutationDelete: { mutate: mockDelete } });
-    
-    render(
-      <MotivosEstornoContext.Provider
-        value={{ 
-          ...mockContextValue, 
-          showModalConfirmacaoExclusao: true,
-          stateFormModal: { motivo: "Teste", uuid: "123", id: 1, operacao: "edit" }
-        }}
-      >
-        <Lista />
-      </MotivosEstornoContext.Provider>
-    );
-
-    const excluirButton = screen.getByRole("button", { name: /^Excluir$/ });
-    fireEvent.click(excluirButton);
-
-    await waitFor(() => {
-      expect(mockDelete).toHaveBeenCalledWith("123");
-    });
-  });
-
-  it("deve abrir o modal de adição ao clicar no botão de adicionar motivo de estorno", () => {
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-
-    render(
-      <MotivosEstornoContext.Provider value={{...mockContextValue}}>
-          <Lista />
-      </MotivosEstornoContext.Provider>
-    );
-
-    const adicionarButton = screen.getByRole("button", { name: /adicionar motivo de estorno/i });
-    expect(adicionarButton).toBeInTheDocument();
-    
-    fireEvent.click(adicionarButton);
-
-    expect(mockContextValue.setStateFormModal).toHaveBeenCalledWith({
-      "id": "",
-      "motivo": "",
-      "operacao": "create",
-      "uuid": "",
-    });
-    expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(true);
-  });
-
-  it("deve abrir o modal de edição com os dados corretos ao clicar no botão editar", () => {
-    const motivoEstorno = { motivo: "Teste", uuid: "123", id: 1 };
-    
-    useGetMotivosEstorno.mockReturnValue({
-      isLoading: false,
-      data: [motivoEstorno],
-      count: 1,
-    });
-  
-    render(
-        <MotivosEstornoContext.Provider value={{...mockContextValue}}>
-            <Lista />
-        </MotivosEstornoContext.Provider>
-    );
-
-    const editarButton = screen.getByRole("button", { name: /editar/i });
-    fireEvent.click(editarButton);
-
-    expect(mockContextValue.setStateFormModal).toHaveBeenCalledWith({
-        ...mockContextValue.stateFormModal,
-        motivo: motivoEstorno.motivo,
-        uuid: motivoEstorno.uuid,
-        id: motivoEstorno.id,
-        operacao: "edit",
+        expect(screen.getByTestId("loading")).toBeInTheDocument();
+        expect(screen.queryByTestId("datatable")).not.toBeInTheDocument();
     });
 
-    expect(mockContextValue.setShowModalForm).toHaveBeenCalledWith(true);
-  });
+    it("deve renderizar tabela quando existem motivos de estorno", () => {
+        render(<Lista />);
 
-  it("deve chamar mutationPost.mutate quando uuid não está presente", () => {
-      RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-      const motivoEstorno = { motivo: "Teste" };
+        expect(screen.getByTestId("datatable")).toBeInTheDocument();
+        expect(screen.getByText("Motivo teste")).toBeInTheDocument();
+        expect(screen.getByTestId("btn-editar-motivos-estorno")).toBeInTheDocument();
+        expect(screen.getByTestId("modal-form")).toBeInTheDocument();
+    });
 
-      render(
-        <MotivosEstornoContext.Provider value={{
-          ...mockContextValue, 
-          showModalForm: true,
-          stateFormModal: {
-            motivo: motivoEstorno.motivo,
-            uuid: "",
-            id: "",
-            operacao: "create",
-          }}}>
-            <Lista />
-        </MotivosEstornoContext.Provider>
-      );
+    it("deve renderizar mensagem de lista vazia quando nao existem motivos", () => {
+        useGetMotivosEstorno.mockReturnValue({
+            isLoading: false,
+            data: [],
+            count: 0,
+        });
 
-      const modal = screen.getByRole("dialog");
-      const botaoAdicionar = within(modal).getByRole("button", { name: /^Adicionar$/ });
-      fireEvent.click(botaoAdicionar);
-      
-      const { result } = renderHook(() => usePostMotivoEstorno(), { wrapper });
+        render(<Lista />);
 
-      act(() => {
-        result.current.mutationPost.mutate({ payload: { motivo: motivoEstorno.motivo } });
-      });
+        expect(screen.getByText("Nenhum resultado encontrado.")).toBeInTheDocument();
+        expect(screen.queryByTestId("datatable")).not.toBeInTheDocument();
+    });
 
-      expect(mutationPostMock.mutate).toHaveBeenCalledWith({ payload: { motivo: "Teste" } });
-  });
+    it("deve abrir o modal de edicao com os dados da linha", () => {
+        render(<Lista />);
 
-  it("deve chamar mutationPatch.mutate quando uuid está presente", () => {
-      RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-      const motivoEstorno = { motivo: "Teste", uuid: "123", id: "123" };
+        fireEvent.click(screen.getByTestId("btn-editar-motivos-estorno"));
 
-      render(
-        <MotivosEstornoContext.Provider value={{
-          ...mockContextValue, 
-          showModalForm: true, 
-          stateFormModal: {
-            motivo: motivoEstorno.motivo,
-            uuid: motivoEstorno.uuid,
-            id: motivoEstorno.id,
-            operacao: "edit",
-          }}}>
-            <Lista />
-        </MotivosEstornoContext.Provider>
-      );
+        expect(setStateFormModal).toHaveBeenCalledWith({
+            id: 1,
+            uuid: "motivo-1",
+            motivo: "Motivo teste",
+            recurso_uuid: "recurso-1",
+            isOpen: true,
+        });
+    });
 
-      const botaoSalvar = screen.getByRole("button", { name: /salvar/i });
-      fireEvent.click(botaoSalvar);
+    it("deve submeter criacao e edicao pelo modal", () => {
+        render(<Lista />);
 
-      const { result } = renderHook(() => usePatchMotivoEstorno(), { wrapper });
+        fireEvent.click(screen.getByText("submit-create"));
+        expect(mockMutationPostMutate).toHaveBeenCalledWith({
+            payload: {
+                motivo: "Novo motivo",
+                recurso: "recurso-1",
+            },
+        });
 
-      act(() => {
-        result.current.mutationPatch.mutate({ UUID: motivoEstorno.uuid, payload: { motivo: motivoEstorno.motivo } });
-      });
+        fireEvent.click(screen.getByText("submit-edit"));
+        expect(mockMutationPatchMutate).toHaveBeenCalledWith({
+            uuidMotivoEstorno: "motivo-1",
+            payload: {
+                motivo: "Motivo editado",
+                recurso: "recurso-2",
+            },
+        });
+    });
 
-      expect(mutationPatchMock.mutate).toHaveBeenCalledWith({ UUID: "123", payload: { motivo: "Teste" } });
-  });
+    it("deve confirmar exclusao pelo modal", () => {
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: {},
+            setStateFormModal,
+            rowsPerPage: 10,
+            showModalConfirmacaoExclusao: {
+                is_open: true,
+                motivo_uuid: "motivo-1",
+            },
+            handleCloseModalConfirmacaoExclusao,
+        });
+
+        render(<Lista />);
+
+        fireEvent.click(screen.getByText("confirmar exclusao"));
+
+        expect(mockMutationDeleteMutate).toHaveBeenCalledWith("motivo-1");
+        expect(handleCloseModalConfirmacaoExclusao).toHaveBeenCalled();
+    });
+
+    it("deve fechar modal de confirmacao ao cancelar exclusao", () => {
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: {},
+            setStateFormModal,
+            rowsPerPage: 10,
+            showModalConfirmacaoExclusao: {
+                is_open: true,
+                motivo_uuid: "motivo-1",
+            },
+            handleCloseModalConfirmacaoExclusao,
+        });
+
+        render(<Lista />);
+
+        fireEvent.click(screen.getByText("cancelar exclusao"));
+
+        expect(handleCloseModalConfirmacaoExclusao).toHaveBeenCalled();
+        expect(mockMutationDeleteMutate).not.toHaveBeenCalled();
+    });
+
+    it("deve exibir toast quando tenta excluir sem uuid", () => {
+        useMotivosEstornoContext.mockReturnValue({
+            stateFormModal: {},
+            setStateFormModal,
+            rowsPerPage: 10,
+            showModalConfirmacaoExclusao: {
+                is_open: true,
+                motivo_uuid: "",
+            },
+            handleCloseModalConfirmacaoExclusao,
+        });
+
+        render(<Lista />);
+
+        fireEvent.click(screen.getByText("confirmar exclusao"));
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+            "Erro ao apagar o motivo de estorno",
+            "Informe os campos corretamente e tente novamente.",
+        );
+        expect(mockMutationDeleteMutate).toHaveBeenCalledWith("");
+    });
 });
