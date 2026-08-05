@@ -12,6 +12,7 @@ import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../../../assets/img/img-404.svg"
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
     const { 
@@ -111,6 +112,10 @@ export const Lista = () => {
                 </div>
             ) : data.length > 0 ? (
                 <>
+                    <TotalRegistros
+                        titulo="Tipo(s) de acerto(s) de lançamento(s)"
+                        total_registros={data.length}
+                    />
                     <DataTable
                         value={data}
                         paginator={data.length > rowsPerPage}

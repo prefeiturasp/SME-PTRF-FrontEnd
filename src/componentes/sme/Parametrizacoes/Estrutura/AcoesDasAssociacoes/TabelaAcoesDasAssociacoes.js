@@ -9,6 +9,7 @@ import {Paginator} from 'primereact/paginator';
 import { useAcoesDasAssociacoesContext } from "./hooks/useAcoesDasAssociacoesContext";
 import moment from "moment";
 import { EditIconButton } from "../../../../Globais/UI/Button";
+import { TotalRegistros } from "../../componentes/TotalRegistros";
 
 
 export const TabelaAcoesDasAssociacoes = () => {
@@ -100,6 +101,10 @@ export const TabelaAcoesDasAssociacoes = () => {
                 excludedTags={["Encerramento de conta pendente"]}     
             />
 
+            <TotalRegistros 
+                titulo="Ações das Associações" 
+                total_registros={countAcoesAssociacoes} 
+            />
             <DataTable
                 value={acoesAssociacoes}
             >
