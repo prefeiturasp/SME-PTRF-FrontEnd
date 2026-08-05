@@ -1,6 +1,7 @@
 # SME-PTRF-FrontEnd
 
 <!-- BADGES:START -->
+![version](https://img.shields.io/badge/version-9.44.0-blue) ![node](https://img.shields.io/badge/node-22.14-blue) ![coverage](https://img.shields.io/badge/coverage-62%25-orange)
 <!-- BADGES:END -->
 
 Esse é o repositório de código da aplicação web Sig-Escola, um sistema integrado de gestão que visa:
