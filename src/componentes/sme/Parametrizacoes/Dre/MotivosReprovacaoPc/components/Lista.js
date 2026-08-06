@@ -14,6 +14,7 @@ import { useGetMotivosReprovacaoPc } from "../hooks/useGetMotivosReprovacaoPc";
 import { usePostMotivoReprovacaoPc } from "../hooks/usePostMotivoReprovacaoPc";
 import { usePatchMotivoReprovacaoPc } from "../hooks/usePatchMotivoReprovacaoPc";
 import { useDeleteMotivoReprovacaoPc } from "../hooks/useDeleteMotivoReprovacaoPc";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 
 export const Lista = () => {
@@ -82,22 +83,28 @@ export const Lista = () => {
   return (
     <>
         {results && results.length > 0 ? (
-            <DataTable
-                value={results}
-                className='tabela-lista-motivos-reprovacao-pc'
-                data-qa='tabela-lista-motivos-reprovacao-pc'
-            >
-                <Column
-                    field="motivo"
-                    header="Motivos de reprovação de PC"
+            <>
+                <TotalRegistros
+                    titulo="Motivo(s) de reprovação de PC"
+                    total_registros={total}
                 />
-                <Column
-                    field="acao"
-                    header="Ação"
-                    body={acoesTemplate}
-                    style={{width: '10%', textAlign: "center",}}
-                />
-            </DataTable>
+                <DataTable
+                    value={results}
+                    className='tabela-lista-motivos-reprovacao-pc'
+                    data-qa='tabela-lista-motivos-reprovacao-pc'
+                >
+                    <Column
+                        field="motivo"
+                        header="Motivos de reprovação de PC"
+                    />
+                    <Column
+                        field="acao"
+                        header="Ação"
+                        body={acoesTemplate}
+                        style={{width: '10%', textAlign: "center",}}
+                    />
+                </DataTable>
+            </>
         ) :
             <MsgImgCentralizada
                 data-qa="imagem-lista-sem-motivos-reprovacao-pc"
