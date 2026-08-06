@@ -58,6 +58,7 @@ describe("FormFiltros", () => {
         handleChangeSelectStatusPc: mockHandleChangeSelectStatusPc,
         handleLimpaFiltros: mockHandleLimpaFiltros,
         handleSubmitFiltros: mockHandleSubmitFiltros,
+        text_consolidado_type: "Publicação",
     };
 
     beforeEach(() => {
