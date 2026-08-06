@@ -19,10 +19,15 @@ import Loading from "../../../../utils/Loading";
 import "./../../../dres/PrestacaoDeContas/prestacao-de-contas.scss"
 import DevolucaoParaAcertos from "./DevolucaoParaAcertos";
 import { BarraDeStatus } from './BarraDeStatus'
+import { useRecursoSelecionadoContext } from '../../../../context/RecursoSelecionado'
 
 export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const params = useParams()
     const navigate = useNavigate()
+    const { textDocumentConsolidadoPC } = useRecursoSelecionadoContext()
+
+    const textPossessive = textDocumentConsolidadoPC.possessivo()
+
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
     const [isShowModalReabrirParaDre, setIsShowModalReabrirParaDre] = useState(false);
     const [isShowModalVoltarParaPublicado, setIsShowModalVoltarParaPublicado] = useState(false);
@@ -40,11 +45,11 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const getConsolidadoDREUuid = useCallback(async () => {
         let {consolidado_dre_uuid} = params
         const response = await detalhamentoConsolidadoDRE(consolidado_dre_uuid)
-        
+
         setRelatorioConsolidado(response.data);
         setLoading(false);
     }, [params]);
-    
+
     useEffect(() => {
         getConsolidadoDREUuid()
     }, [getConsolidadoDREUuid])
@@ -70,7 +75,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 setDisabledBtnAvancar(false);
             }
         }
-        
+
     }, [relatorioConsolidado])
 
     // useEffect para lidar com o campo responsavel (autocomplete)
@@ -80,13 +85,13 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                 let username = relatorioConsolidado.responsavel_pela_analise.username;
                 let name = relatorioConsolidado.responsavel_pela_analise.name;
                 let usuario = `${username} - ${name}`;
-    
+
                 let objeto_auto_complete = {
                     nome: name,
                     username: username,
                     usuario: usuario
                 }
-    
+
                 setSelectedResponsavel(objeto_auto_complete);
                 setDisabledBtnAvancar(false)
             }
@@ -216,13 +221,13 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
         else{
             setDisabledBtnAvancar(true);
         }
-    }   
+    }
 
     const disableResponsavelAnalise = (relatorioConsolidado) => {
         if(relatorioConsolidado){
             if(relatorioConsolidado.status_sme === "NAO_PUBLICADO" || relatorioConsolidado.status_sme === "ANALISADO"){
                 return true;
-            }    
+            }
         }
 
         return false;
@@ -246,15 +251,15 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
 
     const adicionaTooltipBtnAvancar = () => {
         if(!relatorioConsolidado.botoes_avancar_e_retroceder.habilita_botao_avancar && relatorioConsolidado.status_sme === "EM_ANALISE") {
-            return 'Para concluir a análise da publicação é necessário realizar a conferência de todos os documentos.'
+            return `Para concluir a análise ${textPossessive} é necessário realizar a conferência de todos os documentos.`
         }
 
         if(!selectedResponsavel && relatorioConsolidado.status_sme === "EM_ANALISE") {
-            return 'Para concluir a análise da publicação é necessário selecionar o responsável.'
+            return `Para concluir a análise ${textPossessive} é necessário selecionar o responsável.`
         }
 
         if(!selectedResponsavel && relatorioConsolidado.status_sme === "PUBLICADO") {
-            return 'Para iniciar a análise da publicação é necessário selecionar o responsável.'
+            return `Para iniciar a análise ${textPossessive} é necessário selecionar o responsável.`
         }
 
         return null;
@@ -263,7 +268,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Acompanhamento da documentação da DRE</h1>
-            {loading 
+            {loading
             ?
                 (
                     <Loading
@@ -272,7 +277,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                         marginTop="0"
                         marginBottom="0"
                     />
-                ) 
+                )
             :
                 <>
                     <div className="page-content-inner">
@@ -290,7 +295,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             disabledBtnRetroceder={disabledBtnRetroceder}
                             tooltipAvançar={adicionaTooltipBtnAvancar()}
                         />
-                        <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado}/>
+                        <TrilhaDeStatus relatorioConsolidado={relatorioConsolidado} textDocumentConsolidadoPC={textDocumentConsolidadoPC}/>
                         <ResponsavelAnalise
                             selectedResponsavel={selectedResponsavel}
                             todosOsResponsaveisAutoComplete={todosOsResponsaveisAutoComplete}
@@ -312,7 +317,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                             setHabilitaVerResumoComentariosNotificados={setHabilitaVerResumoComentariosNotificados}
                         />
                     </div>
-                    
+
                     <section>
                         <ModalBootstrapDetalhamentoDREDiarioOficial
                             show={isShowModalReabrirParaDre}
