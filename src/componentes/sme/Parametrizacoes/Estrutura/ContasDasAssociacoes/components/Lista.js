@@ -16,6 +16,7 @@ import { useDeleteContaAssociacao } from "../hooks/useDeleteContaAssociacao";
 import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 
 import Loading from "../../../../../../utils/Loading";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
   const {
@@ -113,36 +114,41 @@ export const Lista = () => {
   return (
     <>
     <div className="mt-3">
-
       {results && results.length > 0 ? (
-        <DataTable
-          value={data.results}
-          className="p-datatable-gridlines p-datatable-striped"
-          paginator={false}
-          rows={10}
-          responsiveLayout="scroll"
-        >
-          <Column field="associacao_dados.unidade.nome_com_tipo" header="Unidade Educacional " />
-          <Column
-            field="tipo_conta_dados.nome"
-            header="Tipo de conta"
-            style={{ width: "15%", textAlign: "center" }}
+        <>
+          <TotalRegistros
+            titulo="Contas de associações"
+            total_registros={total}
           />
+          <DataTable
+            value={data.results}
+            className="p-datatable-gridlines p-datatable-striped"
+            paginator={false}
+            rows={10}
+            responsiveLayout="scroll"
+          >
+            <Column field="associacao_dados.unidade.nome_com_tipo" header="Unidade Educacional " />
+            <Column
+              field="tipo_conta_dados.nome"
+              header="Tipo de conta"
+              style={{ width: "15%", textAlign: "center" }}
+            />
 
-          <Column
-              field="status"
-              header="Status"
-              body={statusTemplate}
-              style={{width: '15%', textAlign: "center",}}
-          />
-          
-          <Column
-              field="acoes"
-              header="Ações"
-              body={acoesTemplate}
-              style={{width: '10%', textAlign: "center",}}
-          />
-        </DataTable>
+            <Column
+                field="status"
+                header="Status"
+                body={statusTemplate}
+                style={{width: '15%', textAlign: "center",}}
+            />
+            
+            <Column
+                field="acoes"
+                header="Ações"
+                body={acoesTemplate}
+                style={{width: '10%', textAlign: "center",}}
+            />
+          </DataTable>
+        </>
       ) : (
         <MsgImgCentralizada
             data-qa="imagem-lista-contas-de-associacoes-vazia"

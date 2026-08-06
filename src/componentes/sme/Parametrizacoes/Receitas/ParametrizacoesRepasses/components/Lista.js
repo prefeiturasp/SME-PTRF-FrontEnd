@@ -18,6 +18,7 @@ import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
 
@@ -183,30 +184,33 @@ export const Lista = () => {
         <>
             {results && results.length > 0 ? (
                     <>
-                    {/* <p className='mb-0'>Exibindo <span className='total'>{count}</span> repasses</p> */}
-                    <div className="mt-2">
-                        <DataTable
-                            value={results}
-                            className='tabela-lista-motivos-rejeicao'
-                            autoLayout={true}
-                        >
-                            <Column field="associacao.unidade.nome_com_tipo" header="Unidade Educacional" style={{width: '15%'}}/>
-                            <Column field="periodo.referencia" header="Período"/>
-                            <Column field="valor_capital" header="Valor capital" body={valorCapitalTemplate}/>
-                            <Column field="valor_custeio" header="Valor custeio" body={valorCusteioTemplate}/>
-                            <Column field="valor_livre" header="Valor livre aplicação" body={valorLivreTemplate}/>
-                            <Column field="conta_associacao.nome" header="Tipo de conta"/>
-                            <Column field="acao_associacao.nome" header="Ação"/>
-                            <Column field="status" header="Status" body={statusTemplate}/>
+                        <TotalRegistros
+                            titulo="Repasse(s)"
+                            total_registros={count}
+                        />
+                        <div className="mt-2">
+                            <DataTable
+                                value={results}
+                                className='tabela-lista-motivos-rejeicao'
+                                autoLayout={true}
+                            >
+                                <Column field="associacao.unidade.nome_com_tipo" header="Unidade Educacional" style={{width: '15%'}}/>
+                                <Column field="periodo.referencia" header="Período"/>
+                                <Column field="valor_capital" header="Valor capital" body={valorCapitalTemplate}/>
+                                <Column field="valor_custeio" header="Valor custeio" body={valorCusteioTemplate}/>
+                                <Column field="valor_livre" header="Valor livre aplicação" body={valorLivreTemplate}/>
+                                <Column field="conta_associacao.nome" header="Tipo de conta"/>
+                                <Column field="acao_associacao.nome" header="Ação"/>
+                                <Column field="status" header="Status" body={statusTemplate}/>
 
-                            <Column
-                                field="acao"
-                                header="Ações"
-                                body={acoesTemplate}
-                                style={{width: '10%', textAlign: "center",}}
-                            />
-                        </DataTable>
-                    </div>
+                                <Column
+                                    field="acao"
+                                    header="Ações"
+                                    body={acoesTemplate}
+                                    style={{width: '10%', textAlign: "center",}}
+                                />
+                            </DataTable>
+                        </div>
                     </>
                 ) :
                 <div className="p-2">
