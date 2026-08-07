@@ -89,7 +89,7 @@ export class TextoDocumentoConsolidadoPC {
         let text_status = "Enviado (Externamente)"
 
         if (is_not) {
-            text_status = "Gerado"
+            text_status = "Gerado e não enviado"
         }
 
         if (this.habilita_lauda) {
@@ -110,8 +110,8 @@ export class TextoDocumentoConsolidadoPC {
     }
 
     text_for_status_track_first_step() {
-        let firstPart = "Gerado"
-        let seecondPart = ""
+        let firstPart = "Gerado e"
+        let seecondPart = "não enviado"
 
         if (this.habilita_lauda) {
             firstPart = "Não publicado no"
