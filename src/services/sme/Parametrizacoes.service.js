@@ -902,7 +902,7 @@ export const getTipoCusteio = async (uuid) => {
 export const getFiltrosTiposDeCusteio = async (filter) => {
     return (await api.get(`/api/tipos-custeio/`,{
         ...authHeader(),
-        params: {  
+        params: {
             ...filter
         }
     })).data
@@ -1110,7 +1110,7 @@ export const getTabelasRepassePorAssociacao = async (associacao_uuid, recurso_uu
   if (recurso_uuid) {
     url += `&recurso_uuid=${recurso_uuid}`;
   }
-  
+
   return (
     await api.get(url, authHeader())
   ).data;
@@ -1507,4 +1507,61 @@ export const patchComissao = async (
 
 export const deleteComissao = async (uuidComissao) => {
     return (await api.delete(`api/comissoes-parametrizacao/${uuidComissao}/`, authHeader()));
+};
+
+// Fique de Olho
+
+export const getFiqueDeOlho = async ({ recurso_uuid=undefined, tipo_texto=undefined, page=1, page_size=10 }) => {
+    const params = new URLSearchParams({ page, page_size });
+
+    if (recurso_uuid) {
+        params.append("recurso_uuid", recurso_uuid);
+    }
+
+    if (tipo_texto) {
+        params.append("tipo_texto", tipo_texto);
+    }
+
+    return (
+        await api.get(
+        `/api/fique-de-olho/`,
+        {
+            ...authHeader(),
+            params,
+        }
+        )
+    ).data;
+};
+
+export const getTabelaFiqueDeOlho = async () => {
+    return (
+        await api.get(
+            `/api/fique-de-olho/tabelas/`,
+            authHeader(),
+        )
+    ).data;
+};
+
+export const postFiqueDeOlho = async ({ texto, tipo_texto, recurso }) => {
+  return await api.post(
+    `api/fique-de-olho/`,
+    {
+        texto,
+        tipo_texto,
+        recurso
+    },
+    authHeader()
+  );
+};
+
+export const patchFiqueDeOlho = async ({ uuid, texto, tipo_texto, recurso }) => {
+  return await api.patch(
+    `api/fique-de-olho/${uuid}/`,
+    {
+      texto,
+      tipo_texto,
+      recurso
+    },
+    authHeader()
+  );
 };

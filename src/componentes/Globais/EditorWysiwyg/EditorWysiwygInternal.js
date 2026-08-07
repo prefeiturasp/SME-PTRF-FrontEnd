@@ -5,7 +5,18 @@ import { Editor } from "@tinymce/tinymce-react";
 
 import "./editor-wysiwyg.scss"
 
-const EditorWysiwygInternal = ({textoInicialEditor, tituloEditor, handleSubmitEditor, disabled=false, botaoCancelar=false, setExibeEditor=()=>{}, handleLimparEditor=()=>{}, isSaving=false})=>{
+const EditorWysiwygInternal = ({
+    textoInicialEditor,
+    tituloEditor,
+    handleSubmitEditor,
+    disabled=false,
+    botaoCancelar=false,
+    showButtonsCancelAndSave=true,
+    height=500,
+    setExibeEditor=()=>{},
+    handleLimparEditor=()=>{}, isSaving=false,
+    handleChange=(text) => {}
+})=>{
 
     let REACT_APP_EDITOR_KEY = "EDITOR_KEY_REPLACE_ME";
 
@@ -29,6 +40,14 @@ const EditorWysiwygInternal = ({textoInicialEditor, tituloEditor, handleSubmitEd
         // Não chama handleLimparEditor automaticamente - apenas limpa visualmente
     };
 
+    const handleChangeText = (text) => {
+        setTextoEditor(text);
+
+        if (!showButtonsCancelAndSave) {
+            handleChange(text);
+        }
+    }
+
     return(
         <>
             {tituloEditor &&
@@ -47,45 +66,48 @@ const EditorWysiwygInternal = ({textoInicialEditor, tituloEditor, handleSubmitEd
                     suffix: '',
                     icons_url: false,
                     external_plugins: {},
-                    height: 500,
+                    height: height,
                     menubar: false,
                     plugins: 'advlist autolink lists link charmap preview anchor code searchreplace visualblocks fullscreen insertdatetime table wordcount',
                     toolbar:
                     // eslint-disable-next-line no-multi-str
                         'undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | blockquote | removeformat | link | table | code fullscreen'
                 }}
-                onEditorChange={setTextoEditor}
+                onEditorChange={handleChangeText}
                 disabled={disabled}
+                readonly={disabled}
             />
-            <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
-                {botaoCancelar && (
-                    <button className="btn btn-danger btn-textos" onClick={() => {
-                        setExibeEditor(false);
-                    }} type="button">
-                        Cancelar
-                    </button>
-                )}
-                <div className="d-flex" style={{ gap: '11px' }}>
-                    <button className="btn btn-outline-secondary btn-limpar-customizado btn-textos" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
-                        Limpar
-                    </button>
-                    <button className="btn btn-success btn-textos" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
-                        {isSaving ? (
-                            <>
-                                <FontAwesomeIcon 
-                                    icon={faSpinner} 
-                                    spin 
-                                    style={{ marginRight: "8px" }} 
-                                />
-                                Salvando...
-                            </>
-                        ) : (
-                            "Salvar"
-                        )}
-                    </button>
+            {
+                showButtonsCancelAndSave &&
+                <div className={`d-flex pb-3 mt-3 ${botaoCancelar ? 'justify-content-between' : 'justify-content-end'}`}>
+                    {botaoCancelar && (
+                        <button className="btn btn-danger btn-textos" onClick={() => {
+                            setExibeEditor(false);
+                        }} type="button">
+                            Cancelar
+                        </button>
+                    )}
+                    <div className="d-flex" style={{ gap: '11px' }}>
+                        <button className="btn btn-outline-secondary btn-limpar-customizado btn-textos" onClick={handleLimpar} type="button" disabled={disabled || isSaving}>
+                            Limpar
+                        </button>
+                        <button className="btn btn-success btn-textos" onClick={() => handleSubmitEditor(textoEditor)} type="button" disabled={disabled || isSaving}>
+                            {isSaving ? (
+                                <>
+                                    <FontAwesomeIcon
+                                        icon={faSpinner}
+                                        spin
+                                        style={{ marginRight: "8px" }}
+                                    />
+                                    Salvando...
+                                </>
+                            ) : (
+                                "Salvar"
+                            )}
+                        </button>
+                    </div>
                 </div>
-            </div>
-
+            }
         </>
     )
 };
