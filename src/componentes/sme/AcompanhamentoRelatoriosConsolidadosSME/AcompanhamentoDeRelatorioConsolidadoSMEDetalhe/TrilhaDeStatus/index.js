@@ -5,29 +5,31 @@ import {TrilhaDeStatusEmAnalise} from "./TrilhaDeStatusEmAnalise";
 import {TrilhaDeStatusDevolvido} from "./TrilhaDeStatusDevolvido";
 import {TrilhaDeStatusConcluida} from "./TrilhaDeStatusConcluida";
 
-export const TrilhaDeStatus = ({relatorioConsolidado}) => {
+export const TrilhaDeStatus = ({relatorioConsolidado, textDocumentConsolidadoPC}) => {
+    const text_for_status_track_first_step = textDocumentConsolidadoPC.text_for_status_track_first_step()
+    const text_for_status_track_second_step = textDocumentConsolidadoPC.text_for_status_track_second_step()
 
     const getTrilhaDeStatusPeloStatus = (status_sme)=>{
         if (status_sme === 'NAO_PUBLICADO'){
             return(
-                <TrilhaDeStatusNaoPublicada/>
+                <TrilhaDeStatusNaoPublicada text_for_status_track_first_step={text_for_status_track_first_step} text_for_status_track_second_step={text_for_status_track_second_step}/>
             )
         }else if(status_sme === 'PUBLICADO'){
             return (
-                <TrilhaDeStatusPublicada/>
+                <TrilhaDeStatusPublicada text_for_status_track_first_step={text_for_status_track_first_step} text_for_status_track_second_step={text_for_status_track_second_step}/>
             )
         }else if(status_sme === 'EM_ANALISE'){
             return (
-                <TrilhaDeStatusEmAnalise/>
-            )        
+                <TrilhaDeStatusEmAnalise text_for_status_track_first_step={text_for_status_track_first_step} text_for_status_track_second_step={text_for_status_track_second_step}/>
+            )
         }else if(status_sme === 'DEVOLVIDO'){
             return (
-                <TrilhaDeStatusDevolvido/>
-            )  
+                <TrilhaDeStatusDevolvido text_for_status_track_first_step={text_for_status_track_first_step} text_for_status_track_second_step={text_for_status_track_second_step}/>
+            )
         }
         else if(status_sme === 'ANALISADO'){
             return (
-                <TrilhaDeStatusConcluida/>
+                <TrilhaDeStatusConcluida text_for_status_track_first_step={text_for_status_track_first_step} text_for_status_track_second_step={text_for_status_track_second_step}/>
             )
         }
     };

@@ -1,10 +1,14 @@
 import React from "react";
 import {DataTable} from "primereact/datatable";
 import {Column} from "primereact/column";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const ListaRelatorios = ({relatoriosConsolidados, rowsPerPage, acoesTemplate, statusSmeTemplate}) =>{
+    const { textDocumentConsolidadoPC } = useRecursoSelecionadoContext()
+
+    const tipo_consolidado = textDocumentConsolidadoPC?.normal("capitalize")
+
     return (
-        <>
             <div className="card">
                 <DataTable
                     value={relatoriosConsolidados}
@@ -13,14 +17,12 @@ export const ListaRelatorios = ({relatoriosConsolidados, rowsPerPage, acoesTempl
                     paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                 >
                     <Column field='nome_da_dre' header='Nome da DRE' className="nome-dre-tabela" style={{width: '35%'}}/>
-                    <Column field='tipo_relatorio' header='Tipo de Publicação' style={{width: '12%'}}/>
+                    <Column field='tipo_relatorio' header={`Tipo de ${tipo_consolidado}`} style={{width: '12%'}}/>
                     <Column field='total_unidades_no_relatorio' header='Total de unidades no relatório' style={{width: '13%'}}/>
                     <Column field='data_recebimento' header='Data de recebimento' style={{width: '13%'}}/>
                     <Column header='Status' body={statusSmeTemplate}  style={{width: '20%'}}/>
                     <Column header='Ação' body={acoesTemplate} className="" style={{width: '7%'}}/>
                 </DataTable>
             </div>
-            
-        </>
     )
 };

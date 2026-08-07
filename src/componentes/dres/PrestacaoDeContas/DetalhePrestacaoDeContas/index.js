@@ -42,7 +42,9 @@ require("ordinal-pt-br");
 export const DetalhePrestacaoDeContas = () =>{
     let {prestacao_conta_uuid} = useParams();
 
-    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const { recursoSelecionado, textoDocumentoConsolidadoPC } = useRecursoSelecionadoContext();
+
+    const text_in = textoDocumentoConsolidadoPC?.text_in()
 
     const { hash } = useLocation();
 
@@ -294,7 +296,7 @@ export const DetalhePrestacaoDeContas = () =>{
         }
 
         return setShowAlterarModalSEI(true);
-    } 
+    }
 
     const receberPrestacaoDeContas = async (acao_processo_sei=null)=>{
         setShowAlterarModalSEI(false);
@@ -423,9 +425,9 @@ export const DetalhePrestacaoDeContas = () =>{
     const carregaAnalisesAjustePC = async (conta, prestacao_conta, analise_atual) => {
         let analise = await getAnaliseAjustesSaldoPorConta(conta, prestacao_conta, analise_atual);
         analise = analise[0]
-        
+
         let arrayAnalise = analisesDeContaDaPrestacao;
-        
+
         let analise_index = getObjetoIndexAnalise().analise_index;
         arrayAnalise.splice(analise_index);
 
@@ -442,7 +444,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
-        ])     
+        ])
     }
 
     const onClickSalvarAcertoSaldo = async (conta, analise_de_conta, index) => {
@@ -453,7 +455,7 @@ export const DetalhePrestacaoDeContas = () =>{
         let solicitar_correcao_da_data_do_saldo_da_conta = null;
         let observacao_solicitar_envio_do_comprovante_do_saldo_da_conta = null;
         let solicitar_correcao_de_justificativa_de_conciliacao = null;
-                
+
         if(prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid){
             uuid_analise = prestacaoDeContas.analise_atual.uuid
         }
@@ -464,7 +466,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         if(analise_de_conta){
             if(analise_de_conta.data_extrato){
-                data_extrato = moment(analise_de_conta.data_extrato).format("YYYY-MM-DD") 
+                data_extrato = moment(analise_de_conta.data_extrato).format("YYYY-MM-DD")
             }
 
             if(analise_de_conta.saldo_extrato){
@@ -477,7 +479,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
             if(analise_de_conta.solicitar_correcao_da_data_do_saldo_da_conta !== null){
                 solicitar_correcao_da_data_do_saldo_da_conta = analise_de_conta.solicitar_correcao_da_data_do_saldo_da_conta
-            }            
+            }
 
             if(analise_de_conta.observacao_solicitar_envio_do_comprovante_do_saldo_da_conta){
                 if(solicitar_envio_do_comprovante_do_saldo_da_conta === false){
@@ -512,7 +514,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 ...prevState,
                 [index]: true
             }))
-            
+
             console.log("Criação realizada com sucesso!")
 
             carregaAnalisesAjustePC(conta.uuid, prestacaoDeContas.uuid, uuid_analise);
@@ -537,7 +539,7 @@ export const DetalhePrestacaoDeContas = () =>{
             ...arrayAnalise
         ])
         setAdicaoAjusteSaldo(false);
-        
+
         let erros = {
             data: null,
             saldo: null
@@ -557,13 +559,13 @@ export const DetalhePrestacaoDeContas = () =>{
             if(info_ue && info_ue.data_extrato && (index > -1 && info_dre && info_dre.data_extrato)){
                 let data_ue = moment(info_ue.data_extrato, "DD-MM-YYYY HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
                 let data_dre = moment(info_dre.data_extrato, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
-        
+
                 let diff = moment(data_ue, "YYYY-MM-DD HH:mm:ss").diff(moment(data_dre, "YYYY-MM-DD HH:mm:ss"))
                 let dias = moment.duration(diff).asDays();
-        
+
                 if(dias === 0){
                     erros.data = "Mesma data que UE";
-    
+
                     setFormErrosAjusteSaldo(prevState => ({
                         ...prevState,
                         [index]: erros
@@ -571,7 +573,7 @@ export const DetalhePrestacaoDeContas = () =>{
                 }
                 else{
                     erros.data = null;
-                    
+
                     setFormErrosAjusteSaldo(prevState => ({
                         ...prevState,
                         [index]: erros
@@ -580,7 +582,7 @@ export const DetalhePrestacaoDeContas = () =>{
             }
             else if(info_dre && info_dre.data_extrato === null){
                 erros.data = null;
-    
+
                 setFormErrosAjusteSaldo(prevState => ({
                     ...prevState,
                     [index]: erros
@@ -591,10 +593,10 @@ export const DetalhePrestacaoDeContas = () =>{
             if(info_ue && info_ue.saldo_extrato && (index > -1 && info_dre && info_dre.saldo_extrato)){
                 let saldo_ue = trataNumericos(info_ue.saldo_extrato);
                 let saldo_dre = trataNumericos(info_dre.saldo_extrato);
-    
+
                 if(saldo_ue === saldo_dre){
                     erros.saldo = "Mesmo saldo que UE";
-    
+
                     setFormErrosAjusteSaldo(prevState => ({
                         ...prevState,
                         [index]: erros
@@ -602,17 +604,17 @@ export const DetalhePrestacaoDeContas = () =>{
                 }
                 else{
                     erros.saldo = null;
-        
+
                     setFormErrosAjusteSaldo(prevState => ({
                         ...prevState,
                         [index]: erros
                     }))
                 }
-    
+
             }
             else if(info_dre && info_dre.saldo_extrato === null){
                 erros.saldo = null;
-    
+
                 setFormErrosAjusteSaldo(prevState => ({
                     ...prevState,
                     [index]: erros
@@ -627,10 +629,10 @@ export const DetalhePrestacaoDeContas = () =>{
         if(saldo){
             let backspace = 8
             let teclaPressionada = e.keyCode
-    
+
             let arrayAnalise = analisesDeContaDaPrestacao;
             let analise_index = getObjetoIndexAnalise().analise_index;
-    
+
             if(teclaPressionada === backspace){
                 if(saldo === 0 || saldo === "R$0,00"){
                     arrayAnalise[analise_index]['saldo_extrato'] = null;
@@ -640,14 +642,14 @@ export const DetalhePrestacaoDeContas = () =>{
                 }
             }
         }
-        
+
     }
 
     const exibeAtaPorConta = async (conta) =>{
         let info_ata_por_conta = infoAta.contas.find(element => element.conta_associacao.nome === conta);
         setInfoAtaPorConta(info_ata_por_conta);
         setAdicaoAjusteSaldo(false);
-        
+
         if(analisesDeContaDaPrestacao.length === 0){
             let uuid_analise;
 
@@ -712,7 +714,7 @@ export const DetalhePrestacaoDeContas = () =>{
             arrayAnalise[analise_index].conta_associacao = infoAtaPorConta.conta_associacao.uuid;
             arrayAnalise[analise_index][name] = value;
         }
-        
+
 
         setAnalisesDeContaDaPrestacao(()=>[
             ...arrayAnalise
@@ -826,7 +828,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
         let arrayAnalise = analisesDeContaDaPrestacao;
         let analise = arrayAnalise.find(element => element.conta_associacao === infoAtaPorConta.conta_associacao.uuid)
-        
+
         let analise_index = getObjetoIndexAnalise().analise_index;
         arrayAnalise.splice(analise_index);
         setAnalisesDeContaDaPrestacao(()=>[
@@ -1060,7 +1062,7 @@ export const DetalhePrestacaoDeContas = () =>{
         if((prestacaoDeContas && (prestacaoDeContas.status === "EM_ANALISE" || prestacaoDeContas.status === "RECEBIDA") && pcEmRetificacao())){
             return true;
         }
-        
+
         return false;
     }
 
@@ -1072,7 +1074,7 @@ export const DetalhePrestacaoDeContas = () =>{
         if(prestacaoDeContas && prestacaoDeContas.status === "EM_ANALISE" && pcEmRetificacao()) {
             return "Não é possível retornar o status da PC em retificação."
         }
-    
+
         return null;
     }
 
@@ -1084,7 +1086,7 @@ export const DetalhePrestacaoDeContas = () =>{
 
     const handleConcluirPCemAnalise = async () => {
         let status = await getStatusPeriodo(prestacaoDeContas.associacao.uuid, periodo.data_inicio_realizacao_despesas);
-        
+
         if(status.tem_conta_encerrada_com_saldo) {
             setTiposContasEncerradasComSaldo(status.tipos_das_contas_encerradas_com_saldo)
             setShowModalBloqueioConclusaoContaEncerradaNaoZerada(true);
@@ -1273,7 +1275,7 @@ export const DetalhePrestacaoDeContas = () =>{
                     <ModalNaoPodeVoltarParaAnalise
                         show={showNaoPodeVoltarParaAnalise}
                         handleClose={onHandleClose}
-                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta na Publicação ${prestacaoDeContas?.referencia_consolidado_dre} do período ${periodoReferencia}.</p>`}
+                        texto={`<p>Não é possível reabrir essa PC para análise, pois esta consta ${text_in} ${prestacaoDeContas?.referencia_consolidado_dre} do período ${periodoReferencia}.</p>`}
                         primeiroBotaoTexto="Fechar"
                         primeiroBotaoCss="success"
                     />
