@@ -27,6 +27,7 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
     const { textDocumentConsolidadoPC } = useRecursoSelecionadoContext()
 
     const textPossessive = textDocumentConsolidadoPC.possessivo()
+    const texto_status_filtro = textDocumentConsolidadoPC.texto_status_filtro()
 
     const [relatorioConsolidado, setRelatorioConsolidado] = useState({});
     const [isShowModalReabrirParaDre, setIsShowModalReabrirParaDre] = useState(false);
@@ -333,8 +334,8 @@ export const AcompanhamentoDeRelatorioConsolidadoSMEDetalhe = () => {
                     <section>
                         <ModalBootstrapDetalhamentoDREDiarioOficial
                             show={isShowModalVoltarParaPublicado}
-                            titulo={'Voltar para publicado no D.O'}
-                            bodyText={'Deseja retornar o relatório consolidado para o status de Publicado no D.O?'}
+                            titulo={`Voltar para ${texto_status_filtro}`}
+                            bodyText={`Deseja retornar o relatório consolidado para o status de ${texto_status_filtro}?`}
                             primeiroBotaoTexto={'Cancelar'}
                             segundoBotaoTexto={'Confirmar'}
                             segundoBotaoOnclick={handleVoltarParaPublicado}
