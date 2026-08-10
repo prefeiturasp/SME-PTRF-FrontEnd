@@ -1,60 +1,94 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { Filtros } from '../Filtros';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Filtros } from '../components/Filtros';
+import { useTagsContext } from '../hooks/useTagsContext';
 
-describe('Componente Filtros', () => {
-    const mockHandleChangeFiltros = jest.fn();
-    const mockHandleSubmitFiltros = jest.fn();
-    const mockLimpaFiltros = jest.fn();
+// Mock do hook que fornece o contexto
+jest.mock('../hooks/useTagsContext');
 
-    const initialStateFiltros = {
-        filtrar_por_nome: '',
-        filtrar_por_status: ''
-    };
-    const mockPropsFiltros = {
-        stateFiltros: initialStateFiltros,
-        handleChangeFiltros: mockHandleChangeFiltros,
-        handleSubmitFiltros: mockHandleSubmitFiltros,
-        limpaFiltros: mockLimpaFiltros,
-    };
+describe('Componente <Filtros />', () => {
+  // Mock das funções do contexto
+  const mockHandleChangeFiltros = jest.fn();
+  const mockHandleSubmitFiltros = jest.fn();
+  const mockLimpaFiltros = jest.fn();
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+  const defaultContextValues = {
+    draftFilters: {
+      filtrar_por_nome: '',
+      filtrar_por_status: '',
+    },
+    handleChangeFiltros: mockHandleChangeFiltros,
+    handleSubmitFiltros: mockHandleSubmitFiltros,
+    limpaFiltros: mockLimpaFiltros,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    // Define o valor padrão retornado pelo hook antes de cada teste
+    useTagsContext.mockReturnValue(defaultContextValues);
+  });
+
+  it('deve renderizar os campos e botões corretamente', () => {
+    render(<Filtros />);
+
+    expect(screen.getByLabelText(/filtrar por etiqueta\/tag/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/filtrar por status/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /limpar/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /filtrar/i })).toBeInTheDocument();
+  });
+
+  it('deve chamar handleChangeFiltros ao alterar o texto da etiqueta', async () => {
+    const user = userEvent.setup();
+    render(<Filtros />);
+
+    const inputNome = screen.getByLabelText(/filtrar por etiqueta\/tag/i);
+    await user.type(inputNome, 'A');
+
+    expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_nome', 'A');
+  });
+
+  it('deve chamar handleChangeFiltros ao selecionar um status', async () => {
+    const user = userEvent.setup();
+    render(<Filtros />);
+
+    const selectStatus = screen.getByLabelText(/filtrar por status/i);
+    await user.selectOptions(selectStatus, 'ATIVO');
+
+    expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_status', 'ATIVO');
+  });
+
+  it('deve chamar limpaFiltros ao clicar no botão Limpar', async () => {
+    const user = userEvent.setup();
+    render(<Filtros />);
+
+    const btnLimpar = screen.getByRole('button', { name: /limpar/i });
+    await user.click(btnLimpar);
+
+    expect(mockLimpaFiltros).toHaveBeenCalledTimes(1);
+  });
+
+  it('deve chamar handleSubmitFiltros ao clicar no botão Filtrar', async () => {
+    const user = userEvent.setup();
+    render(<Filtros />);
+
+    const btnFiltrar = screen.getByRole('button', { name: /filtrar/i });
+    await user.click(btnFiltrar);
+
+    expect(mockHandleSubmitFiltros).toHaveBeenCalledTimes(1);
+  });
+
+  it('deve exibir os valores preenchidos vindos do draftFilters', () => {
+    useTagsContext.mockReturnValue({
+      ...defaultContextValues,
+      draftFilters: {
+        filtrar_por_nome: 'Minha Tag',
+        filtrar_por_status: 'INATIVO',
+      },
     });
 
-    it('Testa a as labels e botões', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
+    render(<Filtros />);
 
-        expect(screen.getByLabelText(/filtrar por etiqueta\/tag/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/filtrar por status/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/escreva o nome da etiqueta\/tag/i)).toBeInTheDocument();
-        expect(screen.getByPlaceholderText(/escreva o nome da etiqueta\/tag/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /limpar/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /filtrar/i })).toBeInTheDocument();
-    });
-
-    it('Testa a reatividade ao alterar o campo de filtro', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
-
-        const input = screen.getByLabelText(/filtrar por etiqueta\/tag/i);
-        fireEvent.change(input, { target: { name: 'filtrar_por_nome', value: 'Teste' } });
-
-        expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_nome', 'Teste');
-    });
-
-    it('Testa a chamada de LimpaFiltros ao clicar em Limpar', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
-
-        const limparButton = screen.getByRole('button', { name: /limpar/i });
-        fireEvent.click(limparButton);
-
-        expect(mockLimpaFiltros).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByLabelText(/filtrar por etiqueta\/tag/i)).toHaveValue('Minha Tag');
+    expect(screen.getByLabelText(/filtrar por status/i)).toHaveValue('INATIVO');
+  });
 });

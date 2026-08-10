@@ -16,7 +16,7 @@ const initialFilters = {
 
 const initialStateFormModal = {
     nome: "",
-    status: "",
+    status: "INATIVO",
     uuid: "",
     id: "",
     operacao: 'create',
