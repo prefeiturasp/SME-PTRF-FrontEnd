@@ -5,3 +5,22 @@ export const mockAssociacoesPC = {
 export const mockDiretoriasPC = {
     "detail": "<p><span style=\"background-color: #f1c40f;\"><strong>Corrigindo o Bug 118791 - [SME] Parametriza&ccedil;&otilde;es: Textos do Fique de Olho: Ao acessar a p&aacute;gina de edi&ccedil;&atilde;o nada &eacute; exibido</strong></span></p>"
 }
+
+export const mockTextosFiqueDeOlho = [
+    {
+        "id": 1,
+        "uuid": "uuid-1",
+        "texto": "<p>Texto 1</p>",
+        "tipo_texto": "associacoes",
+        "tipo_texto_display": "ASSOCIAÇÕES - Prestação de Contas",
+        "recurso": "recurso-1"
+    },
+    {
+        "id": 2,
+        "uuid": "uuid-2",
+        "texto": "<p>Texto 2</p>",
+        "tipo_texto": "diretorias",
+        "tipo_texto_display": "DIRETORIAS - Consolidado das PCs",
+        "recurso": "recurso-2"
+    }
+]

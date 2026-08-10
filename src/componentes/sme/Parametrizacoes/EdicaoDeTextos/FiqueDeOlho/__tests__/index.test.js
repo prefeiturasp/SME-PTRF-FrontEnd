@@ -1,19 +1,37 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { FiqueDeOlho } from '..';
-import { 
+import {
     patchAlterarFiqueDeOlhoPrestacoesDeContas,
-    patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre } from "../../../../../../services/sme/Parametrizacoes.service";
+    patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre,
+    getFiqueDeOlho,
+    getTabelaFiqueDeOlho,
+    postFiqueDeOlho,
+    patchFiqueDeOlho
+} from "../../../../../../services/sme/Parametrizacoes.service";
 import { getFiqueDeOlhoPrestacoesDeContas } from "../../../../../../services/escolas/PrestacaoDeContas.service";
 import { getFiqueDeOlhoRelatoriosConsolidados } from "../../../../../../services/dres/RelatorioConsolidado.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
-import { mockAssociacoesPC, mockDiretoriasPC } from '../__fixtures__/mockData';
+import { mockAssociacoesPC, mockDiretoriasPC, mockTextosFiqueDeOlho } from '../__fixtures__/mockData';
+import { AbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/context/Recursos";
+import { useGetFiqueDeOlho } from '../hooks/useGetFiqueDeOlho';
+import { usePostFiqueDeOlho } from '../hooks/usePostFiqueDeOlho';
+import { usePatchFiqueDeOlho } from '../hooks/usePatchFiqueDeOlho';
+import { FiqueDeOlhoContext } from '../context/FiqueDeOlho';
+
+jest.mock("../hooks/useGetFiqueDeOlho");
+jest.mock("../hooks/usePostFiqueDeOlho");
 
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
     patchAlterarFiqueDeOlhoPrestacoesDeContas: jest.fn(),
-    patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre: jest.fn()
+    patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre: jest.fn(),
+    getFiqueDeOlho: jest.fn(),
+    getTabelaFiqueDeOlho: jest.fn(),
+    postFiqueDeOlho: jest.fn(),
+    patchFiqueDeOlho: jest.fn(),
 }));
 jest.mock("../../../../../../services/escolas/PrestacaoDeContas.service", ()=>({
     getFiqueDeOlhoPrestacoesDeContas: jest.fn()
@@ -36,105 +54,102 @@ jest.mock('../../../../../Globais/EditorWysiwyg', () => ({
     ),
 }));
 
+jest.mock("../../../componentes/AbasPorRecurso", () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso"></div>,
+}));
+
 jest.mock("../../../../../Globais/ToastCustom", () => ({
   toastCustom: {
     ToastCustomSuccess: jest.fn(),
+    ToastCustomError: jest.fn(),
   },
 }));
 
+const mockMutationPostMutate = jest.fn();
+const mockMutationPatchMutate = jest.fn();
+
+const contexto = {
+  setShowModalForm: jest.fn(),
+  setStateFormModal: jest.fn(),
+  setBloquearBtnSalvarForm: jest.fn(),
+  handleEditFormModal: jest.fn(),
+  handleExcluirMotivo: jest.fn(),
+  showModalConfirmacaoExclusao: { is_open: false, motivo_uuid: '' },
+  filter: { page: 1, page_size: 10  },
+  mutationPatch: { mutate: mockMutationPatchMutate }
+}
+
 describe("Carrega página fique de olho", () => {
+    const defaultContextValue = {
+        selectedRecurso: {
+            nome: "Programa de Transferência de Recursos Financeiros (PTRF) - Básico",
+            nome_exibicao: "PTRF Básico",
+        },
+        setSelectedRecurso: jest.fn(),
+        clickBtnEscolheOpcao: {},
+        setClickBtnEscolheOpcao: jest.fn(),
+    };
+
     beforeEach(() => {
         jest.clearAllMocks();
         getFiqueDeOlhoPrestacoesDeContas.mockResolvedValueOnce(mockAssociacoesPC).mockResolvedValueOnce(mockDiretoriasPC);
         getFiqueDeOlhoRelatoriosConsolidados.mockResolvedValueOnce(mockDiretoriasPC).mockResolvedValueOnce(mockAssociacoesPC);
+
+        useGetFiqueDeOlho.mockReturnValue({
+          isLoading: false,
+          data: { results: mockTextosFiqueDeOlho },
+        });
+
+        usePostFiqueDeOlho.mockReturnValue({
+          mutationPost: { mutate: mockMutationPostMutate },
+        });
+
+        getTabelaFiqueDeOlho.mockResolvedValue({
+            tipos_de_texto: [],
+        });
+
+        // usePatchFiqueDeOlho.mockReturnValue({
+        //   mutationPatch: { mutate: mockMutationPatchMutate },
+        // });
     });
 
+    const component = () => {
+        const queryClient = new QueryClient({
+            defaultOptions: {
+                queries: { retry: false },
+            },
+        });
+
+        return render(
+            <QueryClientProvider client={queryClient}>
+                <FiqueDeOlhoContext.Provider value={contexto}>
+                    <AbasPorRecursoContext.Provider value={defaultContextValue}>
+                        <MemoryRouter>
+                            <FiqueDeOlho />
+                        </MemoryRouter>
+                    </AbasPorRecursoContext.Provider>
+                </FiqueDeOlhoContext.Provider>
+            </QueryClientProvider>
+        )
+    }
+
     it('Renderiza a página', async() => {
-        render(
-            <MemoryRouter>
-                <FiqueDeOlho />
-            </MemoryRouter>
-        );
+        component();
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
         await waitFor(() => {
             expect(screen.getByText(/ASSOCIAÇÕES - Prestação de Contas/i)).toBeInTheDocument();
-            expect(screen.getByText(/Acompanhamento Prestação de Contas/i)).toBeInTheDocument();
+            expect(screen.getByText(/DIRETORIAS - Consolidado das PCs/i)).toBeInTheDocument();
         });
     });
 
-    it("Testa edição associacoes", async () => {
+    it("Deve confirmar a alteração do fique de olho", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(
-            <MemoryRouter>
-                <FiqueDeOlho />
-            </MemoryRouter>
-        );
+        component();
 
-        expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
+        expect(screen.getAllByText(/Carregando.../i)[0]).toBeInTheDocument();
 
         await waitFor(() => {
-            const tabela = screen.getByRole("grid");
-            const rows = tabela.querySelectorAll("tbody tr");
-            expect(rows).toHaveLength(2);
-            const row = rows[0]
-            const cells = row.querySelectorAll("td");
-            expect(cells).toHaveLength(2);
-            const actionsCell = cells[1]
-            const botaoEditar = actionsCell.querySelector("button");
-            expect(botaoEditar).toBeInTheDocument();
-            fireEvent.click(botaoEditar);
-        });
-        const botaoSalvar = screen.getByRole('button', {name: "Salvar"});
-        fireEvent.click(botaoSalvar);
-        expect(patchAlterarFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoRelatoriosConsolidados).toHaveBeenCalledTimes(1);
-    });
-
-    it("Testa edição associacoes erro", async () => {
-        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        patchAlterarFiqueDeOlhoPrestacoesDeContas.mockRejectedValueOnce({
-            response: { data: { non_field_errors: "Erro 007" } },
-        });
-        render(
-            <MemoryRouter>
-                <FiqueDeOlho />
-            </MemoryRouter>
-        );
-
-        expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
-
-        await waitFor(() => {
-            const tabela = screen.getByRole("grid");
-            const rows = tabela.querySelectorAll("tbody tr");
-            expect(rows).toHaveLength(2);
-            const row = rows[0]
-            const cells = row.querySelectorAll("td");
-            expect(cells).toHaveLength(2);
-            const actionsCell = cells[1]
-            const botaoEditar = actionsCell.querySelector("button");
-            expect(botaoEditar).toBeInTheDocument();
-            fireEvent.click(botaoEditar);
-        });
-        const botaoSalvar = screen.getByRole('button', {name: "Salvar"});
-        fireEvent.click(botaoSalvar);
-        expect(patchAlterarFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoRelatoriosConsolidados).toHaveBeenCalledTimes(1);
-    });
-
-    it("Testa edição dre", async () => {
-        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        render(
-            <MemoryRouter>
-                <FiqueDeOlho />
-            </MemoryRouter>
-        );
-
-        expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
-
-        await waitFor(() => {
-            const tabela = screen.getByRole("grid");
+            const tabela = screen.getByTestId("tabela-lista-fique-de-olho");
             const rows = tabela.querySelectorAll("tbody tr");
             expect(rows).toHaveLength(2);
             const row = rows[1]
@@ -145,28 +160,26 @@ describe("Carrega página fique de olho", () => {
             expect(botaoEditar).toBeInTheDocument();
             fireEvent.click(botaoEditar);
         });
-        const botaoSalvar = screen.getByRole('button', {name: "Salvar"});
+        const botaoSalvar = screen.getByTestId('btn-salvar-formulario-fique-de-olho');
         fireEvent.click(botaoSalvar);
-        expect(patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoRelatoriosConsolidados).toHaveBeenCalledTimes(1);
+
+        await waitFor(() => {
+            expect(patchFiqueDeOlho).toHaveBeenCalledTimes(1);
+        });
     });
 
-    it("Testa edição dre erro", async () => {
+    it("Deve acontecer um erro ao alterar o fique de olho", async () => {
         RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre.mockRejectedValueOnce({
+        patchFiqueDeOlho.mockRejectedValueOnce({
             response: { data: { non_field_errors: "Erro 007" } },
         });
-        render(
-            <MemoryRouter>
-                <FiqueDeOlho />
-            </MemoryRouter>
-        );
+
+        component();
 
         expect(screen.getByText(/Carregando.../i)).toBeInTheDocument();
 
         await waitFor(() => {
-            const tabela = screen.getByRole("grid");
+            const tabela = screen.getByTestId("tabela-lista-fique-de-olho");
             const rows = tabela.querySelectorAll("tbody tr");
             expect(rows).toHaveLength(2);
             const row = rows[1]
@@ -177,11 +190,17 @@ describe("Carrega página fique de olho", () => {
             expect(botaoEditar).toBeInTheDocument();
             fireEvent.click(botaoEditar);
         });
-        const botaoSalvar = screen.getByRole('button', {name: "Salvar"});
+        const botaoSalvar = screen.getByTestId('btn-salvar-formulario-fique-de-olho');
         fireEvent.click(botaoSalvar);
-        expect(patchAlterarFiqueDeOlhoRelatoriosConsolidadosDre).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledTimes(1);
-        expect(getFiqueDeOlhoRelatoriosConsolidados).toHaveBeenCalledTimes(1);
+
+        await waitFor(() => {
+            expect(patchFiqueDeOlho).toHaveBeenCalledTimes(1);
+
+            expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+                "Erro ao atualizar o fique de olho",
+                "Erro 007"
+            );
+        });
     });
 
 });
