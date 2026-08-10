@@ -14,6 +14,7 @@ import { ListaPresentes } from "./ListaPresentes";
 import { BlocoPrioridadesRetificacao } from "./BlocoPrioridades/BlocoPrioridadesRetificacao";
 import { BlocoPrioridadesElaboracao } from "./BlocoPrioridades/BlocoPrioridadesElaboracao";
 import { Manifestacoes } from "./Manifestacoes";
+import { ParecerConselho } from "./ParecerConselho";
 
 export const VisualizacaoAtaPaa = () => {
   const {
@@ -55,9 +56,9 @@ export const VisualizacaoAtaPaa = () => {
   );
   const { uuid_paa } = useParams();
 
-  const { data: paaRetificacao, isLoading } = useGetPaaRetificacao(uuid_paa); 
+  const { data: paaRetificacao, isLoading } = useGetPaaRetificacao(uuid_paa);
   const dataReuniaoElaboracao = paaRetificacao?.ata_elaboracao?.data_reuniao;
-  
+
   return (
       <div className="col-12 container-visualizacao-da-ata mb-5" ref={referenciaDocumento}>
         {alturaDocumento > 0 && <WatermarkPrevia alturaDocumento={alturaDocumento} icon="rascunho" />}
@@ -145,6 +146,13 @@ export const VisualizacaoAtaPaa = () => {
           isLoading={isLoading}
         />
 
+        <ParecerConselho
+          dadosAta={dadosAta}
+          paaRetificacao={paaRetificacao}
+          tabelas={tabelas}
+          isLoading={isLoading}
+        />
+
         { !paaRetificacao && !isLoading ? (
           <div className="col-12 mt-4">
             <p>
@@ -164,7 +172,7 @@ export const VisualizacaoAtaPaa = () => {
         )}
 
         {listaPresentes && listaPresentes.length > 0 && (
-          <ListaPresentes 
+          <ListaPresentes
             listaPresentesMembros={listaPresentesMembros}
             listaPresentesNaoMembros={listaPresentesNaoMembros}
           />
