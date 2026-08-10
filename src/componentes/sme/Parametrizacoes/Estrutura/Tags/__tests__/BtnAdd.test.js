@@ -1,60 +1,86 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { BtnAddTags } from '../BtnAddTags';
-import { mockCreate } from '../__fixtures__/mockData';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { BtnAddTags } from '../components/BtnAddTags';
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from '../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes';
 
-jest.mock('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes', () => ({
-  RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
-}));
+// Mock do utilitário de verificação de permissão
+jest.mock('../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes');
 
-const mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes = require('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes').RetornaSeTemPermissaoEdicaoPainelParametrizacoes;
-const mockSetShowModalForm = jest.fn();
-const mockSetStateFormModal = jest.fn();
+describe('Componente <BtnAddTags />', () => {
+  // Mock das props recebidas pelo componente
+  const mockSetShowModalForm = jest.fn();
+  const mockSetStateFormModal = jest.fn();
+  const mockInitialState = { open: false, nome: '' };
+  
+  // Componente Dummy para simular o FontAwesomeIcon
+  const MockFontAwesomeIcon = (props) => <span data-testid="icon-mock" {...props} />;
+  const mockFaPlus = { iconName: 'plus' };
 
-describe('Componente BtnAdd', () => {
-  const renderBtnAdd = (permission = true) => {
-    mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(permission);
-    render(
-      <BtnAddTags
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={mockSetShowModalForm}
-        initialStateFormModal={mockCreate}
-        setStateFormModal={mockSetStateFormModal}
-      />
-    );
+  const defaultProps = {
+    FontAwesomeIcon: MockFontAwesomeIcon,
+    faPlus: mockFaPlus,
+    setShowModalForm: mockSetShowModalForm,
+    initialStateFormModal: mockInitialState,
+    setStateFormModal: mockSetStateFormModal,
   };
 
-  it('Deve renderizar o botão com o texto e ícone corretamente', () => {
-    renderBtnAdd();
-
-    const button = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
-    expect(button).toBeInTheDocument();
-    expect(screen.getByText('faPlusMock')).toBeInTheDocument();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('Deve habilitar o botão quando houver permissão', () => {
-    renderBtnAdd(true);
+  it('deve renderizar o botão habilitado quando o usuário possui permissão', () => {
+    // Permissão concedida
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-    const button = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
-    expect(button).not.toBeDisabled();
+    render(<BtnAddTags {...defaultProps} />);
+
+    const botao = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
+    expect(botao).toBeInTheDocument();
+    expect(botao).toBeEnabled();
+    expect(screen.getByTestId('icon-mock')).toBeInTheDocument();
   });
 
-  it('Deve desabilitar o botão quando não houver permissão', () => {
-    renderBtnAdd(false);
+  it('deve chamar as funções de estado ao clicar no botão habilitado', async () => {
+    const user = userEvent.setup();
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
 
-    const button = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
-    expect(button).toBeDisabled();
-  });
+    render(<BtnAddTags {...defaultProps} />);
 
-  it('Deve chamar as funções de callback ao clicar no botão', () => {
-    renderBtnAdd(true);
+    const botao = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
+    await user.click(botao);
 
-    const button = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
-    fireEvent.click(button);
+    // Valida se o estado foi resetado com o valor inicial
+    expect(mockSetStateFormModal).toHaveBeenCalledTimes(1);
+    expect(mockSetStateFormModal).toHaveBeenCalledWith(mockInitialState);
 
-    expect(mockSetStateFormModal).toHaveBeenCalledWith(mockCreate);
+    // Valida se o modal foi configurado para abrir (true)
+    expect(mockSetShowModalForm).toHaveBeenCalledTimes(1);
     expect(mockSetShowModalForm).toHaveBeenCalledWith(true);
+  });
+
+  it('deve renderizar o botão desabilitado quando o usuário NÃO possui permissão', () => {
+    // Permissão negada
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+
+    render(<BtnAddTags {...defaultProps} />);
+
+    const botao = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
+    expect(botao).toBeInTheDocument();
+    expect(botao).toBeDisabled();
+  });
+
+  it('não deve acionar as funções de estado ao tentar clicar com o botão desabilitado', async () => {
+    const user = userEvent.setup();
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+
+    render(<BtnAddTags {...defaultProps} />);
+
+    const botao = screen.getByRole('button', { name: /adicionar etiqueta\/tag/i });
+    
+    // Tenta clicar no botão desabilitado
+    await user.click(botao);
+
+    expect(mockSetStateFormModal).not.toHaveBeenCalled();
+    expect(mockSetShowModalForm).not.toHaveBeenCalled();
   });
 });

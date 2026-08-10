@@ -318,8 +318,9 @@ describe('Testes para funções de análise', () => {
 
     test('getTodasTags  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getTodasTags();
-        const url = `/api/tags/`
+        const recurso_uuid = 'test-uuid-123';
+        const result = await getTodasTags(recurso_uuid);
+        const url = `/api/tags/?recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -782,8 +783,9 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome = 'teste'
         const status = 'teste'
-        const result = await getFiltrosTags(nome, status);
-        const url = `/api/tags/?nome=${nome}&status=${status}`
+        const recurso_uuid = 'uuid-123'
+        const result = await getFiltrosTags(nome, status, recurso_uuid);
+        const url = `/api/tags/?nome=${nome}&status=${status}&recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });

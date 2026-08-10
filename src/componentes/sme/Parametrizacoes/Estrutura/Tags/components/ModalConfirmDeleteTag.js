@@ -1,5 +1,5 @@
 import React from "react";
-import {ModalConfirmarExclusao} from "../../componentes/ModalConfirmarExclusao";
+import {ModalConfirmarExclusao} from "../../../componentes/ModalConfirmarExclusao";
 
 export const ModalConfirmDeleteTag = (props) => {
     return (
