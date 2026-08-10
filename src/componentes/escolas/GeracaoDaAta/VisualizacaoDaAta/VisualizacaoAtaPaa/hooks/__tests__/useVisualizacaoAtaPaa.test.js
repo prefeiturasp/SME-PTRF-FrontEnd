@@ -177,6 +177,29 @@ describe('useVisualizacaoAtaPaa', () => {
     expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa', expect.any(Object));
   });
 
+  it('deve navegar para retificacao-paa quando o tipo da ata for RETIFICACAO ao fechar', async () => {
+    getAtaPaa.mockResolvedValue({ tipo_ata: 'RETIFICACAO' });
+    const { result } = renderHook(() => useVisualizacaoAtaPaa());
+
+    await waitFor(() => {
+      expect(result.current.dadosAta.tipo_ata).toBe('RETIFICACAO');
+    });
+
+    act(() => {
+      result.current.handleClickFecharAta();
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith('/retificacao-paa/123', {
+      state: {
+        activeTab: 'relatorios',
+        expandedSections: {
+          planoAnual: true,
+          componentes: true,
+        },
+      },
+    });
+  });
+
   it('deve processar rota atual e acionar window.location.assign na edição da ata', () => {
     window.location.pathname = '/teste-path';
     const { result } = renderHook(() => useVisualizacaoAtaPaa());
@@ -227,7 +250,7 @@ describe('useVisualizacaoAtaPaa', () => {
   });
 
   it('deve formatar como "primeiro" se o dia ajustado for 1', async () => {
-    getAtaPaa.mockResolvedValue({ data_reuniao: '2026-04-30' }); 
+    getAtaPaa.mockResolvedValue({ data_reuniao: '2026-04-30' });
     const { result } = renderHook(() => useVisualizacaoAtaPaa());
 
     await waitFor(() => expect(result.current.dadosAta.data_reuniao).toBe('2026-04-30'));

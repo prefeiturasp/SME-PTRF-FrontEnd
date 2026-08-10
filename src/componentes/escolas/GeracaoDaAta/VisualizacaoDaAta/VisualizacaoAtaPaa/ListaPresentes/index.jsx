@@ -36,34 +36,41 @@ export const ListaPresentes = memo(({
               </tbody>
             </table>
 
-            <p className="titulo-tabela-acoes mt-3" style={{ fontWeight: "bold", color: "#00585E", fontSize: 16 }}>
-              Demais presentes
-            </p>
-            <table className="table table-bordered" style={{ width: "100%" }}>
-              <thead style={{ backgroundColor: "#dadada" }}>
-                <tr>
-                  <th style={{ width: "70%" }}>Nome e cargo</th>
-                  <th style={{ width: "30%" }}>Assinatura</th>
-                </tr>
-              </thead>
-              <tbody>
-                {listaPresentesNaoMembros.map((presente, index) => (
-                  <tr key={presente.uuid || presente.identificacao || index}>
-                    <td>
-                      <div>
-                        <strong style={{ textTransform: "uppercase" }}>{presente.nome || "-"}</strong>
-                        {presente.cargo && (
-                          <div style={{ marginTop: "4px" }}>
-                            {presente.cargo} {presente.professor_gremio && " - Professor do Grêmio"}
-                          </div>
-                        )}
-                      </div>
-                    </td>
-                    <td></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                {listaPresentesNaoMembros?.some(
+                (presente) =>
+                    presente?.nome
+                ) && (
+                <>
+                    <p className="titulo-tabela-acoes mt-3" style={{ fontWeight: "bold", color: "#00585E", fontSize: 16 }}>
+                        Demais presentes
+                    </p>
+                    <table className="table table-bordered" style={{ width: "100%" }}>
+                        <thead style={{ backgroundColor: "#dadada" }}>
+                            <tr>
+                            <th style={{ width: "70%" }}>Nome e cargo</th>
+                            <th style={{ width: "30%" }}>Assinatura</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {listaPresentesNaoMembros.map((presente, index) => (
+                            <tr key={presente.uuid || presente.identificacao || index}>
+                                <td>
+                                <div>
+                                    <strong style={{ textTransform: "uppercase" }}>{presente.nome || "-"}</strong>
+                                    {presente.cargo && (
+                                    <div style={{ marginTop: "4px" }}>
+                                        {presente.cargo} {presente.professor_gremio && " - Professor do Grêmio"}
+                                    </div>
+                                    )}
+                                </div>
+                                </td>
+                                <td></td>
+                            </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </>
+            )}
         </div>
     )
 });

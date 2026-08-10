@@ -49,6 +49,10 @@ jest.mock("../Manifestacoes", () => ({
   Manifestacoes: () => <div data-testid="mock-manifestacoes" />,
 }));
 
+jest.mock("../ParecerConselho", () => ({
+  ParecerConselho: () => <div data-testid="mock-parecer-conselho" />,
+}));
+
 jest.mock("../ListaPresentes", () => ({
   ListaPresentes: () => <div data-testid="mock-lista-presentes" />,
 }));
@@ -119,6 +123,11 @@ describe("VisualizacaoAtaPaa - Container", () => {
       expect(screen.getByTestId("mock-topo-com-botoes")).toBeInTheDocument();
     });
 
+    it("deve renderizar o componente ParecerConselho na estrutura principal", () => {
+      renderComponent();
+      expect(screen.getByTestId("mock-parecer-conselho")).toBeInTheDocument();
+    });
+
     it("deve passar a lista de presentes filtrada corretamente para o subcomponente", () => {
       const listaPresentesMix = [
         { uuid: "1", membro: true, presente: true },
@@ -143,6 +152,7 @@ describe("VisualizacaoAtaPaa - Container", () => {
       expect(screen.getByTestId("mock-ata-elaboracao")).toBeInTheDocument();
       expect(screen.queryByTestId("mock-ata-retificacao")).not.toBeInTheDocument();
       expect(screen.getByTestId("mock-prioridades-elaboracao")).toBeInTheDocument();
+      expect(screen.getByTestId("mock-parecer-conselho")).toBeInTheDocument();
     });
 
     it("deve exibir o texto de encerramento específico para Elaboração com o secretário em negrito", () => {
@@ -182,6 +192,7 @@ describe("VisualizacaoAtaPaa - Container", () => {
       expect(screen.getByTestId("mock-ata-retificacao")).toBeInTheDocument();
       expect(screen.queryByTestId("mock-ata-elaboracao")).not.toBeInTheDocument();
       expect(screen.getByTestId("mock-prioridades-retificacao")).toBeInTheDocument();
+      expect(screen.getByTestId("mock-parecer-conselho")).toBeInTheDocument();
     });
 
     it("deve exibir a seção de justificativa da retificação preenchida", () => {
