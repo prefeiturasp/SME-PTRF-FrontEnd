@@ -1,6 +1,6 @@
 import React from "react";
 
-export const TrilhaDeStatusNaoPublicada = () => {
+export const TrilhaDeStatusNaoPublicada = ({ text_for_status_track_first_step, text_for_status_track_second_step }) => {
     return (
         <>
             <div className='row mt-3'>
@@ -9,11 +9,11 @@ export const TrilhaDeStatusNaoPublicada = () => {
                     <div className="d-flex justify-content-between mb-3">
                         <div className='container-circulo'>
                         <span className='circulo circulo-ativo'>1</span>
-                            <p className='mt-2'><strong>Não publicada no <br/> Diário Oficial</strong></p>
+                            <p className='mt-2'>{text_for_status_track_first_step}</p>
                         </div>
                         <div className='container-circulo'>
                         <span className='circulo circulo'>2</span>
-                            <p className='mt-2 texto-inativo'><strong>Publicada no <br/> Diário Oficial</strong></p>
+                            <p className='mt-2 texto-inativo'>{text_for_status_track_second_step}</p>
                         </div>
                         <div className='container-circulo'>
                         <span className='circulo circulo'>3</span>

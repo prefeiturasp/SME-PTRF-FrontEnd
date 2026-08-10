@@ -1,6 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ListaRelatorios } from '../ListaRelatorios';
+import { useRecursoSelecionadoContext } from '../../../../../context/RecursoSelecionado';
+
+jest.mock('../../../../../context/RecursoSelecionado', () => ({
+    useRecursoSelecionadoContext: jest.fn(),
+}));
 
 jest.mock('primereact/datatable', () => ({
   DataTable: ({ children, value, paginator, rows, paginatorTemplate }) => (
@@ -48,6 +53,12 @@ describe('ListaRelatorios', () => {
 
   const mockAcoesTemplate = jest.fn((rowData) => <button>Ação</button>);
   const mockStatusSmeTemplate = jest.fn((rowData) => <span>Status</span>);
+
+  beforeEach(() => {
+    useRecursoSelecionadoContext.mockReturnValue({
+        textDocumentConsolidadoPC: { normal: jest.fn().mockReturnValue('Publicação') },
+    });
+  });
 
   it('deve renderizar o componente corretamente', () => {
     render(

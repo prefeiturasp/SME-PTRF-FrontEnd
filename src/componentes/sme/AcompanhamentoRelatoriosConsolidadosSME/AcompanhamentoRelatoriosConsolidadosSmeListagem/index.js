@@ -14,8 +14,13 @@ import { ListaRelatorios } from "./ListaRelatorios";
 import Loading from "../../../../utils/Loading";
 import { MsgImgLadoDireito } from "../../../Globais/Mensagens/MsgImgLadoDireito";
 import Img404 from "../../../../assets/img/img-404.svg";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
+    const { textDocumentConsolidadoPC } = useRecursoSelecionadoContext()
+
+    const text_consolidado_type = textDocumentConsolidadoPC?.normal("capitalize")
+
     let {periodo_uuid, status_sme} = useParams();
     const rowsPerPage = 10;
 
@@ -81,7 +86,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
         carregaListaFiltroTipoRelatorio();
     }, [carregaListaFiltroTipoRelatorio]);
 
-    
+
     const carregaListaFiltroStatusSme = useCallback(async () => {
         let status_disponiveis = [
             {
@@ -90,11 +95,11 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
             },
             {
                 id: "NAO_PUBLICADO",
-                nome: "Não Publicado no D.O"
+                nome: textDocumentConsolidadoPC?.texto_status_filtro(true)
             },
             {
                 id: "PUBLICADO",
-                nome: "Publicado no D.O"
+                nome: textDocumentConsolidadoPC?.texto_status_filtro()
             },
             {
                 id: "EM_ANALISE",
@@ -137,7 +142,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
             setRelatoriosConsolidados(relatorios)
             setLoading(false);
         }
-        
+
     }, [periodoEscolhido, status_sme])
 
     useEffect(() => {
@@ -171,7 +176,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
                 if(index > -1){
                     nova_lista.splice(index, 1);
                 }
-                nova_lista.push(lista_com_status_selecionados[i]); 
+                nova_lista.push(lista_com_status_selecionados[i]);
             }
         }
 
@@ -208,11 +213,11 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
     };
 
     const acoesTemplate = (rowData) => {
-        
+
         return (
             <div>
-                {rowData.pode_visualizar 
-                
+                {rowData.pode_visualizar
+
                     ?
                         <Link
                             to={{
@@ -264,7 +269,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
             )
         }
 
-        
+
     };
 
     return (
@@ -287,10 +292,11 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
                     handleChangeSelectStatusPc={handleChangeSelectStatusPc}
                     handleLimpaFiltros={handleLimpaFiltros}
                     handleSubmitFiltros={handleSubmitFiltros}
+                    text_consolidado_type={text_consolidado_type}
                 />
 
-            {loading 
-                ? 
+            {loading
+                ?
                     (
                         <Loading
                             corGrafico="black"
@@ -298,10 +304,10 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
                             marginTop="0"
                             marginBottom="0"
                         />
-                    ) 
+                    )
                 :
-                    relatoriosConsolidados && relatoriosConsolidados.length > 0 
-                        ? 
+                    relatoriosConsolidados && relatoriosConsolidados.length > 0
+                        ?
                             <ListaRelatorios
                                 relatoriosConsolidados={relatoriosConsolidados}
                                 rowsPerPage={rowsPerPage}
@@ -313,11 +319,11 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
                                 texto='Nenhum relatório retornado. Tente novamente com outros filtros'
                                 img={Img404}
                             />
-                    
+
             }
             </div>
         </PaginasContainer>
 
-        
+
     )
 };

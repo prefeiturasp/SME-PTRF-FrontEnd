@@ -429,19 +429,23 @@ export const patchExibirAcoesPTRFPaa = async (uuid, payload) => {
 };
 
 // Tags
-export const getTodasTags = async () => {
-  return (await api.get(`/api/tags/`, authHeader())).data;
+export const getTodasTags = async (recurso_uuid) => {
+  return (await api.get(`/api/tags/?recurso_uuid=${recurso_uuid}`, authHeader())).data;
 };
-export const getFiltrosTags = async (nome, status) => {
-  return (await api.get(`/api/tags/?nome=${nome}&status=${status}`, authHeader()))
+
+export const getFiltrosTags = async (nome, status, recurso_uuid) => {
+  return (await api.get(`/api/tags/?nome=${nome}&status=${status}&recurso_uuid=${recurso_uuid}`, authHeader()))
     .data;
 };
+
 export const postCreateTag = async (payload) => {
   return (await api.post(`/api/tags/`, payload, authHeader())).data;
 };
+
 export const patchAlterarTag = async (tag_uuid, payload) => {
   return (await api.patch(`/api/tags/${tag_uuid}/`, payload, authHeader())).data;
 };
+
 export const deleteTag = async (tag_uuid) => {
   return await api.delete(`/api/tags/${tag_uuid}/`, authHeader());
 };

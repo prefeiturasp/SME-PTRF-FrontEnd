@@ -139,20 +139,6 @@ const isLoggedIn = () => {
     return !!token;
 };
 
-// Busca permissões, visões e feature flags atualizados do backend e sobrescreve
-// o cache do localStorage. Chamado no mount do App para evitar que um reload
-// sirva dados desatualizados (ex.: permissões revogadas desde o último login).
-// Falhas são silenciosas para não bloquear a navegação do usuário.
-const refreshUserData = async () => {
-    const suporte = localStorage.getItem(ACESSO_MODO_SUPORTE) === 'true';
-    try {
-        const response = await api.get(`api/me?suporte=${suporte}`, authHeaderAuthorization());
-        await visoesService.setDadosUsuariosLogados(response.data, suporte);
-    } catch (error) {
-        console.warn('Erro ao atualizar dados do usuário', error?.response?.data);
-    }
-};
-
 const getToken = () => {
     let token = localStorage.getItem(TOKEN_ALIAS);
     if (token) {
@@ -243,7 +229,6 @@ export const authService = {
     logoutToSuporte,
     getToken,
     isLoggedIn,
-    refreshUserData,
     esqueciMinhaSenha,
     limparStorageAoTrocarRecurso
 };

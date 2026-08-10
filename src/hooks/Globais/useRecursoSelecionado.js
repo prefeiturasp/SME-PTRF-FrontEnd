@@ -3,6 +3,7 @@ import { getRecursos, getRecursosPorUnidade } from "../../services/AlterarRecurs
 import { authService } from "../../services/auth.service";
 import { recursoSelecionadoStorageService } from "../../services/storages/RecursoSelecionado.storage.service";
 import { notificaDevolucaoPCStorageService } from "../../services/storages/NotificarDevolucao.storage.service";
+import { TextoDocumentoConsolidadoPC } from "../../utils/TextoDocumentoConsolidadoPC";
 
 /**
  * Hook para gerenciar recurso selecionado com persistência em localStorage
@@ -30,6 +31,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
       return false;
     }
   });
+  const [textDocumentConsolidadoPC, setTextDocumentConsolidadoPC] = useState(undefined);
   const [recursos, setRecursos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -118,6 +120,8 @@ const useRecursoSelecionado = ({ visoesService }) => {
         const recursoAtualizado = res.find((r) => r.uuid === recursoSelecionado?.uuid);
         if (recursoAtualizado) {
           setRecursoSelecionado(recursoAtualizado);
+          const habilita_exibicao_da_lauda = recursoAtualizado.habilita_exibicao_de_lauda;
+          setTextDocumentConsolidadoPC(new TextoDocumentoConsolidadoPC(habilita_exibicao_da_lauda));
           recursoSelecionadoStorageService.setRecursoSelecionado(recursoAtualizado);
         }
       } catch (err) {
@@ -135,6 +139,14 @@ const useRecursoSelecionado = ({ visoesService }) => {
       try {
         const res = await getRecursos();
         setRecursos(res);
+
+        const recursoAtualizado = res.find((r) => r.uuid === recursoSelecionado?.uuid);
+        if (recursoAtualizado) {
+          setRecursoSelecionado(recursoAtualizado);
+          const habilita_exibicao_da_lauda = recursoAtualizado.habilita_exibicao_de_lauda;
+          setTextDocumentConsolidadoPC(new TextoDocumentoConsolidadoPC(habilita_exibicao_da_lauda));
+          recursoSelecionadoStorageService.setRecursoSelecionado(recursoAtualizado);
+        }
       } catch (err) {
         console.error("Erro ao buscar recursos:", err);
         setError(err);
@@ -161,6 +173,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
     setRecursoSelecionadoNaSessao,
     clearRecursoNaSessao,
     getTextValoresReprogramadosATA,
+    textDocumentConsolidadoPC,
   };
 };
 

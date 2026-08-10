@@ -81,7 +81,7 @@ Api.interceptors.response.use(
     const originalRequest = error.config;
 
     // POST /login com credenciais erradas retorna 401 — não deve acionar refresh.
-    // GET /me e demais rotas autenticadas devem tentar refresh normalmente.
+    // GET demais rotas autenticadas devem tentar refresh normalmente.
     // token/refresh falhando com 401 significa refresh expirado — não deve recursar.
     // _retry impede loop infinito caso o novo token também retorne 401.
     const isAuthEndpoint =

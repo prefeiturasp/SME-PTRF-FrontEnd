@@ -172,7 +172,7 @@ export const Tabela = () => {
         {results && results.length > 0 ? (
             <>
                 <TotalRegistros
-                    titulo="Comissão(ões) adicionada(s)"
+                    titulo="Comissões"
                     total_registros={count}
                 />
                 <DataTable

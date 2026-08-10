@@ -3,12 +3,21 @@ import './multiselect.scss'
 import { Select } from 'antd';
 
 
-export const FormFiltros = ({stateFiltros, selectedStatusPc, listaFiltroDre, listaFiltroTipoRelatorio, listaFiltroStatusSme, handleChangeFiltros, handleChangeSelectStatusPc, handleLimpaFiltros, handleSubmitFiltros}) => {
-
+export const FormFiltros = ({
+    stateFiltros,
+    selectedStatusPc,
+    listaFiltroDre,
+    listaFiltroTipoRelatorio,
+    listaFiltroStatusSme,
+    handleChangeFiltros,
+    handleChangeSelectStatusPc,
+    handleLimpaFiltros,
+    handleSubmitFiltros,
+    text_consolidado_type
+}) => {
     const { Option } = Select;
 
     return (
-        <>
             <form method="post">
                 <div className="row mt-3">
                 <div className="col">
@@ -28,7 +37,7 @@ export const FormFiltros = ({stateFiltros, selectedStatusPc, listaFiltroDre, lis
                     </div>
 
                     <div className="col">
-                        <label htmlFor="filtrar_por_tipo_de_relatorio">Filtrar por Publicação</label>
+                        <label htmlFor="filtrar_por_tipo_de_relatorio">Filtrar por {text_consolidado_type}</label>
                         <select
                             value={stateFiltros.filtrar_por_tipo_de_relatorio}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
@@ -63,7 +72,7 @@ export const FormFiltros = ({stateFiltros, selectedStatusPc, listaFiltroDre, lis
                         </Select>
                     </div>
                 </div>
-                
+
                 <div className="d-flex  justify-content-end pb-3 mt-3">
                     <button onClick={()=>handleLimpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar filtros</button>
                     <button
@@ -75,6 +84,5 @@ export const FormFiltros = ({stateFiltros, selectedStatusPc, listaFiltroDre, lis
                     </button>
                 </div>
             </form>
-        </>
     )
 };
