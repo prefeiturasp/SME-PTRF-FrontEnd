@@ -1,183 +1,173 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import ModalFormTags from "../ModalFormTags";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import ModalFormTags from '../components/ModalFormTags';
 
-jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
-  RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+// Importação dos hooks para mockar seus retornos
+import { useTagsContext } from '../hooks/useTagsContext';
+import { useRecursoSelecionadoContext } from '../../../../../../context/RecursoSelecionado';
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from '../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes';
+
+// Mocks dos Contextos e Utilitários
+jest.mock('../hooks/useTagsContext');
+jest.mock('../../../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
+jest.mock('../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes');
+
+// Mock do ModalBootstrap para renderizar o conteúdo diretamente no DOM do teste
+jest.mock('../../../../../Globais/ModalBootstrap', () => ({
+  ModalFormBodyText: ({ show, titulo, bodyText }) =>
+    show ? (
+      <div data-testid="modal-container">
+        <h1>{titulo}</h1>
+        {bodyText}
+      </div>
+    ) : null,
 }));
 
-const mockSetFieldValue = jest.fn();
-const mocksetShowModalConfirmDeleteTag = jest.fn();
+describe('Componente <ModalFormTags />', () => {
+  // Mocks das funções do contexto
+  const mockHandleClose = jest.fn();
+  const mockHandleSubmitFormModal = jest.fn();
+  const mockSetShowModalConfirmDeleteTag = jest.fn();
 
-const mockEdit = {
-  id: 50,
-  uuid: "8de8e23d-8ab5-474d-a0a8-c57857c23bc2",
-  nome: "Nome de teste na edição",
-  tem_documento: true,
-  operacao: 'edit',
-  status: "INATIVO"
-};
+  const mockRecursos = [
+    { uuid: 'rec-123', nome: 'Recurso 1' },
+    { uuid: 'rec-456', nome: 'Recurso 2' },
+  ];
 
-const mockCreate = { 
-  nome: "",
-  operacao: "create",
-  id: null,
-  status: "INATIVO"
-};
+  const defaultModalState = {
+    open: true,
+    uuid: '',
+    id: '',
+    nome: '',
+    status: 'ATIVO',
+    operacao: 'create',
+    recurso: { uuid: 'rec-123' },
+  };
 
-const defaultProps = {
-  show: true,
-  stateFormModal: mockCreate,
-  handleClose: jest.fn(),
-  handleSubmitModalFormTags: jest.fn(),
-  setShowModalConfirmDeleteTag: mocksetShowModalConfirmDeleteTag,
-  setFieldValue: mockSetFieldValue
-};
-
-const defaultPropsEdicao = {
-  ...defaultProps,
-  stateFormModal: mockEdit
-};
-
-const renderModalForm = (props = defaultProps) => {
-  render(<ModalFormTags {...props} />);
-};
-
-const verifyCommonElements = (isEditMode = false) => {
-  expect(screen.getByText(isEditMode ? "Editar etiqueta/tag" : "Adicionar etiqueta/tag")).toBeInTheDocument();
-  expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
-  expect(screen.getByLabelText("Nome *")).toBeInTheDocument();
-  expect(screen.getByLabelText("Status *")).toBeInTheDocument();
-};
-
-describe("Componente ModalForm", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+
+    // Retornos padrão dos mocks
+    useTagsContext.mockReturnValue({
+      modalForm: defaultModalState,
+      handleClose: mockHandleClose,
+      handleSubmitFormModal: mockHandleSubmitFormModal,
+      setShowModalConfirmDeleteTag: mockSetShowModalConfirmDeleteTag,
+    });
+
+    useRecursoSelecionadoContext.mockReturnValue({
+      recursos: mockRecursos,
+    });
+
+    // Permissão concedida por padrão
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
   });
 
-  describe("Quando a operação é Cadastro", () => {
-    it("Renderiza a Modal corretamente com permissão True", () => {
-      renderModalForm();
-      verifyCommonElements();
-
-      expect(screen.getByLabelText("Nome *")).toHaveValue("");
-      expect(screen.getByLabelText("Status *")).toHaveValue("INATIVO");
-      expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
-
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
-
-      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeEnabled();
+  it('não deve renderizar o modal quando modalForm.open for false', () => {
+    useTagsContext.mockReturnValue({
+      ...useTagsContext(),
+      modalForm: { ...defaultModalState, open: false },
     });
 
-    it("Renderiza a Modal corretamente com permissão False", () => {
-      RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-      renderModalForm();
-      verifyCommonElements();
+    render(<ModalFormTags />);
 
-      expect(screen.getByLabelText("Nome *")).toHaveValue("");
-      expect(screen.getByLabelText("Status *")).toHaveValue("INATIVO");
-      expect(screen.queryByRole("button", { name: "Excluir" })).not.toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+    expect(screen.queryByTestId('modal-container')).not.toBeInTheDocument();
+  });
 
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
+  it('deve renderizar o título correto e as opções do recurso em modo de criação', () => {
+    render(<ModalFormTags />);
 
-      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeDisabled();
+    expect(screen.getByRole('heading', { level: 1, name: /adicionar etiqueta\/tag/i })).toBeInTheDocument();
+    
+    // Verifica se as opções do recurso vindas do useAbasPorRecursoContext foram renderizadas
+    expect(screen.getByText('Recurso 1')).toBeInTheDocument();
+    expect(screen.getByText('Recurso 2')).toBeInTheDocument();
+  });
+
+  it('deve renderizar o título correto e o botão excluir em modo de edição', () => {
+    useTagsContext.mockReturnValue({
+      ...useTagsContext(),
+      modalForm: {
+        ...defaultModalState,
+        uuid: 'tag-123',
+        id: '99',
+        operacao: 'edit',
+        status: 'ATIVO',
+        nome: 'Tag Teste',
+      },
+    });
+
+    render(<ModalFormTags />);
+
+    expect(screen.getByRole('heading', { level: 1, name: /editar etiqueta\/tag/i })).toBeInTheDocument();
+    expect(screen.getByText('ID: 99')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /excluir/i })).toBeInTheDocument();
+  });
+
+  it('deve desabilitar campos de entrada quando não houver permissão de edição', () => {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+
+    render(<ModalFormTags />);
+
+    expect(screen.getByLabelText(/nome \*/i)).toBeDisabled();
+    expect(screen.getByLabelText(/status \*/i)).toBeDisabled();
+    expect(screen.getByRole('button', { name: /salvar/i })).toBeDisabled();
+  });
+
+  it('deve chamar handleClose ao clicar no botão Cancelar', async () => {
+    const user = userEvent.setup();
+    render(<ModalFormTags />);
+
+    const btnCancelar = screen.getByRole('button', { name: /cancelar/i });
+    await user.click(btnCancelar);
+
+    expect(mockHandleClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('deve disparar setShowModalConfirmDeleteTag ao clicar no botão Excluir', async () => {
+    const user = userEvent.setup();
+
+    useTagsContext.mockReturnValue({
+      ...useTagsContext(),
+      modalForm: {
+        ...defaultModalState,
+        uuid: 'tag-abc-123',
+        operacao: 'edit',
+      },
+    });
+
+    render(<ModalFormTags />);
+
+    const btnExcluir = screen.getByRole('button', { name: /excluir/i });
+    await user.click(btnExcluir);
+
+    expect(mockSetShowModalConfirmDeleteTag).toHaveBeenCalledWith({
+      open: true,
+      tag_uuid: 'tag-abc-123',
     });
   });
 
-  describe("Quando a operação é Edição", () => {
-    it("Renderiza a Modal corretamente com permissão True", () => {
-      renderModalForm(defaultPropsEdicao);
-      verifyCommonElements(true);
+  it('deve submeter o formulário chamando handleSubmitFormModal com os dados preenchidos', async () => {
+    const user = userEvent.setup();
+    render(<ModalFormTags />);
 
-      expect(screen.getByLabelText("Nome *")).toHaveValue("Nome de teste na edição");
-      expect(screen.getByLabelText("Status *")).toHaveValue("INATIVO");
-      expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeEnabled();
+    const inputNome = screen.getByLabelText(/nome \*/i);
+    const selectStatus = screen.getByLabelText(/status \*/i);
+    const btnSalvar = screen.getByRole('button', { name: /salvar/i });
 
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeEnabled();
-      });
+    // Preenche os campos do formulário
+    await user.clear(inputNome);
+    await user.type(inputNome, 'Nova Tag Atualizada');
+    await user.selectOptions(selectStatus, 'INATIVO');
 
-      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeEnabled();
-    });
+    // Submete o formulário
+    await user.click(btnSalvar);
 
-    it("Renderiza a Modal corretamente com permissão False", () => {
-      RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-      renderModalForm(defaultPropsEdicao);
-      verifyCommonElements(true);
-
-      expect(screen.getByLabelText("Nome *")).toHaveValue("Nome de teste na edição");
-      expect(screen.getByLabelText("Status *")).toHaveValue("INATIVO");
-      expect(screen.queryByRole("button", { name: "Excluir" })).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
-
-      const camposTexto = screen.getAllByRole("textbox");
-      camposTexto.forEach((campo) => {
-        expect(campo).toBeDisabled();
-      });
-
-      expect(screen.getByRole("combobox", { name: /Status \*/i })).toBeDisabled();
-    });
-  });
-
-  it("Chama handleSubmitModalFormTags quando o formulario for submetido", async () => {
-    renderModalForm();
-
-    const input = screen.getByLabelText("Nome *");
-    const saveButton = screen.getByRole("button", { name: "Salvar" });
-    const select = screen.getByLabelText("Status *");
-
-    fireEvent.change(input, { target: { value: "Documento Teste" } });
-    fireEvent.change(select, { target: { value: "INATIVO" } });
-    fireEvent.click(saveButton);
-
+    // Formik dispara a submissão assincronamente
     await waitFor(() => {
-      expect(defaultProps.handleSubmitModalFormTags).toHaveBeenCalledTimes(1);
+      expect(mockHandleSubmitFormModal).toHaveBeenCalledTimes(1);
     });
-  });
-
-  it("Chama a ação de fechar modal quando o botão Cancelar for clicado", () => {
-    renderModalForm();
-    const cancelButton = screen.getByRole("button", { name: "Cancelar" });
-    fireEvent.click(cancelButton);
-    expect(defaultProps.handleClose).toHaveBeenCalled();
-  });
-
-  it('Deve atualizar o valor do Select para ATIVO', async () => {
-    renderModalForm();
-
-    const select = screen.getByLabelText('Status *');
-    fireEvent.change(select, { target: { value: 'ATIVO' } });
-    await waitFor(() => {
-      expect(select.value).toBe('ATIVO');
-    });
-  });
-
-  it('Deve atualizar o valor do Select para INATIVO', async () => {
-    renderModalForm();
-
-    const select = screen.getByLabelText('Status *');
-    fireEvent.change(select, { target: { value: 'INATIVO' } });
-    await waitFor(() => {
-      expect(select.value).toBe('INATIVO');
-    });
-  });
-
-  it('Deve chamar setShowModalConfirmDeleteTag quando o botão for clicado', () => {
-    renderModalForm(defaultPropsEdicao);
-    const button = screen.getByRole('button', { name: /Excluir/i });
-    fireEvent.click(button);
-    expect(mocksetShowModalConfirmDeleteTag).toHaveBeenCalledTimes(1);
   });
 });
