@@ -276,10 +276,20 @@ export const getConcluirPrestacaoDeConta = async (
   ).data
 };
 
-
-export const getFiqueDeOlhoPrestacoesDeContas = async () => {
-  return (await api.get(`/api/prestacoes-contas/fique-de-olho/`,authHeader())).data
-};
+export const getFiqueDeOlhoPrestacoesDeContas = async (tipo_texto, recurso_uuid = '') => {
+  const params = new URLSearchParams();
+  
+  if (tipo_texto) {
+    params.append('tipo_texto', tipo_texto);
+  }
+  if (recurso_uuid) {
+    params.append('recurso_uuid', recurso_uuid);
+  }
+  const queryString = params.toString();
+  const url = `/api/fique-de-olho/?${queryString}`;
+  
+  return (await api.get(url, authHeader())).data;
+}
 
 export const getAtaRetificadora = async (prestacao_uuid) => {
   return (await api.get(`/api/prestacoes-contas/${prestacao_uuid}/ata-retificacao/`,authHeader())).data

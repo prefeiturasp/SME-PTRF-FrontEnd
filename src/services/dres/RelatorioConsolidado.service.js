@@ -88,8 +88,17 @@ export const devolverConsolidado = async (consolidado_uuid, dataLimiteDevolucao)
 
 // FIM Consolidado DRE
 
-export const getFiqueDeOlhoRelatoriosConsolidados = async () => {
-    return (await api.get(`/api/relatorios-consolidados-dre/fique-de-olho/`, authHeader())).data
+export const getFiqueDeOlhoRelatoriosConsolidados = async (tipo_texto, recurso_uuid) => {
+    const params = new URLSearchParams();
+    if (tipo_texto) 
+        params.append('tipo_texto', tipo_texto);
+    if (recurso_uuid) 
+        params.append('recurso_uuid', recurso_uuid);
+
+    return (await api.get(
+        `/api/fique-de-olho/?${params.toString()}`, 
+        authHeader()
+    )).data
 };
 
 export const getConsultarStatus = async (dre_uuid, periodo_uuid, conta_uuid) => {
