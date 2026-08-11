@@ -31,6 +31,7 @@ import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada"
 import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 import { useGetComissaoResponsavelPC } from "./hooks/useGetComissaoResponsavelPC";
 import { toastCustom } from "../../Globais/ToastCustom";
+import { TEXTOS_FIQUE_DE_OLHO } from "../../../constantes/textosFiqueDeOlho";
 
 const RelatorioConsolidado = () => {
     const { getUUIDUnidadeSelecionadaTipoDRE } = useUnidadeSelecionada(visoesService)
@@ -201,12 +202,15 @@ const RelatorioConsolidado = () => {
 
     const buscaFiqueDeOlho = useCallback(async () => {
         try {
-            let fique_de_olho = await getFiqueDeOlhoRelatoriosConsolidados();
-            setFiqueDeOlho(fique_de_olho.detail);
+            let fique_de_olho = await getFiqueDeOlhoRelatoriosConsolidados(
+                TEXTOS_FIQUE_DE_OLHO.DRE_CONSOLIDADO_DAS_PCS,
+                recursoSelecionado?.uuid
+            );
+            setFiqueDeOlho(fique_de_olho.results[0].texto);
         } catch (e) {
             console.log("Erro ao buscar Fique de Olho ", e)
         }
-    }, [])
+    }, [recursoSelecionado?.uuid])
 
     useEffect(() => {
         buscaFiqueDeOlho()
@@ -388,9 +392,12 @@ const RelatorioConsolidado = () => {
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Consolidado das PCs</h1>
             <>
-                <div className="col-12 container-texto-introdutorio mb-4 mt-3">
-                    <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
-                </div>
+                { fiqueDeOlho?.trim() && (
+                    <div className="col-12 container-texto-introdutorio mb-4 mt-3">
+                        <div dangerouslySetInnerHTML={{__html: fiqueDeOlho}}/>
+                    </div>
+                )}
+
                 <div className="page-content-inner pt-0">
                     {statusBarraDeStatus &&
                         <BarraDeStatus

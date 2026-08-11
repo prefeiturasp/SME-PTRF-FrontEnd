@@ -537,9 +537,11 @@ describe('Testes para funções de análise', () => {
     
     test('getFiqueDeOlhoPrestacoesDeContas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getFiqueDeOlhoPrestacoesDeContas();
+        const recurso_uuid = '1234';
+        const tipo_texto = 'diretorias_consolidado_pcs';
+        const result = await getFiqueDeOlhoPrestacoesDeContas(tipo_texto, recurso_uuid);
         expect(api.get).toHaveBeenCalledWith(
-            `/api/prestacoes-contas/fique-de-olho/`,
+            `/api/fique-de-olho/?tipo_texto=${tipo_texto}&recurso_uuid=${recurso_uuid}`,
             getAuthHeader()
         )
         expect(result).toEqual(mockData);
