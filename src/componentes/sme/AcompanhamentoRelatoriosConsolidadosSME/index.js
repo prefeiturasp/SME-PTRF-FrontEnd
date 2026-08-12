@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Navigate} from 'react-router-dom'
 import {getPeriodos} from "../../../services/dres/Dashboard.service";
 import {getCardRelatorios} from "../../../services/sme/DashboardSme.service"
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
+import { visoesService } from "../../../services/visoes.service";
 import {SelectPeriodo} from "./SelectPeriodo";
 import {BarraDeStatus} from "./BarraDeStatus";
 import {DashboardCard} from "./DashboardCard";
@@ -15,6 +17,7 @@ export const SmeDashboard = () => {
     const [itensDashboard, setItensDashboard] = useState(false);
     const [statusRelatorio, setStatusRelatorio] = useState(false);
     const [loading, setLoading] = useState(false);
+    const { isSME } = useUnidadeSelecionada(visoesService);
 
     useEffect(() => {
         carregaPeriodos();
@@ -28,7 +31,7 @@ export const SmeDashboard = () => {
 
     const carregaPeriodos = async () => {
         setLoading(true);
-        let periodoEncontrados = await getPeriodos();
+        let periodoEncontrados = await getPeriodos(undefined, isSME());
         setPeriodos(periodoEncontrados);
         if (periodoEncontrados && periodoEncontrados.length > 0){
             const periodoIndex = periodoEncontrados.length > 1 ? 1 : 0;
