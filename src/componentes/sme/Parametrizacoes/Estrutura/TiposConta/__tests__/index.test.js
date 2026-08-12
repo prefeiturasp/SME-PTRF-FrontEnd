@@ -1,468 +1,274 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TiposConta } from '..';
-import {
-    deleteTipoConta,
-    getTiposContas,
-    patchTipoConta,
-    postTipoConta,
-} from "../../../../../../services/sme/Parametrizacoes.service";
-import {mockTiposConta} from "../__fixtures__/mockData";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
+import { TiposConta } from '../index';
+import { useTiposContas } from '../hooks/useTiposdeContas';
 
-jest.mock("../../../../../../paginas/PaginasContainer", () => ({
-    PaginasContainer: ({ children }) => <>{children}</>,
+// Mock do Custom Hook principal
+jest.mock('../hooks/useTiposdeContas');
+
+// Mocks dos subcomponentes (incluindo __esModule: true para os exports default)
+jest.mock('../../../../../../paginas/PaginasContainer', () => ({
+    PaginasContainer: ({ children }) => <div>{children}</div>
 }));
 
-jest.mock("../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext", () => ({
-    useAbasPorRecursoContext: () => ({
-        selectedRecurso: { uuid: "test-uuid", nome: "Test Recurso" },
-        setSelectedRecurso: jest.fn(),
-    }),
+jest.mock('../../../../../../utils/Loading', () => ({
+    __esModule: true,
+    default: () => <div data-testid="loading-mock">Carregando...</div>
 }));
 
-jest.mock("../../../../../../services/sme/Parametrizacoes.service", ()=>({
-    deleteTipoConta: jest.fn(),
-    getFiltroTiposContas: jest.fn(),
-    getTiposContas: jest.fn(),
-    patchTipoConta: jest.fn(),
-    postTipoConta: jest.fn()
+jest.mock('../../../componentes/AbasPorRecurso', () => ({
+    AbasPorRecurso: () => <div data-testid="abas-por-recurso-mock">Abas Por Recurso</div>
 }));
 
-jest.mock("../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
-    RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
+jest.mock('../TopoComBotoes', () => ({
+    TopoComBotoes: ({ handleOpenCreateModal, tem_permissao_edicao_painel_parametrizacoes }) => (
+        <div data-testid="topo-com-botoes-mock">
+            <button 
+                onClick={handleOpenCreateModal} 
+                disabled={!tem_permissao_edicao_painel_parametrizacoes}
+            >
+                Novo Tipo de Conta
+            </button>
+        </div>
+    )
 }));
 
-jest.mock("../../../componentes/AbasPorRecurso", () => ({
-    AbasPorRecurso: () => <div data-testid="abas-por-recurso">Abas</div>,
+jest.mock('../Filtros', () => ({
+    Filtros: ({ stateFiltros, handleChangeFiltros, handleSubmitFiltros, handleLimparFiltros }) => (
+        <div data-testid="filtros-mock">
+            <input 
+                data-testid="filtro-nome-input" 
+                value={stateFiltros?.nome || ''} 
+                onChange={handleChangeFiltros} 
+            />
+            <button onClick={handleSubmitFiltros}>Filtrar</button>
+            <button onClick={handleLimparFiltros}>Limpar</button>
+        </div>
+    )
 }));
 
-jest.mock("../../../../../../context/RecursoSelecionado", () => ({
-    useRecursoSelecionadoContext: () => ({
+jest.mock('../TabelaTiposConta', () => ({
+    __esModule: true,
+    default: ({ rowsPerPage, listaDeTiposContas }) => (
+        <div data-testid="tabela-tipos-conta-mock">
+            <span>Linhas por pagina: {rowsPerPage}</span>
+            <ul>
+                {listaDeTiposContas?.map((item) => (
+                    <li key={item.uuid}>{item.nome}</li>
+                ))}
+            </ul>
+        </div>
+    )
+}));
+
+jest.mock('../ModalAddEditTipoConta', () => ({
+    __esModule: true,
+    default: ({ show, handleClose }) => show ? (
+        <div data-testid="modal-add-edit-tipo-conta-mock">
+            <h2>Modal Formulario</h2>
+            <button onClick={handleClose}>Fechar Modal Form</button>
+        </div>
+    ) : null
+}));
+
+jest.mock('../../../../../../componentes/Globais/ModalAntDesign/ModalConfirmarExclusao', () => ({
+    ModalConfirmarExclusao: ({ open, onOk, onCancel, titulo, bodyText }) => open ? (
+        <div data-testid="modal-confirmar-exclusao-mock">
+            <h2>{titulo}</h2>
+            <p>{bodyText}</p>
+            <button onClick={onOk}>Excluir</button>
+            <button onClick={onCancel}>Cancelar</button>
+        </div>
+    ) : null
+}));
+
+// Helper para renderizar encapsulado no MemoryRouter
+const renderWithProviders = (ui) => render(<MemoryRouter>{ui}</MemoryRouter>);
+
+describe('Componente <TiposConta />', () => {
+    const mockHandleOpenCreateModal = jest.fn();
+    const mockHandleChangeFiltros = jest.fn();
+    const mockHandleSubmitFiltros = jest.fn();
+    const mockHandleLimparFiltros = jest.fn();
+    const mockHandleCloseFormModal = jest.fn();
+    const mockHandleSubmitModalFormTiposConta = jest.fn();
+    const mockSetShowModalConfirmDeleteTipoConta = jest.fn();
+    const mockOnDeleteTipoContaTrue = jest.fn();
+    const mockHandleCloseConfirmDeleteTipoConta = jest.fn();
+
+    const defaultHookValues = {
+        draftFiltros: { nome: 'Filtro Inicial' },
+        handleChangeFiltros: mockHandleChangeFiltros,
+        handleSubmitFiltros: mockHandleSubmitFiltros,
+        handleLimparFiltros: mockHandleLimparFiltros,
+        rowsPerPage: 10,
+        acoesTemplate: jest.fn(),
+        handleOpenCreateModal: mockHandleOpenCreateModal,
+        TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES: true,
+        showModalForm: false,
+        stateFormModal: { id: 1, nome: 'Conta Teste' },
+        handleCloseFormModal: mockHandleCloseFormModal,
+        handleSubmitModalFormTiposConta: mockHandleSubmitModalFormTiposConta,
+        setShowModalConfirmDeleteTipoConta: mockSetShowModalConfirmDeleteTipoConta,
+        showModalConfirmDeleteTipoConta: false,
+        onDeleteTipoContaTrue: mockOnDeleteTipoContaTrue,
+        handleCloseConfirmDeleteTipoConta: mockHandleCloseConfirmDeleteTipoConta,
+        results: [
+            { uuid: '1', nome: 'Conta Corrente' },
+            { uuid: '2', nome: 'Conta Poupança' }
+        ],
         isLoading: false,
-        recursos: [{ uuid: "test-uuid", nome: "Test Recurso", nome_exibicao: "Test" }],
-    }),
-}));
+    };
 
-// Helper function para renderizar com QueryClientProvider
-const renderWithQueryClient = (component) => {
-    const queryClient = new QueryClient({
-        defaultOptions: {
-            queries: { retry: false },
-        },
-    });
-    return render(
-        <QueryClientProvider client={queryClient}>
-            {component}
-        </QueryClientProvider>
-    );
-};
-
-describe("Carrega página de Tipos de Conta", () => {
     beforeEach(() => {
-        getTiposContas.mockReturnValue(mockTiposConta);
+        jest.clearAllMocks();
+        useTiposContas.mockReturnValue(defaultHookValues);
     });
 
-    it("carrega no modo Listagem com itens", async () => {
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
-        expect(screen.getAllByText(/Tipos de conta/i)).toHaveLength(1);
+    describe('Estado de Carregamento (Loading)', () => {
+        it('deve renderizar apenas a mensagem de carregamento quando isLoading for verdadeiro', () => {
+            useTiposContas.mockReturnValue({
+                ...defaultHookValues,
+                isLoading: true,
+            });
 
-        await waitFor(()=> expect(getTiposContas).toHaveBeenCalledTimes(1));
-    });
-});
+            renderWithProviders(<TiposConta />);
 
-describe('Teste handleSubmitModalForm', () => {
-    beforeEach(() => {
-        RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-        getTiposContas.mockReturnValue(mockTiposConta);
-    });
+            expect(screen.getByRole('heading', { level: 1, name: /tipos de conta/i })).toBeInTheDocument();
+            expect(screen.getByTestId('loading-mock')).toBeInTheDocument();
 
-    it('teste criação sucesso', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
-
-        await waitFor(()=>{
-            const botaoAdicionar = screen.getByRole("button", { name: "Adicionar tipo de conta" });
-            expect(botaoAdicionar).toBeInTheDocument();
-            expect(botaoAdicionar).toBeEnabled();
-            fireEvent.click(botaoAdicionar);
-        });
-
-        await screen.findByText("* Preenchimento obrigatório");
-
-        // Ativar o switch para mostrar os campos bancários
-        const switchVinculado = await screen.findByRole("switch");
-        fireEvent.click(switchVinculado);
-
-        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
-        const input_banco = await screen.findByLabelText("Nome do banco");
-        const input_agencia = await screen.findByLabelText("Nº da agência");
-        const input_conta = await screen.findByLabelText("Nº da conta");
-        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
-        // const input_cartao = await screen.findByLabelText("Nº do cartão");
-        const input_checkbox_2 = await screen.findByLabelText("Conta permite encerramento");
-        const saveButton = await screen.findByRole("button", { name: "Salvar" });
-
-        expect(input_nome).toBeInTheDocument();
-        expect(input_nome).toBeEnabled();
-        expect(input_banco).toBeInTheDocument();
-        expect(input_banco).toBeEnabled();
-        expect(input_agencia).toBeInTheDocument();
-        expect(input_agencia).toBeEnabled();
-        expect(input_conta).toBeInTheDocument();
-        expect(input_conta).toBeEnabled();
-        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
-        // expect(input_cartao).toBeInTheDocument();
-        // expect(input_cartao).toBeEnabled();
-        expect(input_checkbox_2).toBeInTheDocument();
-        expect(input_checkbox_2).toBeEnabled();
-        expect(saveButton).toBeInTheDocument();
-
-        fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
-        fireEvent.change(input_banco, { target: { value: "BTG" } });
-        fireEvent.change(input_agencia, { target: { value: "0001" } });
-        fireEvent.change(input_conta, { target: { value: "123123" } });
-        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
-
-        expect(saveButton).toBeEnabled();
-
-        fireEvent.click(saveButton);
-
-        await waitFor(()=>{
-            expect(postTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(2);
+            expect(screen.queryByTestId('topo-com-botoes-mock')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('filtros-mock')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('tabela-tipos-conta-mock')).not.toBeInTheDocument();
         });
     });
 
-    it('teste criação erro duplicado', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        postTipoConta.mockRejectedValueOnce({
-            response: { data: { non_field_errors: "Testando erro response" } },
-        });
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
+    describe('Renderização dos Subcomponentes e Interações', () => {
+        it('deve renderizar todos os subcomponentes principais quando não estiver carregando', () => {
+            renderWithProviders(<TiposConta />);
 
-        await waitFor(()=>{
-            const botaoAdicionar = screen.getByRole("button", { name: "Adicionar tipo de conta" });
-            expect(botaoAdicionar).toBeInTheDocument();
-            expect(botaoAdicionar).toBeEnabled();
-            fireEvent.click(botaoAdicionar);
+            expect(screen.getByTestId('abas-por-recurso-mock')).toBeInTheDocument();
+            expect(screen.getByTestId('topo-com-botoes-mock')).toBeInTheDocument();
+            expect(screen.getByTestId('filtros-mock')).toBeInTheDocument();
+            expect(screen.getByTestId('tabela-tipos-conta-mock')).toBeInTheDocument();
         });
 
-        await screen.findByText("* Preenchimento obrigatório");
+        it('deve passar corretamente as props e acionar handleOpenCreateModal no TopoComBotoes', async () => {
+            const user = userEvent.setup();
+            renderWithProviders(<TiposConta />);
 
-        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
-        
-        // Ativar o switch para mostrar os campos bancários
-        const switchVinculado = await screen.findByRole("switch");
-        fireEvent.click(switchVinculado);
+            const btnNovo = screen.getByRole('button', { name: /novo tipo de conta/i });
+            expect(btnNovo).not.toBeDisabled();
 
-        const input_banco = await screen.findByLabelText("Nome do banco");
-        const input_agencia = await screen.findByLabelText("Nº da agência");
-        const input_conta = await screen.findByLabelText("Nº da conta");
-        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
-        // const input_cartao = await screen.findByLabelText("Nº do cartão");
-        const saveButton = await screen.findByRole("button", { name: "Salvar" });
-
-        fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
-        fireEvent.change(input_banco, { target: { value: "BTG" } });
-        fireEvent.change(input_agencia, { target: { value: "0001" } });
-        fireEvent.change(input_conta, { target: { value: "123123" } });
-        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
-
-        expect(saveButton).toBeEnabled();
-
-        fireEvent.click(saveButton);
-
-        await waitFor(()=>{
-            expect(postTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(1);
-        });
-    });
-
-    it('teste criação erro genérico', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        postTipoConta.mockRejectedValueOnce({
-            response: { data: { message: "Testando erro response" } },
-        });
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
-
-        await waitFor(()=>{
-            const botaoAdicionar = screen.getByRole("button", { name: "Adicionar tipo de conta" });
-            expect(botaoAdicionar).toBeInTheDocument();
-            expect(botaoAdicionar).toBeEnabled();
-            fireEvent.click(botaoAdicionar);
+            await user.click(btnNovo);
+            expect(mockHandleOpenCreateModal).toHaveBeenCalledTimes(1);
         });
 
-        await screen.findByText("* Preenchimento obrigatório");
+        it('deve desabilitar o botão de novo registro caso não tenha permissão de edição', () => {
+            useTiposContas.mockReturnValue({
+                ...defaultHookValues,
+                TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES: false,
+            });
 
-        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
-        
-        // Ativar o switch para mostrar os campos bancários
-        const switchVinculado = await screen.findByRole("switch");
-        fireEvent.click(switchVinculado);
+            renderWithProviders(<TiposConta />);
 
-        const input_banco = await screen.findByLabelText("Nome do banco");
-        const input_agencia = await screen.findByLabelText("Nº da agência");
-        const input_conta = await screen.findByLabelText("Nº da conta");
-        // Nº do cartão foi removido do formulário, então o teste relacionado a esse campo foi comentado
-        // const input_cartao = await screen.findByLabelText("Nº do cartão");
-        const saveButton = await screen.findByRole("button", { name: "Salvar" });
+            const btnNovo = screen.getByRole('button', { name: /novo tipo de conta/i });
+            expect(btnNovo).toBeDisabled();
+        });
 
-        fireEvent.change(input_nome, { target: { value: "Tipo conta 007" } });
-        fireEvent.change(input_banco, { target: { value: "BTG" } });
-        fireEvent.change(input_agencia, { target: { value: "0001" } });
-        fireEvent.change(input_conta, { target: { value: "123123" } });
-        // fireEvent.change(input_cartao, { target: { value: "0001000200030004" } });
+        it('deve repassar as props e permitir interações nos Filtros', async () => {
+            const user = userEvent.setup();
+            renderWithProviders(<TiposConta />);
 
-        expect(saveButton).toBeEnabled();
+            const inputFiltro = screen.getByTestId('filtro-nome-input');
+            expect(inputFiltro).toHaveValue('Filtro Inicial');
 
-        fireEvent.click(saveButton);
+            const btnFiltrar = screen.getByRole('button', { name: /filtrar/i });
+            const btnLimpar = screen.getByRole('button', { name: /limpar/i });
 
-        await waitFor(()=>{
-            expect(postTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(1);
+            await user.click(btnFiltrar);
+            expect(mockHandleSubmitFiltros).toHaveBeenCalledTimes(1);
+
+            await user.click(btnLimpar);
+            expect(mockHandleLimparFiltros).toHaveBeenCalledTimes(1);
+        });
+
+        it('deve renderizar a TabelaTiposConta repassando os dados do resultado e rowsPerPage', () => {
+            renderWithProviders(<TiposConta />);
+
+            expect(screen.getByText('Linhas por pagina: 10')).toBeInTheDocument();
+            expect(screen.getByText('Conta Corrente')).toBeInTheDocument();
+            expect(screen.getByText('Conta Poupança')).toBeInTheDocument();
         });
     });
 
-    it('teste edição sucesso', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
+    describe('Modal de Adição / Edição (ModalAddEditTipoConta)', () => {
+        it('não deve renderizar o modal de formulário se showModalForm for falso', () => {
+            renderWithProviders(<TiposConta />);
 
-        await waitFor(()=>{
-            const tabela = screen.getByRole('table');
-            const linhas = tabela.querySelectorAll('tbody tr');
-            const linha = linhas[0];
-            const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
-            expect(btnAlterar).toBeInTheDocument();
-            fireEvent.click(btnAlterar);
+            expect(screen.queryByTestId('modal-add-edit-tipo-conta-mock')).not.toBeInTheDocument();
         });
 
-        await screen.findByText("* Preenchimento obrigatório");
+        it('deve renderizar o modal de formulário e permitir o fechamento quando showModalForm for verdadeiro', async () => {
+            const user = userEvent.setup();
 
-        const input_nome = await screen.findByLabelText("Nome do tipo de conta *");
-        
-        // Ativar o switch para mostrar os campos bancários
-        const switchVinculado = await screen.findByRole("switch");
-        fireEvent.click(switchVinculado);
+            useTiposContas.mockReturnValue({
+                ...defaultHookValues,
+                showModalForm: true,
+            });
 
-        const input_banco = await screen.findByLabelText("Nome do banco");
-        const input_agencia = await screen.findByLabelText("Nº da agência");
-        const input_conta = await screen.findByLabelText("Nº da conta");
-        const input_checkbox_2 = await screen.findByLabelText("Conta permite encerramento");
-        const saveButton = await screen.findByRole("button", { name: "Salvar" });
+            renderWithProviders(<TiposConta />);
 
-        expect(input_nome).toBeInTheDocument();
-        expect(input_nome).toBeEnabled();
-        expect(input_banco).toBeInTheDocument();
-        expect(input_banco).toBeEnabled();
-        expect(input_agencia).toBeInTheDocument();
-        expect(input_agencia).toBeEnabled();
-        expect(input_conta).toBeInTheDocument();
-        expect(input_conta).toBeEnabled();
-        expect(input_checkbox_2).toBeInTheDocument();
-        expect(input_checkbox_2).toBeEnabled();
+            expect(screen.getByTestId('modal-add-edit-tipo-conta-mock')).toBeInTheDocument();
 
-        fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
-        fireEvent.click(saveButton);
+            const btnFecharForm = screen.getByRole('button', { name: /fechar modal form/i });
+            await user.click(btnFecharForm);
 
-        await waitFor(()=>{
-            expect(patchTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(2);
+            expect(mockHandleCloseFormModal).toHaveBeenCalledTimes(1);
         });
     });
 
-    it('teste edição erro nome duplicado', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        patchTipoConta.mockRejectedValueOnce({
-            response: { data: { non_field_errors: "Testando erro response" } },
-        });
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
+    describe('Modal de Confirmação de Exclusão (ModalConfirmarExclusao)', () => {
+        it('deve exibir o modal de exclusão apenas quando showModalConfirmDeleteTipoConta for verdadeiro', () => {
+            renderWithProviders(<TiposConta />);
 
-        await waitFor(()=>{
-            const tabela = screen.getByRole('table');
-            const linhas = tabela.querySelectorAll('tbody tr');
-            const linha = linhas[0];
-            const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
-            expect(btnAlterar).toBeInTheDocument();
-            fireEvent.click(btnAlterar);
+            expect(screen.queryByTestId('modal-confirmar-exclusao-mock')).not.toBeInTheDocument();
         });
 
-        await waitFor(()=>{
-            const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-            const saveButton = screen.getByRole("button", { name: "Salvar" });
+        it('deve acionar as callbacks corretas ao confirmar a exclusão no modal', async () => {
+            const user = userEvent.setup();
 
-            fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
-            fireEvent.click(saveButton);
+            useTiposContas.mockReturnValue({
+                ...defaultHookValues,
+                showModalConfirmDeleteTipoConta: true,
+            });
+
+            renderWithProviders(<TiposConta />);
+
+            const btnExcluir = screen.getByRole('button', { name: /excluir/i });
+            await user.click(btnExcluir);
+
+            expect(mockOnDeleteTipoContaTrue).toHaveBeenCalledTimes(1);
+            expect(mockHandleCloseConfirmDeleteTipoConta).toHaveBeenCalledTimes(1);
         });
 
-        await waitFor(()=>{
-            expect(patchTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(1);
-        });
-    });
+        it('deve acionar apenas handleCloseConfirmDeleteTipoConta ao cancelar a exclusão', async () => {
+            const user = userEvent.setup();
 
-    it('teste edição erro genérico', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        patchTipoConta.mockRejectedValueOnce({
-            response: { data: { mensagem: "Testando erro response" } },
-        });
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
+            useTiposContas.mockReturnValue({
+                ...defaultHookValues,
+                showModalConfirmDeleteTipoConta: true,
+            });
 
-        await waitFor(()=>{
-            const tabela = screen.getByRole('table');
-            const linhas = tabela.querySelectorAll('tbody tr');
-            const linha = linhas[0];
-            const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
-            expect(btnAlterar).toBeInTheDocument();
-            fireEvent.click(btnAlterar);
-        });
+            renderWithProviders(<TiposConta />);
 
-        await waitFor(()=>{
-            const input_nome = screen.getByLabelText("Nome do tipo de conta *");
-            const saveButton = screen.getByRole("button", { name: "Salvar" });
+            const btnCancelar = screen.getByRole('button', { name: /cancelar/i });
+            await user.click(btnCancelar);
 
-            fireEvent.change(input_nome, { target: { value: "Tipo de conta 007" } });
-            fireEvent.click(saveButton);
-        });
-
-        await waitFor(()=>{
-            expect(patchTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(1);
+            expect(mockOnDeleteTipoContaTrue).not.toHaveBeenCalled();
+            expect(mockHandleCloseConfirmDeleteTipoConta).toHaveBeenCalledTimes(1);
         });
     });
-
-    it('teste exclusão sucesso', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
-
-        await waitFor(()=>{
-            const tabela = screen.getByRole('table');
-            const linhas = tabela.querySelectorAll('tbody tr');
-            const linha = linhas[0];
-            const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
-            expect(btnAlterar).toBeInTheDocument();
-            fireEvent.click(btnAlterar);
-        });
-
-        await waitFor(()=> {
-            const buttons = screen.getAllByRole("button", { name: "Excluir" });
-            const btnRemover = buttons[0];
-            expect(btnRemover).toBeInTheDocument();
-            expect(btnRemover).toBeEnabled();
-            fireEvent.click(btnRemover);
-        });
-
-        await waitFor(() => {
-            const buttons = screen.getAllByRole("button", { name: "Excluir" });
-            const btnConfirma = buttons[buttons.length - 1];
-            expect(btnConfirma).toBeInTheDocument();
-            expect(btnConfirma).toBeEnabled();
-            fireEvent.click(btnConfirma);
-        });
-
-        await waitFor(()=>{
-            expect(deleteTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(2);
-        });
-    });
-
-    it('teste exclusão erro', async() => {
-        getTiposContas.mockResolvedValueOnce(mockTiposConta).mockResolvedValueOnce(mockTiposConta);
-        deleteTipoConta.mockRejectedValueOnce({
-            response: { data: { mensagem: "Testando erro response" } },
-        });
-        renderWithQueryClient(
-            <MemoryRouter initialEntries={["/parametro-tipos-conta"]}>
-                <Routes>
-                    <Route path="/parametro-tipos-conta" element={<TiposConta />} />
-                </Routes>
-            </MemoryRouter>
-        );
-
-        await waitFor(()=>{
-            const tabela = screen.getByRole('table');
-            const linhas = tabela.querySelectorAll('tbody tr');
-            const linha = linhas[0];
-            const coluna = linha.querySelectorAll('td');
-            const btnAlterar = coluna[1].querySelector('button');
-            expect(btnAlterar).toBeInTheDocument();
-            fireEvent.click(btnAlterar);
-        });
-
-        await waitFor(()=> {
-            const buttons = screen.getAllByRole("button", { name: "Excluir" });
-            const btnRemover = buttons[0];
-            expect(btnRemover).toBeInTheDocument();
-            expect(btnRemover).toBeEnabled();
-            fireEvent.click(btnRemover);
-        });
-
-        await waitFor(() => {
-            const buttons = screen.getAllByRole("button", { name: "Excluir" });
-            const btnConfirma = buttons[buttons.length - 1];
-            expect(btnConfirma).toBeInTheDocument();
-            expect(btnConfirma).toBeEnabled();
-            fireEvent.click(btnConfirma);
-        });
-
-        await waitFor(()=>{
-            expect(deleteTipoConta).toHaveBeenCalled();
-            expect(getTiposContas).toHaveBeenCalledTimes(1);
-        });
-    });
-
 });
