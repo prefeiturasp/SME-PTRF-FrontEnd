@@ -15,7 +15,7 @@ export const usePatchTiposDeConta = (setShowModalForm) => {
             toastCustom.ToastCustomSuccess('Edição do tipo de conta realizada com sucesso.', 'O tipo de conta foi editado no sistema com sucesso.')
         },
         onError: (e) => {
-            if (e.response.data && e.response.data.non_field_errors) {
+            if (e.response?.data?.non_field_errors) {
                 toastCustom.ToastCustomError('Erro ao editar tipo de conta.', e.response.data.non_field_errors)
             } else {
                 toastCustom.ToastCustomError('Erro ao editar tipo de conta.', 'Houve um erro ao tentar editar o tipo de conta.')
