@@ -19,6 +19,10 @@ export const getPeriodos = async (parameters = {}) => {
         params.append('dre_uuid', parameters.dre_uuid);
     }
 
+    if (parameters.recurso_uuid) {
+        params.append('recurso_uuid', parameters.recurso_uuid);
+    }
+
     const paramsToString = params.toString() ? `?${params.toString()}` : '';
 
     return (await api.get(`/api/periodos/${paramsToString}`, authHeader())).data

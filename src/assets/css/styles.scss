@@ -36,7 +36,7 @@ body {
 
   .btn-primary {
     background-color: var(--color-primary);
-    border-color: var(--color-primary);    
+    border-color: var(--color-primary);
   }
 
   .btn-disabled {
@@ -54,6 +54,10 @@ body {
     color: #fff;
     background-color: $corBtnSuccess;
     border-color: $corBtnSuccess;
+  }
+
+.btn-outline-success:hover svg {
+    color: #fff !important;
   }
 
   hr {
@@ -78,6 +82,20 @@ body {
     color: #fff;
     background-color: var(--color-fallback);
     border-color: var(--color-fallback);
+  }
+
+  .btn-text-danger {
+    color: var(--color-danger);
+    background-color: transparent;
+    border: none;
+  }
+
+  .btn-text-danger svg {
+    color: var(--color-danger);
+  }
+
+  .btn-text-danger:hover {
+    background-color: #b800000f;
   }
 
   /* ---------------------------------------------------

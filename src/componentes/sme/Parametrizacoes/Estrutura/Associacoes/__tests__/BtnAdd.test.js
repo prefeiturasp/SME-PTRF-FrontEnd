@@ -1,91 +1,45 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { BtnAddAssociacoes } from '../BtnAddAssociacoes';
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { BtnAddAssociacoes } from "../components/BtnAddAssociacoes";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { useNavigate } from "react-router-dom";
 
-jest.mock('../../../../Parametrizacoes/RetornaSeTemPermissaoEdicaoPainelParametrizacoes', () => ({
+jest.mock("../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes", () => ({
   RetornaSeTemPermissaoEdicaoPainelParametrizacoes: jest.fn(),
 }));
 
-const mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes = require('../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes').RetornaSeTemPermissaoEdicaoPainelParametrizacoes;
+jest.mock("react-router-dom", () => ({
+  useNavigate: jest.fn(),
+}));
 
-describe('Componente BtnAdd', () => {
-  it('deve renderizar o botão com o texto e ícone corretamente', () => {
-    mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+jest.mock("../../../../../Globais/UI/Button", () => ({
+  IconButton: ({ label, onClick, disabled }) => (
+    <button type="button" onClick={onClick} disabled={disabled}>{label}</button>
+  ),
+}));
 
-    const mockSetShowModalForm = jest.fn();
-    const mockSetStateFormModal = jest.fn();
+describe("BtnAddAssociacoes", () => {
+  const navigate = jest.fn();
 
-    render(
-      <BtnAddAssociacoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={mockSetShowModalForm}
-        initialStateFormModal={{}}
-        setStateFormModal={mockSetStateFormModal}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /Adicionar associação/i });
-    expect(button).toBeInTheDocument();
-    expect(screen.getByText('faPlusMock')).toBeInTheDocument();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useNavigate.mockReturnValue(navigate);
   });
 
-  it('deve habilitar o botão quando houver permissão', () => {
-    mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+  it("permite acessar o formulario para usuarios com permissao", () => {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
+    render(<BtnAddAssociacoes />);
 
-    render(
-      <BtnAddAssociacoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={() => {}}
-        initialStateFormModal={{}}
-        setStateFormModal={() => {}}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /Adicionar associação/i });
-    expect(button).not.toBeDisabled();
-  });
-
-  it('deve desabilitar o botão quando não houver permissão', () => {
-    mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
-
-    render(
-      <BtnAddAssociacoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={() => {}}
-        initialStateFormModal={{}}
-        setStateFormModal={() => {}}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /Adicionar associação/i });
-    expect(button).toBeDisabled();
-  });
-
-  it('deve chamar as funções de callback ao clicar no botão', () => {
-    mockRetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(true);
-
-    const mockSetShowModalForm = jest.fn();
-    const mockSetStateFormModal = jest.fn();
-    const mockInitialStateFormModal = { example: 'value' };
-
-    render(
-      <BtnAddAssociacoes
-        FontAwesomeIcon={({ icon }) => <span>{icon}</span>}
-        faPlus="faPlusMock"
-        setShowModalForm={mockSetShowModalForm}
-        initialStateFormModal={mockInitialStateFormModal}
-        setStateFormModal={mockSetStateFormModal}
-      />
-    );
-
-    const button = screen.getByRole('button', { name: /Adicionar associação/i });
+    const button = screen.getByRole("button", { name: "Adicionar Associação" });
+    expect(button).toBeEnabled();
     fireEvent.click(button);
+    expect(navigate).toHaveBeenCalledWith("/formulario-associacao");
+  });
 
-    expect(mockSetStateFormModal).toHaveBeenCalledWith(mockInitialStateFormModal);
-    expect(mockSetShowModalForm).toHaveBeenCalledWith(true);
+  it("fica desabilitado para usuarios sem permissao", () => {
+    RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(false);
+    render(<BtnAddAssociacoes />);
+
+    expect(screen.getByRole("button", { name: "Adicionar Associação" })).toBeDisabled();
   });
 });

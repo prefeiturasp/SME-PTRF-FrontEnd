@@ -139,6 +139,7 @@ import { FEATURE_FLAGS } from "../constantes/featureFlags";
 import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametrizacoes/Dre/MotivosReprovacaoPc";
 import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametrizacoes/Receitas/DetalhesTiposCredito";
 import { ParametrizacoesComissoes } from "../componentes/sme/Parametrizacoes/Dre/Comissoes";
+import { FormualarioAssociacao } from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes/FormualarioAssociacao";
 
 const routesConfig = [
   {
@@ -523,6 +524,12 @@ const routesConfig = [
     exact: true,
     path: "/parametro-associacoes",
     component: Associacoes,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/formulario-associacao/:uuid?",
+    component: FormualarioAssociacao,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
@@ -974,8 +981,8 @@ const PrivateRoute = ({ element, permissoes, featureFlag }) => {
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;
   }
-  
-  if (location.pathname !== "/seleciona-recurso" && mostrarOverlaySelecionarRecursos 
+
+  if (location.pathname !== "/seleciona-recurso" && mostrarOverlaySelecionarRecursos
       && visoesService.featureFlagAtiva(FEATURE_FLAGS.PREMIO_EXCELENCIA)) {
     return <Navigate to="/seleciona-recurso" replace />;
   }
