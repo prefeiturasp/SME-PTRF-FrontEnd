@@ -137,7 +137,7 @@ export function InputsPeriodosIniciais({
 
                                         <div
                                             data-tooltip-html={
-                                            props.values.pode_editar_periodo_inicial && !props.values.pode_editar_periodo_inicial?.pode_editar_periodo_inicial
+                                            props.values.pode_editar_periodo_inicial && !props.values.pode_editar_periodo_inicial?.pode_editar_periodo_inicial && props.values.pode_editar_periodo_inicial?.mensagem_pode_editar_periodo_inicial?.length > 0
                                                 ? props.values.pode_editar_periodo_inicial?.mensagem_pode_editar_periodo_inicial?.reduce((hint, text) => (hint + `${text}<br/>`), '<p>') + '</p>'
                                                 : ''
                                             } style={{display:'inline'}} data-tooltip-id={`tooltip-id-${props.values.uuid}`}
