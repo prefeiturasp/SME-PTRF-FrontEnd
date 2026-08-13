@@ -6,6 +6,8 @@ import {faEye} from "@fortawesome/free-solid-svg-icons";
 import { getPeriodos } from "../../../../services/dres/Dashboard.service";
 import { getTabelaAssociacoes } from "../../../../services/sme/Parametrizacoes.service";
 import { getListaRelatoriosConsolidados } from "../../../../services/sme/DashboardSme.service";
+import useUnidadeSelecionada from "../../../../hooks/Globais/useUnidadeSelecionada";
+import { visoesService } from "../../../../services/visoes.service";
 
 import { PaginasContainer } from "../../../../paginas/PaginasContainer";
 import { Cabecalho } from "./Cabecalho";
@@ -18,6 +20,7 @@ import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecio
 
 export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
     const { textDocumentConsolidadoPC } = useRecursoSelecionadoContext()
+    const { isSME } = useUnidadeSelecionada(visoesService);
 
     const text_consolidado_type = textDocumentConsolidadoPC?.normal("capitalize")
 
@@ -41,7 +44,7 @@ export const AcompanhamentoRelatorioConsolidadosSmeListagem = () => {
     const [loading, setLoading] = useState(true);
 
     const carregaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodos();
+        let periodos = await getPeriodos(undefined, isSME());
         setPeriodos(periodos);
         if (periodo_uuid) {
             setPeriodoEscolhido(periodo_uuid)
