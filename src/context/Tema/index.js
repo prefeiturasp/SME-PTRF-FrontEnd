@@ -52,7 +52,7 @@ export const ThemeProvider = ({ children }) => {
   const antdTheme = {
     token: {
       borderRadius: 4,
-      colorError: "rgba(184, 0, 0, 1)",
+      colorError: "#b80000",
     },
     components: {
       Alert: {
@@ -98,6 +98,7 @@ export const ThemeProvider = ({ children }) => {
         "--color-primary": color,
         "--color-primary-darker": `${darkenColor(color, 0.2)}`,
         "--color-primary-lighten": `${lightenColor(color, 0.2)}`,
+        "--color-danger": antdTheme.token.colorError,
       },
     };
 

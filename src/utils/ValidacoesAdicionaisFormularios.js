@@ -9,11 +9,6 @@ import {metodosAuxiliares} from "../componentes/escolas/Despesas/metodosAuxiliar
 export const YupSignupSchemaAssociacoes  = yup.object().shape({
   nome: yup.string().required("Nome é obrigatório"),
   codigo_eol_unidade: yup.string().required("Código EOL da unidade é obrigatório"),
-  periodo_inicial: yup.string().test('test-name', 'Período inicial é obrigatório',
-      function (value) {
-        return !(value === undefined || value === null || value === "");
-
-      }),
   cnpj: yup.string()
   .test('test-name', 'Digite um CNPJ Válido',
       function (value) {
@@ -199,7 +194,7 @@ export const periodoFechado = async (data, setReadOnlyBtnAcao, setShowPeriodoFec
   }
 }
 
-export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral) =>{  
+export const periodoFechadoImposto = async (despesas_impostos, setReadOnlyBtnAcao, setShowPeriodoFechadoImposto, setReadOnlyCamposImposto, setDisableBtnAdicionarImposto, onShowErroGeral) =>{
   for(let despesa_imposto = 0; despesa_imposto <= despesas_impostos.length-1; despesa_imposto++){
     if(despesas_impostos[despesa_imposto].data_transacao){
       let data = moment(despesas_impostos[despesa_imposto].data_transacao, "YYYY-MM-DD").format("YYYY-MM-DD");
@@ -807,10 +802,10 @@ export const valida_cpf_exportado = ( valor ) => {
 
 export const apenasNumero = (valor) => {
 	const re = /^[0-9\b]+$/;
-	
+
 	if (valor === '' || re.test(valor)) {
 		return true;
-		
+
 	}
 	return false;
 }
@@ -818,15 +813,15 @@ export const apenasNumero = (valor) => {
 export const formataNomeDRE = (nome_dre) => {
   if(nome_dre !== ""){
     nome_dre = nome_dre.toUpperCase();
-    
+
     if(nome_dre.indexOf("DIRETORIA REGIONAL DE EDUCACAO") !== -1){
       nome_dre = nome_dre.replace("DIRETORIA REGIONAL DE EDUCACAO", "");
       nome_dre = nome_dre.trim();
-      
+
       return nome_dre;
     }
   }
-  
+
 
   return nome_dre;
 }

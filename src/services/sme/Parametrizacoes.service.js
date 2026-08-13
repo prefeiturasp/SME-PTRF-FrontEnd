@@ -456,16 +456,38 @@ export const getAssociacoes = async (recurso_uuid = '') => {
 };
 
 export const getParametrizacoesAssociacoes = async (
-  page,
-  tipo_unidade,
-  unidade__dre__uuid,
-  nome,
-  informacoes
+  page=1,
+  tipo_unidade=undefined,
+  unidade__dre__uuid=undefined,
+  nome=undefined,
+  informacoes=undefined,
+  recurso_uuid=undefined
 ) => {
+    const params = new URLSearchParams({ page, page_size: 10 });
+
+    if (tipo_unidade) {
+        params.set('unidade__tipo_unidade', tipo_unidade);
+    }
+    if (unidade__dre__uuid) {
+        params.set('unidade__dre__uuid', unidade__dre__uuid);
+    }
+    if (nome) {
+        params.set('nome', nome);
+    }
+    if (informacoes) {
+        params.set('filtro_informacoes', informacoes);
+    }
+    if (recurso_uuid) {
+        params.set('recurso_uuid', recurso_uuid);
+    }
+
   return (
     await api.get(
-      `/api/parametrizacoes-associacoes/?page=${page}&page_size=${20}&unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}&filtro_informacoes=${informacoes}`,
-      authHeader()
+      `/api/parametrizacoes-associacoes/`,
+      {
+        ...authHeader(),
+        params
+      }
     )
   ).data;
 };
@@ -493,6 +515,22 @@ export const getUnidadePeloCodigoEol = async (codigo_eol_unidade) => {
   return (
     await api.get(
       `/api/associacoes/eol/?codigo_eol=${codigo_eol_unidade}`,
+      authHeader()
+    )
+  ).data;
+};
+export const verifyCNPJexistente = async (cnpj) => {
+  return (
+    await api.get(
+      `/api/associacoes/verifica-cnpj-existente/?cnpj=${cnpj}`,
+      authHeader()
+    )
+  ).data;
+};
+export const getOpcoesStatusValoresReprogramados = async (cnpj) => {
+  return (
+    await api.get(
+      '/api/associacoes/opcoes-status-valores-reprogramados/',
       authHeader()
     )
   ).data;
