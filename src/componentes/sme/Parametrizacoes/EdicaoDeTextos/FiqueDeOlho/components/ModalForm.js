@@ -67,6 +67,7 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                         name="tipo_texto"
                                         id="tipo_texto"
                                         required
+                                        disabled={Boolean(values.id)}
                                     >
                                         <option data-qa="option-recurso-vazio" value=''>Selecione um tipo de texto</option>
                                         {
