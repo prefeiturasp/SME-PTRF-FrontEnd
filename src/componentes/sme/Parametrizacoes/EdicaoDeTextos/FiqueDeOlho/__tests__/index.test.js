@@ -197,7 +197,7 @@ describe("Carrega página fique de olho", () => {
             expect(patchFiqueDeOlho).toHaveBeenCalledTimes(1);
 
             expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-                "Erro ao atualizar o fique de olho",
+                "Erro ao atualizar o texto do fique de olho",
                 "Erro 007"
             );
         });
