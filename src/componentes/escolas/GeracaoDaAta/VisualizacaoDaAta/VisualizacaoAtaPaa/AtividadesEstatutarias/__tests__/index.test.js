@@ -10,6 +10,7 @@ jest.mock("../../../../../Paa/componentes/TagRetificacao", () => ({
 describe("AtividadesEstatutarias Component", () => {
   const mockFormatarMesAno = jest.fn((data) => `Formated_Month_${data}`);
   const mockFormatarData = jest.fn((data) => `Formated_Date_${data}`);
+  const mockGetPeriodoPaaFormatado = jest.fn();
 
   const atividadesMock = [
     {
@@ -59,10 +60,15 @@ describe("AtividadesEstatutarias Component", () => {
     isLoading: false,
     formatarMesAno: mockFormatarMesAno,
     formatarData: mockFormatarData,
+    getPeriodoPaaFormatado: mockGetPeriodoPaaFormatado,
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockGetPeriodoPaaFormatado.mockReturnValue(
+      '1º de janeiro de 2026 a 31 de dezembro de 2026'
+    );
   });
 
   it("deve renderizar o título principal e os cabeçalhos da tabela corretamente", () => {
@@ -85,6 +91,19 @@ describe("AtividadesEstatutarias Component", () => {
     render(<AtividadesEstatutarias {...defaultProps} paaRetificacao={true} isLoading={true} />);
 
     expect(screen.queryByTestId("tag-retificacao")).not.toBeInTheDocument();
+  });
+
+
+  it('deve exibir o texto de apresentação quando for ata apresentação', async () => {
+    render(<AtividadesEstatutarias {...defaultProps} paaRetificacao={false} isLoading={false} />);
+
+    expect(await screen.findByText('Foi apresentado o seguinte cronograma para as atividades de 1º de janeiro de 2026 a 31 de dezembro de 2026:')).toBeInTheDocument();
+  });
+
+  it('deve exibir o texto de apresentação quando for ata de retificação', async () => {
+    render(<AtividadesEstatutarias {...defaultProps} paaRetificacao={true} isLoading={false} />);
+
+    expect(await screen.findByText('Foi apresentado o seguinte cronograma para as atividades de 1º de janeiro de 2026 a 31 de dezembro de 2026:')).toBeInTheDocument();
   });
 
   it("deve renderizar TODAS as atividades quando as condições padrão forem atendidas", () => {

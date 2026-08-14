@@ -110,16 +110,12 @@ export const VisualizacaoAtaPaa = () => {
             </Spin>
           </span>
         )}
-        
+
         {!isLoadingPrioridades && prioridadesAgrupadas && !paaRetificacao && !isLoading ? (
           <BlocoPrioridadesElaboracao prioridadesAgrupadas={prioridadesAgrupadas} />
         ) : (
           <BlocoPrioridadesRetificacao prioridadesAgrupadas={prioridadesAgrupadas} />
         )}
-
-        <div className="col-12 mt-4">
-          <p>Foi apresentado o seguinte cronograma para as atividades de {getPeriodoPaaFormatado()}:</p>
-        </div>
 
         { !isLoadingAtividades && atividades && atividades.length > 0 && (
           <AtividadesEstatutarias
@@ -129,6 +125,7 @@ export const VisualizacaoAtaPaa = () => {
             isLoading={isLoading}
             formatarMesAno={formatarMesAno}
             formatarData={formatarData}
+            getPeriodoPaaFormatado={getPeriodoPaaFormatado}
           />
         )}
 
