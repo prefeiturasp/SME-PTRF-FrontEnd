@@ -46,6 +46,16 @@ export const TabelaAssociacoes = () => {
         )
     };
 
+    const recursosTemplate = (rowData) => {
+        return (
+            <ul>
+                {rowData?.recursos?.map((recurso, index) => (
+                    <li key={`${recurso.nome}-${index}`}>{recurso};</li>
+                ))}
+            </ul>
+        )
+    };
+
     if (isLoadingAssociacaoListagem) {
         return (
             <div className="mt-5">
@@ -77,7 +87,11 @@ export const TabelaAssociacoes = () => {
             <Column field="nome" header="Nome da Associação"/>
             <Column field="unidade.nome_com_tipo" header="Unidade educacional"/>
             <Column field="unidade.nome_dre" header="DRE"/>
-            <Column field="recursos" header="Recurso(s)"/>
+            <Column
+                field="recursos_lista"
+                header="Recurso(s)"
+                body={recursosTemplate}
+            />
             <Column
                 field="informacao"
                 header="Informações"
