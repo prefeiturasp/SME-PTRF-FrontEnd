@@ -429,19 +429,23 @@ export const patchExibirAcoesPTRFPaa = async (uuid, payload) => {
 };
 
 // Tags
-export const getTodasTags = async () => {
-  return (await api.get(`/api/tags/`, authHeader())).data;
+export const getTodasTags = async (recurso_uuid) => {
+  return (await api.get(`/api/tags/?recurso_uuid=${recurso_uuid}`, authHeader())).data;
 };
-export const getFiltrosTags = async (nome, status) => {
-  return (await api.get(`/api/tags/?nome=${nome}&status=${status}`, authHeader()))
+
+export const getFiltrosTags = async (nome, status, recurso_uuid) => {
+  return (await api.get(`/api/tags/?nome=${nome}&status=${status}&recurso_uuid=${recurso_uuid}`, authHeader()))
     .data;
 };
+
 export const postCreateTag = async (payload) => {
   return (await api.post(`/api/tags/`, payload, authHeader())).data;
 };
+
 export const patchAlterarTag = async (tag_uuid, payload) => {
   return (await api.patch(`/api/tags/${tag_uuid}/`, payload, authHeader())).data;
 };
+
 export const deleteTag = async (tag_uuid) => {
   return await api.delete(`/api/tags/${tag_uuid}/`, authHeader());
 };
@@ -452,16 +456,38 @@ export const getAssociacoes = async (recurso_uuid = '') => {
 };
 
 export const getParametrizacoesAssociacoes = async (
-  page,
-  tipo_unidade,
-  unidade__dre__uuid,
-  nome,
-  informacoes
+  page=1,
+  tipo_unidade=undefined,
+  unidade__dre__uuid=undefined,
+  nome=undefined,
+  informacoes=undefined,
+  recurso_uuid=undefined
 ) => {
+    const params = new URLSearchParams({ page, page_size: 10 });
+
+    if (tipo_unidade) {
+        params.set('unidade__tipo_unidade', tipo_unidade);
+    }
+    if (unidade__dre__uuid) {
+        params.set('unidade__dre__uuid', unidade__dre__uuid);
+    }
+    if (nome) {
+        params.set('nome', nome);
+    }
+    if (informacoes) {
+        params.set('filtro_informacoes', informacoes);
+    }
+    if (recurso_uuid) {
+        params.set('recurso_uuid', recurso_uuid);
+    }
+
   return (
     await api.get(
-      `/api/parametrizacoes-associacoes/?page=${page}&page_size=${20}&unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}&filtro_informacoes=${informacoes}`,
-      authHeader()
+      `/api/parametrizacoes-associacoes/`,
+      {
+        ...authHeader(),
+        params
+      }
     )
   ).data;
 };
@@ -489,6 +515,22 @@ export const getUnidadePeloCodigoEol = async (codigo_eol_unidade) => {
   return (
     await api.get(
       `/api/associacoes/eol/?codigo_eol=${codigo_eol_unidade}`,
+      authHeader()
+    )
+  ).data;
+};
+export const verifyCNPJexistente = async (cnpj) => {
+  return (
+    await api.get(
+      `/api/associacoes/verifica-cnpj-existente/?cnpj=${cnpj}`,
+      authHeader()
+    )
+  ).data;
+};
+export const getOpcoesStatusValoresReprogramados = async (cnpj) => {
+  return (
+    await api.get(
+      '/api/associacoes/opcoes-status-valores-reprogramados/',
       authHeader()
     )
   ).data;
@@ -902,7 +944,7 @@ export const getTipoCusteio = async (uuid) => {
 export const getFiltrosTiposDeCusteio = async (filter) => {
     return (await api.get(`/api/tipos-custeio/`,{
         ...authHeader(),
-        params: {  
+        params: {
             ...filter
         }
     })).data
@@ -1110,7 +1152,7 @@ export const getTabelasRepassePorAssociacao = async (associacao_uuid, recurso_uu
   if (recurso_uuid) {
     url += `&recurso_uuid=${recurso_uuid}`;
   }
-  
+
   return (
     await api.get(url, authHeader())
   ).data;
@@ -1507,4 +1549,61 @@ export const patchComissao = async (
 
 export const deleteComissao = async (uuidComissao) => {
     return (await api.delete(`api/comissoes-parametrizacao/${uuidComissao}/`, authHeader()));
+};
+
+// Fique de Olho
+
+export const getFiqueDeOlho = async ({ recurso_uuid=undefined, tipo_texto=undefined, page=1, page_size=10 }) => {
+    const params = new URLSearchParams({ page, page_size });
+
+    if (recurso_uuid) {
+        params.append("recurso_uuid", recurso_uuid);
+    }
+
+    if (tipo_texto) {
+        params.append("tipo_texto", tipo_texto);
+    }
+
+    return (
+        await api.get(
+        `/api/fique-de-olho/`,
+        {
+            ...authHeader(),
+            params,
+        }
+        )
+    ).data;
+};
+
+export const getTabelaFiqueDeOlho = async () => {
+    return (
+        await api.get(
+            `/api/fique-de-olho/tabelas/`,
+            authHeader(),
+        )
+    ).data;
+};
+
+export const postFiqueDeOlho = async ({ texto, tipo_texto, recurso }) => {
+  return await api.post(
+    `api/fique-de-olho/`,
+    {
+        texto,
+        tipo_texto,
+        recurso
+    },
+    authHeader()
+  );
+};
+
+export const patchFiqueDeOlho = async ({ uuid, texto, tipo_texto, recurso }) => {
+  return await api.patch(
+    `api/fique-de-olho/${uuid}/`,
+    {
+      texto,
+      tipo_texto,
+      recurso
+    },
+    authHeader()
+  );
 };

@@ -399,8 +399,13 @@ describe('Testes para funções de análise', () => {
     test('getFiqueDeOlhoRelatoriosConsolidados deve chamar a API corretamente', async () =>{
         api.get.mockResolvedValue({ data: mockData })
         
-        const result = await getFiqueDeOlhoRelatoriosConsolidados();
-        const url = `/api/relatorios-consolidados-dre/fique-de-olho/`
+        const tipo_texto = 'associacoes_geracao_documentos'
+        const recurso_uuid = '1234'
+        const result = await getFiqueDeOlhoRelatoriosConsolidados(
+            tipo_texto,
+            recurso_uuid
+        );
+        const url = `/api/fique-de-olho/?tipo_texto=${tipo_texto}&recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });

@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { ListaPresentes } from "../index"; 
+import { ListaPresentes } from "../index";
 
 describe("Componente <ListaPresentes />", () => {
   const mockMembros = [
@@ -16,29 +16,26 @@ describe("Componente <ListaPresentes />", () => {
     { uuid: "nm3", nome: "Everton Santos" },
   ];
 
-  it("deve renderizar a estrutura inicial com os títulos das tabelas corretamente", () => {
-    render(<ListaPresentes listaPresentesMembros={[]} listaPresentesNaoMembros={[]} />);
+  it("deve renderizar a estrutura inicial com os títulos e tabelas quando houver dados em ambas as listas", () => {
+    render(<ListaPresentes listaPresentesMembros={mockMembros} listaPresentesNaoMembros={mockNaoMembros} />);
 
     expect(screen.getByRole("heading", { level: 4, name: /lista de presentes/i })).toBeInTheDocument();
     expect(screen.getByText(/membros da diretoria executiva e do conselho fiscal/i)).toBeInTheDocument();
     expect(screen.getByText(/demais presentes/i)).toBeInTheDocument();
 
-    const cabecalhosNomeCargo = screen.getAllByRole("columnheader", { name: /nome e cargo/i });
-    const cabecalhosAssinatura = screen.getAllByRole("columnheader", { name: /assinatura/i });
-
-    expect(cabecalhosNomeCargo).toHaveLength(2);
-    expect(cabecalhosAssinatura).toHaveLength(2);
-  });
-
-  it("deve renderizar as tabelas vazias sem quebrar o componente quando os arrays forem vazios", () => {
-    render(<ListaPresentes listaPresentesMembros={[]} listaPresentesNaoMembros={[]} />);
-
     const tabelas = screen.getAllByRole("table");
     expect(tabelas).toHaveLength(2);
+  });
 
-    const tbodies = document.querySelectorAll("tbody");
-    expect(tbodies[0].children).toHaveLength(0);
-    expect(tbodies[1].children).toHaveLength(0);
+  it("não deve renderizar a seção de 'Demais presentes' quando listaPresentesNaoMembros estiver vazia ou sem nomes válidos", () => {
+    render(<ListaPresentes listaPresentesMembros={mockMembros} listaPresentesNaoMembros={[]} />);
+
+    // Apenas 1 tabela deve existir (a de membros)
+    const tabelas = screen.getAllByRole("table");
+    expect(tabelas).toHaveLength(1);
+
+    // O título de demais presentes não deve aparecer
+    expect(screen.queryByText(/demais presentes/i)).not.toBeInTheDocument();
   });
 
   it("deve renderizar a lista de membros corretamente com todas as variações (nome, cargo ausente, sem nome)", () => {
@@ -56,6 +53,7 @@ describe("Componente <ListaPresentes />", () => {
   it("deve renderizar a lista de não-membros testando as condicionais de cargo e professor do grêmio", () => {
     render(<ListaPresentes listaPresentesMembros={[]} listaPresentesNaoMembros={mockNaoMembros} />);
 
+    expect(screen.getByText(/demais presentes/i)).toBeInTheDocument();
     expect(screen.getByText(/bruno costa/i)).toBeInTheDocument();
     expect(screen.getByText(/secretário/i)).toBeInTheDocument();
     expect(screen.queryByText(/secretário - professor do grêmio/i)).not.toBeInTheDocument();

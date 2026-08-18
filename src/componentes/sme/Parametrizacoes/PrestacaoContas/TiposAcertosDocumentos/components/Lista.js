@@ -11,6 +11,7 @@ import Loading from "../../../../../../utils/Loading";
 import { ModalForm } from "./ModalForm";
 import { ModalConfirmacaoExclusao } from "./ModalConfirmacaoExclusao";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
     const { 
@@ -143,35 +144,41 @@ export const Lista = () => {
                     />
                 </div>
             ) : data.length > 0 ? (
-                <DataTable
-                    value={data}
-                    paginator={data.length > rowsPerPage}
-                    paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                    rows={rowsPerPage}
-                >
-                    <Column field="nome" header="Nome do tipo" />
-                    <Column 
-                        field="categoria"
-                        header="Categoria de acerto"
-                        body={categoriaTemplate}
+                <>
+                    <TotalRegistros
+                        titulo="Tipo(s) de acerto(s) em documento(s)"
+                        total_registros={data.length}
                     />
-                    <Column 
-                        field="tipos_documento_prestacao"
-                        header="Tipo de documento de prestação"
-                        body={documentoTemplate}
-                    />
-                    <Column 
-                        field="ativo"
-                        header="Ativo"
-                        body={ativoTemplate}
-                    />
-                    <Column 
-                        field="uuid"
-                        header="Ações"
-                        body={editDocumentosTemplate}
-                        style={{ width: '5%', textAlign: 'center' }}
-                    />
-                </DataTable>
+                    <DataTable
+                        value={data}
+                        paginator={data.length > rowsPerPage}
+                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                        rows={rowsPerPage}
+                    >
+                        <Column field="nome" header="Nome do tipo" />
+                        <Column 
+                            field="categoria"
+                            header="Categoria de acerto"
+                            body={categoriaTemplate}
+                        />
+                        <Column 
+                            field="tipos_documento_prestacao"
+                            header="Tipo de documento de prestação"
+                            body={documentoTemplate}
+                        />
+                        <Column 
+                            field="ativo"
+                            header="Ativo"
+                            body={ativoTemplate}
+                        />
+                        <Column 
+                            field="uuid"
+                            header="Ações"
+                            body={editDocumentosTemplate}
+                            style={{ width: '5%', textAlign: 'center' }}
+                        />
+                    </DataTable>
+                </>
             ) : (
                 <div className="p-2">
                     <p><strong>Nenhum resultado encontrado.</strong></p>

@@ -120,19 +120,23 @@ export const NovoFormularioEditaAta = ({
         lista_cargos_composicao,
       );
 
-    const resetProfessor = {
-      nome: "",
-      cargo: "",
-      identificacao: "",
-      presente: true,
-    };
+    const professorDefaultValues =
+      professorDefaults &&
+      (professorDefaults.nome || professorDefaults.cargo || professorDefaults.identificacao)
+        ? professorDefaults
+        : {
+            nome: "",
+            cargo: "",
+            identificacao: "",
+            presente: true,
+          };
 
-    setProfessorDefaults(resetProfessor);
+    setProfessorDefaults(professorDefaultValues);
 
     const listaComProfessor = adicionaProfessorGremioNaLista(
       composicao_formatada,
       uuid_ata,
-      resetProfessor,
+      professorDefaultValues,
       precisaProfessorGremio,
     );
 
@@ -173,6 +177,7 @@ export const NovoFormularioEditaAta = ({
             ...prev?.stateFormEditarAta,
             justificativa_retificacao:
               stateFormEditarAta.justificativa_retificacao ?? "",
+            comentarios: stateFormEditarAta.comentarios ?? "",
           },
         };
       });
@@ -248,7 +253,7 @@ export const NovoFormularioEditaAta = ({
       precisaCarregarComposicao &&
       stateFormEditarAta &&
       stateFormEditarAta.data_reuniao &&
-      isValidDateString(stateFormEditarAta.data_reuniao)
+      isValidDateOrDateString(stateFormEditarAta.data_reuniao)
     ) {
       carregarComposicao();
     }
@@ -299,7 +304,7 @@ export const NovoFormularioEditaAta = ({
     };
 
     firstFetchData(uuid_ata);
-  }, [uuid_ata]);
+  }, [uuid_ata, precisaProfessorGremio]);
 
   const onClickCancelarAdicao = (remove, lista) => {
     if (lista.length > 0) {
@@ -924,11 +929,11 @@ export const NovoFormularioEditaAta = ({
   };
 
   const isValidDateString = (dateString) => {
-    var parsedDate = new Date(dateString);
-    return (
-      !isNaN(parsedDate.getTime()) &&
-      parsedDate.toISOString().slice(0, 10) === dateString
-    );
+    if (!dateString) {
+      return false;
+    }
+    const parsedDate = new Date(dateString);
+    return !isNaN(parsedDate.getTime());
   };
 
   const isValidDateOrDateString = (value) => {
@@ -1849,7 +1854,7 @@ export const NovoFormularioEditaAta = ({
                               />
                             </div>
                           </div>
-                        </div>                   
+                        </div>
                       </>
 
                     )}

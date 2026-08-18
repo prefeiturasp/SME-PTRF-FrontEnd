@@ -1,34 +1,56 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { InformacoesIniciais } from '../InformacoesIniciais';
+import { getFiqueDeOlhoPrestacoesDeContas } from '../../../../services/escolas/PrestacaoDeContas.service';
+import { useRecursoSelecionadoContext } from '../../../../context/RecursoSelecionado';
 
 // Mock da função de serviço
 jest.mock('../../../../services/escolas/PrestacaoDeContas.service', () => ({
   getFiqueDeOlhoPrestacoesDeContas: jest.fn(),
 }));
+jest.mock('../../../../context/RecursoSelecionado', () => ({
+  useRecursoSelecionadoContext: jest.fn(),
+}));
 
-import { getFiqueDeOlhoPrestacoesDeContas } from '../../../../services/escolas/PrestacaoDeContas.service';
+describe('Componente <InformacoesIniciais />', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
 
-describe('InformacoesIniciais', () => {
-  it('renderiza o HTML retornado pelo serviço', async () => {
-    const mockHtml = '<p><strong>Preste atenção nas pendências</strong></p>';
-
-    getFiqueDeOlhoPrestacoesDeContas.mockResolvedValue({
-      detail: mockHtml,
+        // Valor padrão do contexto para os testes
+        useRecursoSelecionadoContext.mockReturnValue({
+            recursoSelecionado: { uuid: 'recurso-uuid-123' },
+        });
     });
 
-    render(<InformacoesIniciais />);
+    it('renderiza o HTML retornado pelo serviço', async () => {
+        const mockHtml = '<p><strong>Preste atenção nas pendências</strong></p>';
 
-    await waitFor(() => {
-      expect(screen.getByText(/Preste atenção nas pendências/i)).toBeInTheDocument();
+        // Mock com a estrutura exata esperada pelo componente: response.results[0].texto
+        getFiqueDeOlhoPrestacoesDeContas.mockResolvedValue({
+            results: [
+                { texto: mockHtml }
+            ]
+        });
+
+        render(<InformacoesIniciais />);
+
+        // findByText aguarda a resolução do useEffect e a renderização do HTML
+        const textoRenderizado = await screen.findByText(/Preste atenção nas pendências/i);
+
+        expect(textoRenderizado).toBeInTheDocument();
+        expect(getFiqueDeOlhoPrestacoesDeContas).toHaveBeenCalledWith(
+            expect.anything(),
+            'recurso-uuid-123'
+        );
     });
-  });
 
-  it('lida com erro na chamada do serviço sem quebrar', async () => {
-    console.error = jest.fn(); // evitar log no console
+    it('não deve renderizar nada se o retorno estiver vazio', async () => {
+        getFiqueDeOlhoPrestacoesDeContas.mockResolvedValue({
+            results: [{ texto: '' }]
+        });
 
-    getFiqueDeOlhoPrestacoesDeContas.mockRejectedValue(new Error('Erro na API'));
+        const { container } = render(<InformacoesIniciais />);
 
-    render(<InformacoesIniciais />);
-
-  });
+        // Garante que nada é renderizado no DOM além do wrapper
+        expect(container.firstChild).toBeNull();
+    });
 });

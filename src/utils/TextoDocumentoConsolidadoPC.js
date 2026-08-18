@@ -3,12 +3,22 @@ export class TextoDocumentoConsolidadoPC {
         this.habilita_lauda = habilita_lauda;
     }
 
-    normal() {
+    normal(case_text = "lower") {
+        let text = "relatório"
+
         if (this.habilita_lauda) {
-            return "publicação";
+            text = "publicação";
         }
 
-        return "relatório";
+        if (case_text === "upper") {
+            text = text.toUpperCase();
+        }
+
+        if (case_text === "capitalize") {
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        return text;
     }
 
     possessivo() {
@@ -73,6 +83,58 @@ export class TextoDocumentoConsolidadoPC {
 
     texto_acao_concreta() {
         return this.habilita_lauda ? "fazer a publicação" : "gerar o relatório";
+    }
+
+    texto_status_filtro(is_not=false) {
+        let text_status = "Enviado (Externamente)"
+
+        if (is_not) {
+            text_status = "Gerado e não enviado"
+        }
+
+        if (this.habilita_lauda) {
+            text_status = `${is_not ? 'Não ' : ''}Publicado no D.O`;
+        }
+
+        return `${text_status}`
+    }
+
+    text_in() {
+        let text = "no Relátorio"
+
+        if (this.habilita_lauda) {
+            text = "na Publicação";
+        }
+
+        return text;
+    }
+
+    text_for_status_track_first_step() {
+        let firstPart = "Gerado e"
+        let seecondPart = "não enviado"
+
+        if (this.habilita_lauda) {
+            firstPart = "Não publicado no"
+            seecondPart = "Diário Oficial"
+        }
+
+        return (
+            <strong>{firstPart} <br /> {seecondPart}</strong>
+        )
+    }
+
+    text_for_status_track_second_step() {
+        let firstPart = "Enviado"
+        let seecondPart = "(Externamente)"
+
+        if (this.habilita_lauda) {
+            firstPart = "Publicado no"
+            seecondPart = "Diário Oficial"
+        }
+
+        return (
+            <strong>{firstPart} <br /> {seecondPart}</strong>
+        )
     }
 
 }

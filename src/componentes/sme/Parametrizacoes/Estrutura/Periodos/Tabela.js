@@ -3,6 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import moment from "moment";
 import { EditIconButton, VisualizarIconButton} from "../../../../Globais/UI/Button";
+import { TotalRegistros } from "../../componentes/TotalRegistros";
 
 const Tabela = ({
     rowsPerPage, 
@@ -34,46 +35,51 @@ const Tabela = ({
     }
 
     return(
-        <DataTable  
-            value={data}
-            rows={rowsPerPage}
-            paginator={data.length > rowsPerPage}
-            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-            id={'tabela-periodos'}
-        >
-            <Column field="referencia" header="Referência"/>
-            <Column
-                field="data_prevista_repasse"
-                header="Data prevista do repasse"
-                body={dataTemplate}
+        <>
+            <TotalRegistros 
+                titulo="Período(s)" 
+                total_registros={data.length} 
             />
-            <Column
-                field="data_inicio_realizacao_despesas"
-                header="Início realização de despesas"
-                body={dataTemplate}
-            />
-            <Column
-                field="data_fim_realizacao_despesas"
-                header="Fim realização de despesas"
-                body={dataTemplate}
-            />
-            <Column
-                field="data_inicio_prestacao_contas"
-                header="Início prestação de contas"
-                body={dataTemplate}
-            />
-            <Column
-                field="data_fim_prestacao_contas"
-                header="Fim prestação de contas"
-                body={dataTemplate}
-            />
-            <Column
-                field="acoes"
-                header="Ações"
-                body={acoesTemplate}
-            />
-        </DataTable>
-
+            <DataTable  
+                value={data}
+                rows={rowsPerPage}
+                paginator={data.length > rowsPerPage}
+                paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                id={'tabela-periodos'}
+            >
+                <Column field="referencia" header="Referência"/>
+                <Column
+                    field="data_prevista_repasse"
+                    header="Data prevista do repasse"
+                    body={dataTemplate}
+                />
+                <Column
+                    field="data_inicio_realizacao_despesas"
+                    header="Início realização de despesas"
+                    body={dataTemplate}
+                />
+                <Column
+                    field="data_fim_realizacao_despesas"
+                    header="Fim realização de despesas"
+                    body={dataTemplate}
+                />
+                <Column
+                    field="data_inicio_prestacao_contas"
+                    header="Início prestação de contas"
+                    body={dataTemplate}
+                />
+                <Column
+                    field="data_fim_prestacao_contas"
+                    header="Fim prestação de contas"
+                    body={dataTemplate}
+                />
+                <Column
+                    field="acoes"
+                    header="Ações"
+                    body={acoesTemplate}
+                />
+            </DataTable>
+        </>
     );
 };
 

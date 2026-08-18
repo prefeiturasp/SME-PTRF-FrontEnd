@@ -79,6 +79,16 @@ export const useVisualizacaoAtaPaa = () => {
         const origem = location.state?.origem || searchParams.get("origem");
         if (origem === 'paa-vigente-e-anteriores') {
             navigate("/paa-vigente-e-anteriores");
+        }else if (dadosAta.tipo_ata === "RETIFICACAO") {
+            navigate(`/retificacao-paa/${uuid_paa}`, {
+                state: {
+                    activeTab: "relatorios",
+                    expandedSections: {
+                        planoAnual: true,
+                        componentes: true,
+                    },
+                },
+            });
         } else {
             navigate("/elaborar-novo-paa", {
                 state: {

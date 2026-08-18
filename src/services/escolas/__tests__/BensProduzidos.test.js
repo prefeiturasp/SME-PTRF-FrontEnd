@@ -15,9 +15,12 @@ import { TOKEN_ALIAS, ASSOCIACAO_UUID } from "../../auth.service";
 import { getUuidAssociacao } from "../../../utils/AssociacaoUtils";
 
 jest.mock("../../api", () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  patch: jest.fn(),
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    patch: jest.fn(),
+  },
   registerUnauthorizedHandler: jest.fn(),
 }));
 

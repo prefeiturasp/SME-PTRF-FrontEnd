@@ -13,6 +13,7 @@ import { usePatchMotivoEstorno } from "../hooks/usePatchMotivoEstorno";
 import { useDeleteMotivoEstorno } from "../hooks/useDeleteMotivoEstorno";
 import Loading from "../../../../../../utils/Loading";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
     const {
@@ -93,23 +94,29 @@ export const Lista = () => {
         <>
             <div className="mt-3">
                 {results && results.length > 0 ? (
-                    <DataTable
-                        value={results}
-                        className="mt-3 container-tabela-associacoes"
-                        paginator={count > rowsPerPage}
-                        rows={rowsPerPage}
-                        paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                        autoLayout={true}
-                        selectionMode="single"
-                    >
-                        <Column field="motivo" header="Motivo" />
-                        <Column
-                            field="acoes"
-                            header="Ações"
-                            body={acoesTemplate}
-                            style={{ width: "10%", textAlign: "center" }}
+                    <>
+                        <TotalRegistros
+                            titulo="Motivo(s) de estorno"
+                            total_registros={count}
                         />
-                    </DataTable>
+                        <DataTable
+                            value={results}
+                            className="mt-3 container-tabela-associacoes"
+                            paginator={count > rowsPerPage}
+                            rows={rowsPerPage}
+                            paginatorTemplate="PrevPageLink PageLinks NextPageLink"
+                            autoLayout={true}
+                            selectionMode="single"
+                        >
+                            <Column field="motivo" header="Motivo" />
+                            <Column
+                                field="acoes"
+                                header="Ações"
+                                body={acoesTemplate}
+                                style={{ width: "10%", textAlign: "center" }}
+                            />
+                        </DataTable>
+                    </>
                 ) : (
                     <MsgImgCentralizada
                         data-qa="imagem-lista-contas-de-associacoes-vazia"

@@ -19,6 +19,7 @@ import { Paginacao } from "./Paginacao";
 
 import { IconButton } from "../../../../../Globais/UI/Button";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 
 export const Tabela = () => {
@@ -169,28 +170,34 @@ export const Tabela = () => {
         </div>
 
         {results && results.length > 0 ? (
-            <DataTable
-                value={results}
-                className='tabela-lista-detalhes-tipos-credito'
-                data-qa='tabela-lista-detalhes-tipos-credito'
-            >
-                <Column
-                    field="nome"
-                    header="Comissão"
-                    body={comissaoTemplate}
+            <>
+                <TotalRegistros
+                    titulo="Comissões"
+                    total_registros={count}
                 />
-                <Column
-                    field="recursos"
-                    header="Recursos Vinculados"
-                    body={recursosTemplate}
-                />
-                <Column
-                    field="acao"
-                    header="Ação"
-                    body={acoesTemplate}
-                    style={{width: '10%', textAlign: "center",}}
-                />
-            </DataTable>
+                <DataTable
+                    value={results}
+                    className='tabela-lista-detalhes-tipos-credito'
+                    data-qa='tabela-lista-detalhes-tipos-credito'
+                >
+                    <Column
+                        field="nome"
+                        header="Comissão"
+                        body={comissaoTemplate}
+                    />
+                    <Column
+                        field="recursos"
+                        header="Recursos Vinculados"
+                        body={recursosTemplate}
+                    />
+                    <Column
+                        field="acao"
+                        header="Ação"
+                        body={acoesTemplate}
+                        style={{width: '10%', textAlign: "center",}}
+                    />
+                </DataTable>
+            </>
         ) :
             <MsgImgCentralizada
                 data-qa="imagem-lista-sem-comissoes"
