@@ -4,6 +4,6 @@ export function Title() {
     const { uuid } = useAssociacoesFormularioContext();
 
     return (
-        <h1 className="titulo-itens-painel mt-5">{uuid ? 'Atualizar' : 'Adicionar'} Associação</h1>
+        <h1 className="titulo-itens-painel mt-5">{uuid ? 'Editar' : 'Adicionar'} Associação</h1>
     )
 }
