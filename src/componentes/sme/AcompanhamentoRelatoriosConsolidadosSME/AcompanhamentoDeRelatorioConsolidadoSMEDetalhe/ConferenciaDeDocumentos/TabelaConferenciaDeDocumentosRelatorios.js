@@ -300,10 +300,11 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                 <div className="col-12"
                      style={
                          {
-                             color: 'white',
-                             padding: "15px",
-                             margin: "0px 15px",
-                             flex: "100%"
+                            background: "var(--color-primary)",
+                            color: 'white',
+                            padding: "15px",
+                            margin: "0px 15px",
+                            flex: "100%"
                          }
                      }>
                     <div className="row">
@@ -368,7 +369,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
                                                      {padding: "0px 10px"}
                                                  }>|
                                             </div>
-                                            <button className="float-right btn btn-link btn-montagem-selecionar"
+                                            <button type="button" className="float-right btn btn-link btn-montagem-selecionar"
                                                     onClick={
                                                         () => marcarComoNaoConferido()
                                                     }
@@ -502,7 +503,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
             return (
                 <>
                 <div className="d-flex align-items-center justify-content-start">
-                    <button 
+                    <button
                         disabled={!editavel}
                         className="btn btn-link fonte-14"
                         type="button"
@@ -606,7 +607,7 @@ const TabelaConferenciaDeDocumentosRelatorios = ({
 
     const bodyTextarea = () => {
         const height = `${window.innerHeight * 0.85}px`;
-    
+
         return (
             <object
                 style={{ height: height, width: '100%' }}

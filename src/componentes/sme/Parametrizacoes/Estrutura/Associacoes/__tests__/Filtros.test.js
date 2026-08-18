@@ -1,101 +1,128 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { Filtros } from '../Filtros';
-import {mockTabelaAssociacoes} from "../__fixtures__/mockData";
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { Filtros } from "../components/Filtros";
+import { mockTabelaAssociacoes } from "../__fixtures__/mockData";
+import { useAssociacaoListagemContext } from "../hooks/useAssociacoesListagemContext";
 
-describe('Componente Filtros', () => {
-    const mockHandleChangeFiltros = jest.fn();
-    const mockHandleSubmitFiltros = jest.fn();
-    const mockLimpaFiltros = jest.fn();
-    const mockHandleOnChangeMultipleSelectStatus = jest.fn();
+jest.mock("../hooks/useAssociacoesListagemContext", () => ({
+  useAssociacaoListagemContext: jest.fn(),
+}));
 
-    const initialStateFiltros = {
-        filtrar_por_associacao: "",
-        filtrar_por_dre: "",
-        filtrar_por_tipo_ue: "",
-        filtrar_por_informacao: []
+jest.mock("../../../../../../context/RecursoSelecionado", () => ({
+  useRecursoSelecionadoContext: () => ({
+    recursos: [{ uuid: "recurso-1", nome: "PTRF" }],
+  }),
+}));
 
-    };
+jest.mock("antd", () => {
+  const Select = ({ children, id, onChange }) => (
+    <button
+      id={id}
+      type="button"
+      onClick={() => onChange(["ENCERRADAS", "NAO_ENCERRADAS"])}
+    >
+      {children}
+    </button>
+  );
+  Select.Option = ({ children, value }) => <option value={value}>{children}</option>;
+  return { Select };
+});
 
-    const mockPropsFiltros = {
-        stateFiltros: initialStateFiltros,
-        handleChangeFiltros: mockHandleChangeFiltros,
-        handleSubmitFiltros: mockHandleSubmitFiltros,
-        limpaFiltros: mockLimpaFiltros,
-        tabelaAssociacoes: mockTabelaAssociacoes,
-        handleOnChangeMultipleSelectStatus: mockHandleOnChangeMultipleSelectStatus
-    };
+jest.mock("../../../../../../utils/Loading", () => () => <div data-testid="loading" />);
 
-    beforeEach(() => {
-        jest.clearAllMocks();
+describe("Componente Filtros", () => {
+  const setDraftFilter = jest.fn();
+  const handleApplyFilter = jest.fn();
+  const handleClearFilter = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useAssociacaoListagemContext.mockReturnValue({
+      isLoadingTabelaAssociacaoListagem: false,
+      dataTabelaAssociacaoListagem: mockTabelaAssociacoes,
+      draftFilter: {
+        recurso_uuid: "",
+        associacao: "",
+        dre: "",
+        tipo_ue: "",
+        informacao: [],
+      },
+      setDraftFilter,
+      handleApplyFilter,
+      handleClearFilter,
+    });
+  });
+
+  it("renderiza os campos e as opcoes de filtro", () => {
+    render(<Filtros />);
+
+    expect(screen.getByLabelText("Filtrar por associação")).toBeInTheDocument();
+    expect(screen.getByLabelText("Filtrar por DRE")).toBeInTheDocument();
+    expect(screen.getByLabelText("Filtrar pelo tipo de UE")).toBeInTheDocument();
+    expect(screen.getByLabelText("Filtrar por Recurso")).toBeInTheDocument();
+    expect(screen.getByLabelText("Filtrar por informações")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "PTRF" })).toBeInTheDocument();
+  });
+
+  it("atualiza o filtro em rascunho ao alterar um campo", () => {
+    render(<Filtros />);
+
+    fireEvent.change(screen.getByLabelText("Filtrar por associação"), {
+      target: { value: "Associação 1" },
     });
 
-    it('testa a renderização dos labels e botões', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
+    const updater = setDraftFilter.mock.calls[0][0];
+    expect(updater({ associacao: "" })).toEqual({ associacao: "Associação 1" });
+  });
 
-        expect(screen.getByLabelText(/Filtrar por associação/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Filtrar por DRE/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Filtrar pelo tipo de UE/i)).toBeInTheDocument();
-        expect(screen.getByLabelText(/Filtrar por informações/i)).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /limpar/i })).toBeInTheDocument();
-        expect(screen.getByRole('button', { name: /filtrar/i })).toBeInTheDocument();
+  it("atualiza os filtros de DRE, tipo de UE e recurso", () => {
+    render(<Filtros />);
+
+    fireEvent.change(screen.getByLabelText("Filtrar por DRE"), {
+      target: { value: mockTabelaAssociacoes.dres[0].uuid },
+    });
+    fireEvent.change(screen.getByLabelText("Filtrar pelo tipo de UE"), {
+      target: { value: "ADM" },
+    });
+    fireEvent.change(screen.getByLabelText("Filtrar por Recurso"), {
+      target: { value: "recurso-1" },
     });
 
-    it('testa a reatividade ao alterar o campo de filtro de associação', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
+    expect(setDraftFilter.mock.calls[0][0]({ dre: "" })).toEqual({
+      dre: mockTabelaAssociacoes.dres[0].uuid,
+    });
+    expect(setDraftFilter.mock.calls[1][0]({ tipo_ue: "" })).toEqual({ tipo_ue: "ADM" });
+    expect(setDraftFilter.mock.calls[2][0]({ recurso_uuid: "" })).toEqual({ recurso_uuid: "recurso-1" });
+  });
 
-        const input = screen.getByLabelText(/Filtrar por associação/i);
-        fireEvent.change(input, { target: { name: 'filtrar_por_associacao', value: 'Associação 1' } });
+  it("aplica e limpa os filtros pelas acoes do formulario", () => {
+    render(<Filtros />);
 
-        expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_associacao', 'Associação 1');
+    fireEvent.click(screen.getByRole("button", { name: "Limpar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Filtrar" }));
+
+    expect(handleClearFilter).toHaveBeenCalledTimes(1);
+    expect(handleApplyFilter).toHaveBeenCalledTimes(1);
+  });
+
+  it("atualiza as informacoes selecionadas", () => {
+    render(<Filtros />);
+
+    fireEvent.click(screen.getByLabelText("Filtrar por informações"));
+
+    const updater = setDraftFilter.mock.calls[0][0];
+    expect(updater({ informacao: [] })).toEqual({
+      informacao: ["ENCERRADAS", "NAO_ENCERRADAS"],
+    });
+  });
+
+  it("exibe carregamento enquanto as opcoes da tabela sao buscadas", () => {
+    useAssociacaoListagemContext.mockReturnValue({
+      isLoadingTabelaAssociacaoListagem: true,
     });
 
-    it('testa a reatividade ao alterar o campo de filtro por dre', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
+    render(<Filtros />);
 
-        const input = screen.getByLabelText(/Filtrar por DRE/i);
-        fireEvent.change(input, { target: { name: 'filtrar_por_dre', value: '63db6f59-e32c-4f2f-8c76-29ef40b16e7d' } });
-
-        expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_dre', '63db6f59-e32c-4f2f-8c76-29ef40b16e7d');
-    });
-
-    it('testa a reatividade ao alterar o campo de filtro por ue', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
-
-        const input = screen.getByLabelText(/Filtrar pelo tipo de UE/i);
-        fireEvent.change(input, { target: { name: 'filtrar_por_tipo_ue', value: 'ADM' } });
-
-        expect(mockHandleChangeFiltros).toHaveBeenCalledWith('filtrar_por_tipo_ue', 'ADM');
-    });
-
-    it('testa a chamada de LimpaFiltros ao clicar em Limpar', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
-
-        const limparButton = screen.getByRole('button', { name: /limpar/i });
-        fireEvent.click(limparButton);
-
-        expect(mockLimpaFiltros).toHaveBeenCalledTimes(1);
-    });
-
-    it('testa a chamada de SubmitFiltros ao clicar em Filtrar', () => {
-        render(
-            <Filtros {...mockPropsFiltros} />
-        );
-
-        const limparButton = screen.getByRole('button', { name: /Filtrar/i });
-        fireEvent.click(limparButton);
-
-        expect(mockHandleSubmitFiltros).toHaveBeenCalledTimes(1);
-    });
+    expect(screen.getByTestId("loading")).toBeInTheDocument();
+  });
 });

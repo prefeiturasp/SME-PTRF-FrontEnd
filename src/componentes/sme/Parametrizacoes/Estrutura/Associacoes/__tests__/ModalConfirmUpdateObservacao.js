@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ModalConfirmUpdateObservacao } from "../ModalConfirmUpdateObservacao";
-import { ModalBootstrap } from "../../../../../Globais/ModalBootstrap";
+import { ModalConfirmUpdateObservacao } from "../components/ModalConfirmUpdateObservacao";
 
 jest.mock("../../../../../Globais/ModalBootstrap", () => ({
     ModalBootstrap: ({ show, onHide, titulo, bodyText, primeiroBotaoOnclick, primeiroBotaoTexto, primeiroBotaoCss, segundoBotaoOnclick, segundoBotaoCss, segundoBotaoTexto }) => (
@@ -9,12 +8,13 @@ jest.mock("../../../../../Globais/ModalBootstrap", () => ({
             <h1>{titulo}</h1>
             <p>{bodyText}</p>
             <button onClick={primeiroBotaoOnclick}>{primeiroBotaoTexto}</button>
+            <button onClick={segundoBotaoOnclick}>{segundoBotaoTexto}</button>
         </div>
     ),
 }));
 
 describe("Modal confirma Update Observacao", () => {
-  it("renderiza a Modal passando as props", () => {
+  it("fecha a modal ao cancelar", () => {
     const handleClose = jest.fn();
     const onUpdateObservacao = jest.fn();
     render(
@@ -34,6 +34,7 @@ describe("Modal confirma Update Observacao", () => {
     expect(screen.getByTestId("modal-bootstrap")).toBeInTheDocument();
     expect(screen.getByText("Test Modal")).toBeInTheDocument();
     expect(screen.getByText("Texto body")).toBeInTheDocument();
-    expect(screen.getByText("Confirmar")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
+    expect(handleClose).toHaveBeenCalledTimes(1);
   });
 });

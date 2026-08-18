@@ -2,7 +2,7 @@ import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCheck, faExclamation} from "@fortawesome/free-solid-svg-icons";
 
-export const TrilhaDeStatusDevolvido = () => {
+export const TrilhaDeStatusDevolvido = ({ text_for_status_track_first_step, text_for_status_track_second_step }) => {
     return (
         <>
             <div className='row'>
@@ -16,7 +16,7 @@ export const TrilhaDeStatusDevolvido = () => {
                                     icon={faCheck}
                                 />
                             </span>
-                            <p className='mt-2'><strong>Não publicada no <br/> Diário Oficial</strong></p>
+                            <p className='mt-2'>{text_for_status_track_first_step}</p>
                         </div>
                         <div className='container-circulo'>
                             <span className='circulo circulo-ativo-passado'>
@@ -25,7 +25,7 @@ export const TrilhaDeStatusDevolvido = () => {
                                     icon={faCheck}
                                 />
                             </span>
-                            <p className='mt-2'><strong>Publicada no <br/> Diário Oficial</strong></p>
+                            <p className='mt-2'>{text_for_status_track_second_step}</p>
                         </div>
                         <div className='container-circulo'>
                         <span className='circulo circulo-devolvido-para-acertos'>

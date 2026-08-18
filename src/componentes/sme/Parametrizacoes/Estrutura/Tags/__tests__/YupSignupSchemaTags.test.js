@@ -1,4 +1,4 @@
-import { YupSignupSchemaTags } from "../YupSignupSchemaTags"; // Ajuste o caminho conforme necessário
+import { YupSignupSchemaTags } from "../YupSignupSchemaTags";
 
 describe("YupSignupSchemaTags Validation Schema", () => {
 

@@ -12,6 +12,7 @@ import Img404 from "../../../../../../assets/img/img-404.svg";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { ModalConfirmarExclusao } from "../../../../../Globais/ModalAntDesign/ModalConfirmarExclusao";
 import { useMotivosAprovacaoPcRessalvaContext } from "../hooks/useMotivoAprovacaoComRessalvaContext";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
 
 export const Lista = () => {
 
@@ -78,7 +79,12 @@ export const Lista = () => {
   }
   return (
     <div className="mt-4">
-      {results && results.length > 0 ? (
+        {results && results.length > 0 ? (
+        <>
+            <TotalRegistros 
+                titulo="Motivo(s) de aprovação de PC com ressalva(s)" 
+                total_registros={data?.count} 
+            />
             <DataTable
                 value={results}
                 className='tabela-lista-motivos-aprovacao-pc-ressalva'
@@ -95,6 +101,7 @@ export const Lista = () => {
                     style={{width: '10%', textAlign: "center",}}
                 />
             </DataTable>
+        </>
       ) :
       <MsgImgCentralizada
             data-qa="imagem-lista-sem-motivos-pagamento-antecipado"

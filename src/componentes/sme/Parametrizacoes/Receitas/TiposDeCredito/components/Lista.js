@@ -7,6 +7,7 @@ import "./style.scss";
 import { Tag } from '../../../../../Globais/Tag';
 import { useNavigate } from 'react-router-dom';
 import { EditIconButton } from '../../../../../Globais/UI/Button';
+import { TotalRegistros } from '../../../componentes/TotalRegistros';
 
 
 export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange, rowsPerPage}) => {
@@ -79,6 +80,10 @@ export const Lista = ({isLoading, tiposDeCredito, count, firstPage, onPageChange
             {!isLoading && tiposDeCredito && tiposDeCredito.length > 0 ? (
               <>
                   <div className="p-2">
+                      <TotalRegistros
+                          titulo="Tipo(s) de Crédito(s)"
+                          total_registros={count}
+                      />
                       <DataTable
                           value={tiposDeCredito}
                           className='tabela-lista-tipos-de-credito'

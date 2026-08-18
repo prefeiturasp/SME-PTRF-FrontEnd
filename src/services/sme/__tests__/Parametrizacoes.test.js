@@ -172,7 +172,7 @@ const payload = { teste: 'teste', recurso_uuid: 'recurso-uuid' }
 const uuid = '1234'
 
 describe('Testes para funções de análise', () => {
-    
+
     beforeEach(() => {
         localStorage.setItem(ASSOCIACAO_UUID, associacao_uuid);
         localStorage.setItem(TOKEN_ALIAS, mockToken);
@@ -318,8 +318,9 @@ describe('Testes para funções de análise', () => {
 
     test('getTodasTags  deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getTodasTags();
-        const url = `/api/tags/`
+        const recurso_uuid = 'test-uuid-123';
+        const result = await getTodasTags(recurso_uuid);
+        const url = `/api/tags/?recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -549,7 +550,7 @@ describe('Testes para funções de análise', () => {
         }));
 
         expect(api.get).rejects.toThrow('Erro de API');
-        
+
         mockCreateObjectURL.mockRestore();
         mockCreateElement.mockRestore();
     });
@@ -578,7 +579,7 @@ describe('Testes para funções de análise', () => {
 
         expect(mockCreateObjectURL).toHaveBeenCalled();
         expect(mockCreateElement).toHaveBeenCalledWith('a');
-        
+
         mockCreateObjectURL.mockRestore();
         mockCreateElement.mockRestore();
     });
@@ -664,7 +665,7 @@ describe('Testes para funções de análise', () => {
         expect(api.delete).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
-    
+
     test('getUnidadesTipoReceita deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome_ou_codigo = '1234'
@@ -777,13 +778,14 @@ describe('Testes para funções de análise', () => {
         expect(api.delete).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual({data: mockData});
     });
-    
+
     test('getFiltrosTags deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const nome = 'teste'
         const status = 'teste'
-        const result = await getFiltrosTags(nome, status);
-        const url = `/api/tags/?nome=${nome}&status=${status}`
+        const recurso_uuid = 'uuid-123'
+        const result = await getFiltrosTags(nome, status, recurso_uuid);
+        const url = `/api/tags/?nome=${nome}&status=${status}&recurso_uuid=${recurso_uuid}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
         expect(result).toEqual(mockData);
     });
@@ -821,9 +823,22 @@ describe('Testes para funções de análise', () => {
         const unidade__dre__uuid = '1234'
         const nome = 'teste'
         const informacoes = 'teste'
+
+        const params = new URLSearchParams({
+            page: page,
+            page_size: 10,
+            unidade__tipo_unidade: tipo_unidade,
+            unidade__dre__uuid: unidade__dre__uuid,
+            nome: nome,
+            filtro_informacoes: informacoes
+        });
+
         const result = await getParametrizacoesAssociacoes(page, tipo_unidade, unidade__dre__uuid, nome, informacoes);
-        const url = `/api/parametrizacoes-associacoes/?page=${page}&page_size=${20}&unidade__tipo_unidade=${tipo_unidade}&unidade__dre__uuid=${unidade__dre__uuid}&nome=${nome}&filtro_informacoes=${informacoes}`
-        expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        const url = `/api/parametrizacoes-associacoes/`
+        expect(api.get).toHaveBeenCalledWith(url, {
+            ...authHeader(),
+            params: params
+        })
         expect(result).toEqual(mockData);
     });
 
@@ -899,7 +914,7 @@ describe('Testes para funções de análise', () => {
     test('validarDataDeEncerramento deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
         const periodo_inicial = '1234'
-        const data_de_encerramento = '1234'        
+        const data_de_encerramento = '1234'
         const result = await validarDataDeEncerramento(associacao_uuid, data_de_encerramento, periodo_inicial);
         const url = `api/associacoes/${associacao_uuid}/validar-data-de-encerramento/?data_de_encerramento=${data_de_encerramento}&periodo_inicial=${periodo_inicial}`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
@@ -1184,7 +1199,7 @@ describe('Testes para funções de análise', () => {
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
-   
+
     test('putAtualizarAcertosDocumentos deve chamar a API corretamente', async () => {
         const acerto_documento_uuid = '1234';
         api.patch.mockResolvedValue({ data: mockData });
@@ -1925,7 +1940,7 @@ describe('Testes para funções de análise', () => {
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
-    
+
     test('getParametroPaa deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const result = await getParametroPaa();
