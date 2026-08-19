@@ -5,6 +5,8 @@ import { Tooltip as ReactTooltip } from "react-tooltip";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { mockData } from "../__fixtures__/mockData";
+import fs from 'fs';
+import path from 'path';
 
 // Mock da função handleEditFormModal
 const mockHandleEditFormModal = jest.fn();
@@ -57,4 +59,34 @@ describe("Tabela Component", () => {
         expect(mockHandleEditFormModal).toHaveBeenCalled()
     });
 
+    it('deve aplicar o background #F4F4F4 no elemento com p-highlight', () => {
+        render(<Tabela rowsPerPage={20} lista={mockData} acoesTemplate={mockAcoesTemplate} />);
+
+        const columnHeader = screen.getByRole('columnheader', { name: /nome/i });
+
+        expect(columnHeader).toHaveClass('field-name-tipo-documento');
+    });
+
+    it('deve definir o background da coluna Nome como #F4F4F4', () => {
+        const caminhoScss = path.resolve(
+            process.cwd(),
+            'src/componentes/sme/Parametrizacoes/Despesas/TiposDocumento/scss/Table.scss'
+        );
+
+        const scss = fs.readFileSync(caminhoScss, 'utf8');
+
+        const seletorColunaNome =
+            '#main .p-datatable .p-datatable-thead > tr > th.field-name-tipo-documento.p-highlight';
+
+        const inicioRegra = scss.indexOf(seletorColunaNome);
+
+        expect(inicioRegra).toBeGreaterThanOrEqual(0);
+
+        const fimRegra = scss.indexOf('}', inicioRegra);
+        const regraCss = scss.slice(inicioRegra, fimRegra + 1);
+
+        expect(regraCss).toContain(
+            'background-color: #F4F4F4 !important;'
+        );
+    });
 });
