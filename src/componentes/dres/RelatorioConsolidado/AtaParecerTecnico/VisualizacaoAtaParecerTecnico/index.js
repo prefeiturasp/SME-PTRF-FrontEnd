@@ -166,6 +166,9 @@ export const VisualizacaoDaAtaParecerTecnico = () => {
 
             return nome_dre;
         }
+        else if(campo === "portaria_publicada") {
+            return dadosAta?.portaria_publicada
+        }
     };
 
     const retornaTituloCabecalhoAta = () => {
