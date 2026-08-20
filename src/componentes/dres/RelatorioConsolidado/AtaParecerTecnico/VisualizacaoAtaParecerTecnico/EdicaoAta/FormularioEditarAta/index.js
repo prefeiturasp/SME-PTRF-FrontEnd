@@ -222,7 +222,7 @@ export const FormularioEditaAta = ({
                     </div>
 
                     <div className="col">
-                      <label htmlFor="stateFormEditarAta.data_portaria">Data da portaria</label>
+                      <label htmlFor="stateFormEditarAta.data_portaria">Data da publicação da portaria</label>
                       <DatePickerField
                         name="stateFormEditarAta.data_portaria"
                         value={values.stateFormEditarAta.data_portaria ? values.stateFormEditarAta.data_portaria : ""}
