@@ -1,14 +1,22 @@
 import React from "react";
+import { useAcoesContext } from "../hooks/useAcoesContext";
 
-export const Filtros = ({stateFiltros, handleChangeFiltros, handleSubmitFiltros, limpaFiltros}) =>{
-    return(
+export const Filtros = () => {
+    const {
+        draftFilters,
+        handleChangeFiltros,
+        handleSubmitFiltros,
+        limpaFiltros
+    } = useAcoesContext();
+
+    return (
         <>
-            <form onSubmit={handleSubmitFiltros}>
+            <form>
                 <div className="form-row">
                     <div className="form-group col-md-12">
                         <label htmlFor="filtrar_por_nome">Filtrar por nome da ação</label>
                         <input
-                            value={stateFiltros.filtrar_por_nome}
+                            value={draftFilters.filtrar_por_nome}
                             onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                             name='filtrar_por_nome'
                             id="filtrar_por_nome"
