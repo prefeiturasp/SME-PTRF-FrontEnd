@@ -5,6 +5,8 @@ import { YupSignupSchemaTags } from "../YupSignupSchemaTags";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado/";
 import { useTagsContext } from "../hooks/useTagsContext";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
 const ModalFormTags = () => {
     const {
@@ -105,7 +107,13 @@ const ModalFormTags = () => {
                                 <div className="d-flex bd-highlight mt-2">
                                     <div className="p-Y flex-grow-1 bd-highlight">
                                         {values.operacao === 'edit' ? (
-                                            <button onClick={() => setShowModalConfirmDeleteTag({ open: true, tag_uuid: values.uuid })} type="button" className="btn btn btn-danger mt-2 mr-2" disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}>
+                                            <button 
+                                                onClick={() => setShowModalConfirmDeleteTag({ open: true, tag_uuid: values.uuid })} 
+                                                type="button" 
+                                                className="btn btn btn-danger mt-2 mr-2" 
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                            >
+                                                <FontAwesomeIcon icon={faXmark} style={{ marginRight: "8px", color: "white", fontWeight: "bold" }} />
                                                 Excluir
                                             </button>
                                         ) : null}
