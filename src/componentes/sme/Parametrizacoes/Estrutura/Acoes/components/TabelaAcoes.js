@@ -1,22 +1,24 @@
 import React from "react";
+import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
+import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
+import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
+import { faClipboardList, faTimesCircle, faCheckCircle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { TotalRegistros } from "../../../componentes/TotalRegistros";
+import { EditIconButton } from "../../../../../Globais/UI/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Img404 from "../../../../../../assets/img/img-404.svg";
+import { useAcoesContext } from "../hooks/useAcoesContext";
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import Loading from "../../../../../../utils/Loading";
+import { Link, useNavigate } from "react-router-dom";
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { Tooltip as ReactTooltip } from 'react-tooltip';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClipboardList, faTimesCircle, faCheckCircle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
-import { EditIconButton } from "../../../../../Globais/UI/Button";
-import { useAcoesContext } from "../hooks/useAcoesContext";
-import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
-import { TotalRegistros } from "../../../componentes/TotalRegistros";
-import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 
 export const TabelaAcoes = () => {
     const navigate = useNavigate();
-    const { results, handleOpenModalForm } = useAcoesContext();
+    const { results, handleOpenModalForm, isLoading } = useAcoesContext();
     const { recursoSelecionado } = useRecursoSelecionadoContext();
     const { selectedRecurso } = useAbasPorRecursoContext();
-    // const rowsPerPage = 20;
 
     const acoesTemplate = (rowData) => {
         return (
@@ -118,49 +120,72 @@ export const TabelaAcoes = () => {
 
     return(
         <>
-            <div className="d-flex justify-content-end">
-                <button 
-                    type="button" 
-                    className="btn btn btn-success mt-4"
-                    onClick={handleAlterarOrdenacao}
-                >
-                    Alterar ordenação
-                </button>
-            </div>
-            <TotalRegistros 
-                titulo="Ações"
-                total_registros={results.length}
-            />
-            <DataTable
-                value={results}
-                // paginator={results.length > rowsPerPage}
-                // paginatorTemplate="PrevPageLink PageLinks NextPageLink"
-                // rows={rowsPerPage}
-            >
-                <Column field="nome" header="Nome"/>
+            { isLoading ? (
+                <div className="mt-5">
+                    <Loading
+                        corGrafico="black"
+                        corFonte="dark"
+                        marginTop="0"
+                        marginBottom="0"
+                    />
+                </div>
+            ) : (
+                <>
+                    {(results || []).length ? (
+                        <>
+                            <div className="d-flex justify-content-end">
+                                <button 
+                                    type="button" 
+                                    className="btn btn btn-success mt-4"
+                                    onClick={handleAlterarOrdenacao}
+                                >
+                                    Alterar ordenação
+                                </button>
+                            </div>
 
-                <Column body={ordenacaoTemplate} header={ordenacaoHeaderTemplate()} />
+                            <TotalRegistros 
+                                titulo="Ações"
+                                total_registros={results.length}
+                            />
 
-                <Column body={conferirUnidadesTemplate} header='UEs vinculadas'
-                                                    style={{textAlign: 'center', width:'140px',}}/>
-                <Column body={aceitaCapitalTemplate} header='Aceita Capital?'
-                                                    style={{textAlign: 'center', width:'110px',}}/>
-                <Column body={aceitaCusteioTemplate} header='Aceita Custeio?'
-                                                    style={{textAlign: 'center', width:'110px',}}/>
-                <Column body={aceitaLivreTemplate} header='Aceita Livre Aplicação?'
-                                                    style={{textAlign: 'center', width:'110px',}}/>
-                <Column body={recursosPropriosTemplate} header='Recursos externos?'
-                                                    style={{textAlign: 'center', width:'110px',}}/>
-                <Column body={exibePaa} header='Exibe no PAA?'
-                                                    style={{textAlign: 'center', width:'110px',}}/>
+                            <DataTable
+                                value={results}
+                            >
+                                <Column field="nome" header="Nome"/>
 
-                <Column
-                    field="acoes"
-                    header="Ações"
-                    body={acoesTemplate}
-                    style={{width:'80px', textAlign: 'center'}}
-                />
-            </DataTable>
+                                <Column body={ordenacaoTemplate} header={ordenacaoHeaderTemplate()} />
+
+                                <Column body={conferirUnidadesTemplate} header='UEs vinculadas'
+                                                                    style={{textAlign: 'center', width:'140px',}}/>
+                                <Column body={aceitaCapitalTemplate} header='Aceita Capital?'
+                                                                    style={{textAlign: 'center', width:'110px',}}/>
+                                <Column body={aceitaCusteioTemplate} header='Aceita Custeio?'
+                                                                    style={{textAlign: 'center', width:'110px',}}/>
+                                <Column body={aceitaLivreTemplate} header='Aceita Livre Aplicação?'
+                                                                    style={{textAlign: 'center', width:'110px',}}/>
+                                <Column body={recursosPropriosTemplate} header='Recursos externos?'
+                                                                    style={{textAlign: 'center', width:'110px',}}/>
+                                <Column body={exibePaa} header='Exibe no PAA?'
+                                                                    style={{textAlign: 'center', width:'110px',}}/>
+
+                                <Column
+                                    field="acoes"
+                                    header="Ações"
+                                    body={acoesTemplate}
+                                    style={{width:'80px', textAlign: 'center'}}
+                                />
+                            </DataTable>
+                        </>
+                    ) : (
+                        <MsgImgCentralizada
+                            data-qa="imagem-lista-sem-acoes"
+                            texto="Nenhum resultado encontrado."
+                            img={Img404}
+                        />
+                    )}
+                </>
+            ) }
+            
         </>
     )
 };
