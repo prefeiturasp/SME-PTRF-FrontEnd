@@ -10,27 +10,38 @@ export const Filtros = () => {
     } = useAcoesContext();
 
     return (
-        <>
-            <form>
-                <div className="form-row">
-                    <div className="form-group col-md-12">
-                        <label htmlFor="filtrar_por_nome">Filtrar por nome da ação</label>
-                        <input
-                            value={draftFilters.filtrar_por_nome}
-                            onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
-                            name='filtrar_por_nome'
-                            id="filtrar_por_nome"
-                            type="text"
-                            className="form-control"
-                            placeholder='Escreva o nome da ação'
-                        />
-                    </div>
+        <form>
+            <div className="form-row align-items-end">
+                <div className="form-group col">
+                    <label htmlFor="filtrar_por_nome">Filtrar por nome da ação</label>
+                    <input
+                        value={draftFilters.filtrar_por_nome}
+                        onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
+                        name="filtrar_por_nome"
+                        id="filtrar_por_nome"
+                        type="text"
+                        className="form-control"
+                        placeholder="Escreva o nome da ação"
+                    />
                 </div>
-                <div className="d-flex  justify-content-end mt-n2">
-                    <button onClick={()=>limpaFiltros()} type="button" className="btn btn btn-outline-success mt-2 mr-2">Limpar</button>
-                    <button onClick={handleSubmitFiltros} type="button" className="btn btn-success mt-2">Filtrar</button>
+
+                <div className="form-group col-auto d-flex">
+                    <button 
+                        onClick={() => limpaFiltros()} 
+                        type="button" 
+                        className="btn btn-outline-success mr-2"
+                    >
+                        Limpar
+                    </button>
+                    <button 
+                        onClick={handleSubmitFiltros} 
+                        type="button" 
+                        className="btn btn-success"
+                    >
+                        Filtrar
+                    </button>
                 </div>
-            </form>
-        </>
+            </div>
+        </form>
     );
 };

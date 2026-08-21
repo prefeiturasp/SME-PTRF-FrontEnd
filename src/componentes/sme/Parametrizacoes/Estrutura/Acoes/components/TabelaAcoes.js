@@ -133,20 +133,20 @@ export const TabelaAcoes = () => {
                 <>
                     {(results || []).length ? (
                         <>
-                            <div className="d-flex justify-content-end">
+                            <div className="d-flex justify-content-between align-items-center mt-4">
+                                <TotalRegistros 
+                                    titulo="Ações"
+                                    total_registros={results.length}
+                                />
+
                                 <button 
                                     type="button" 
-                                    className="btn btn btn-success mt-4"
+                                    className="btn btn btn-success mb-3"
                                     onClick={handleAlterarOrdenacao}
                                 >
                                     Alterar ordenação
                                 </button>
                             </div>
-
-                            <TotalRegistros 
-                                titulo="Ações"
-                                total_registros={results.length}
-                            />
 
                             <DataTable
                                 value={results}
