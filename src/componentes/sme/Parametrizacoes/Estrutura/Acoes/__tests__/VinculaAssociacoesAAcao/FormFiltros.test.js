@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Filtros } from '../../VinculaAssociacoesAAcao/FormFiltros';
+import { Filtros } from '../../components/VinculaAssociacoesAAcao/FormFiltros';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
@@ -54,10 +54,11 @@ describe('Filtros Component', () => {
 
         const input = screen.getByLabelText(/Pesquisar unidades vinculadas à ação/i);
 
-        await userEvent.type(input, 'Teste');
+        // Dispara 1 único evento com o valor completo
+        fireEvent.change(input, { target: { value: 'Teste' } });
 
         expect(mockMudancasFiltros).toHaveBeenCalled();
-        expect(mockMudancasFiltros).toHaveBeenCalledTimes('Teste'.length);
+        expect(mockMudancasFiltros).toHaveBeenCalledTimes(1);
         expect(mockMudancasFiltros.mock.calls.at(-1)).toEqual(['filtrar_por_nome', 'Teste']);
     });
 

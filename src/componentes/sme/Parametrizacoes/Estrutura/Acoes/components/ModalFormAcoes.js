@@ -116,7 +116,7 @@ export const ModalFormAcoes = () => {
                                                 id="ordem_exibicao"
                                                 type="text"
                                                 className="form-control"
-                                                placeholder="Sem preenchimento"
+                                                placeholder="-"
                                                 onChange={props.handleChange}
                                                 maxLength={10}
                                                 disabled

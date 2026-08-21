@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Filtros } from '../../AssociacoesDaAcao/FormFiltros';
+import { Filtros } from '../../components/AssociacoesDaAcao/FormFiltros';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
