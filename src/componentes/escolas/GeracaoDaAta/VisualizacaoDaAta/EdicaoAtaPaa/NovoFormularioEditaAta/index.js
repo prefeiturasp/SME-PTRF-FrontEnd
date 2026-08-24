@@ -80,6 +80,7 @@ export const NovoFormularioEditaAta = ({
   const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
   const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
   const [linhaEditada, setLinhaEditada] = useState({});
+  const identificadoresAnteriores = useRef({});
   const professorLookupTimeouts = useRef({});
 
   const notificarErroComposicaoPorData = (error) => {
@@ -140,6 +141,8 @@ export const NovoFormularioEditaAta = ({
       precisaProfessorGremio,
     );
 
+    carregarIdentificadoresAnteriores(listaComProfessor);
+
     return listaComProfessor;
   };
 
@@ -155,7 +158,7 @@ export const NovoFormularioEditaAta = ({
         stateFormEditarAta,
         listaParticipantes: initialValues?.listaParticipantes || [],
       });
-     } 
+     }
   }, [initialValues, stateFormEditarAta]);
 
   useEffect(() => {
@@ -295,6 +298,9 @@ export const NovoFormularioEditaAta = ({
           professorInfo || professorDefaults,
           precisaProfessorGremio,
         );
+
+        carregarIdentificadoresAnteriores(listaComProfessor);
+
         sincronizaListaParticipantes(listaComProfessor, {
           reinicializar: true,
         });
@@ -376,11 +382,15 @@ export const NovoFormularioEditaAta = ({
     if (ehEdicaoPresente[index]) {
       let presentes = values.listaParticipantes;
       let nome = presentes[index].nome;
+      let identificacao = presentes[index].identificacao;
       let podeCadastrar = true;
 
       for (let i = 0; i <= presentes.length - 1; i++) {
         if (i !== index) {
-          if (nome === presentes[i].nome) {
+          let ehProfessor = presentes[i].professor_gremio
+          let jaEstaNaLista = nome === presentes[i].nome || identificacao === presentes[i].identificacao;
+
+          if (jaEstaNaLista  && !ehProfessor) {
             podeCadastrar = false;
             break;
           }
@@ -427,11 +437,15 @@ export const NovoFormularioEditaAta = ({
     } else {
       let presentes = values.listaParticipantes;
       let nome = presentes[index].nome;
+      let identificacao = presentes[index].identificacao;
       let podeCadastrar = true;
 
       for (let i = 0; i <= presentes.length - 1; i++) {
         if (i !== index) {
-          if (nome === presentes[i].nome) {
+          let ehProfessor = presentes[i].professor_gremio
+          let jaEstaNaLista = nome === presentes[i].nome || identificacao === presentes[i].identificacao;
+
+          if (jaEstaNaLista  && !ehProfessor) {
             podeCadastrar = false;
             break;
           }
@@ -669,6 +683,13 @@ export const NovoFormularioEditaAta = ({
   };
 
   const handleChangeIdentificador = async (e, setFieldValue, index) => {
+    erros = {
+        ...erros,
+        [index]: null,
+    };
+
+    setFormErrors(erros);
+
     const participanteAtual = obterParticipanteAtual(index);
     const ehProfessorGremio =
       participanteAtual && participanteAtual.professor_gremio;
@@ -691,25 +712,27 @@ export const NovoFormularioEditaAta = ({
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
 
+
   const handleBlurIdentificador = async (e, setFieldValue, index) => {
+
     let identificador = e.target.value;
+    let identificadorAnterior = identificadoresAnteriores.current[index];
+    console.log(identificadorAnterior)
+    if (identificador === identificadorAnterior) {
+        console.log('aqui2');
+        return;
+    }
+
+    identificadoresAnteriores.current[index] = identificador;
+
+    if(identificador === '') return;
+
     let data_reuniao = null;
-    if (
-      initialValues &&
-      initialValues.stateFormEditarAta &&
-      initialValues.stateFormEditarAta.data_reuniao
-    ) {
+    if (initialValues?.stateFormEditarAta?.data_reuniao) {
       data_reuniao = initialValues.stateFormEditarAta.data_reuniao;
     }
-    const participanteAtual =
-      formRef &&
-      formRef.current &&
-      formRef.current.values &&
-      formRef.current.values.listaParticipantes
-        ? formRef.current.values.listaParticipantes[index]
-        : null;
-    const ehProfessorGremio =
-      participanteAtual && participanteAtual.professor_gremio;
+    const participanteAtual = formRef?.current?.values?.listaParticipantes?.[index] ?? null;
+    const ehProfessorGremio = participanteAtual?.professor_gremio;
 
     if (ehProfessorGremio) {
       if (identificador.length === 7 && isNumber(identificador)) {
@@ -720,8 +743,8 @@ export const NovoFormularioEditaAta = ({
           atualizarCamposProfessorGremio(
             index,
             setFieldValue,
-            professor && professor.nome ? professor.nome : "",
-            professor && professor.cargo ? professor.cargo : "",
+            professor?.nome || "",
+            professor?.cargo || "",
             !!encontrou,
             identificador,
           );
@@ -729,14 +752,32 @@ export const NovoFormularioEditaAta = ({
             toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
           }
         } catch (error) {
-          console.error("Erro ao buscar professor do grêmio", error);
+          identificadoresAnteriores.current[index] = '';
+
+          const status = error?.response?.status;
+
+          if (status === 400) {
+            toastCustom.ToastCustomWarning(
+              "Professor Orientador do Grêmio não encontrado",
+            );
+          } else {
+            toastCustom.ToastCustomError(
+              "Erro ao buscar professor do grêmio",
+            );
+          }
+
+          console.error(
+            "Erro ao buscar professor do grêmio",
+            status,
+          );
+
           atualizarCamposProfessorGremio(
             index,
             setFieldValue,
             "",
             "",
             false,
-            identificador,
+            "",
           );
         }
       } else {
@@ -748,7 +789,12 @@ export const NovoFormularioEditaAta = ({
           false,
           identificador,
         );
+
+        toastCustom.ToastCustomWarning(
+          "RF do Professor Orientador do Grêmio inválido",
+        );
       }
+
       return;
     }
 
@@ -762,8 +808,8 @@ export const NovoFormularioEditaAta = ({
           dataFormatada,
         );
 
-        if (membro.mensagem === "membro-encontrado") {
-          setFieldValue(
+        if (membro.mensagem !== "servidor-nao-encontrado") {
+            setFieldValue(
             `listaParticipantes[${index}].nome`,
             membro.nome ? membro.nome : "",
           );
@@ -773,6 +819,11 @@ export const NovoFormularioEditaAta = ({
           );
           setFieldValue(`listaParticipantes[${index}].membro`, true);
         } else {
+
+          toastCustom.ToastCustomWarning(
+            "Membro não encontrado",
+          );
+
           setFieldValue(
             `listaParticipantes[${index}].nome`,
             membro.nome ? membro.nome : "",
@@ -789,8 +840,20 @@ export const NovoFormularioEditaAta = ({
         document.getElementById(
           `listaParticipantes.cargo_[${index}]`,
         ).disabled = true;
-      } catch (err) {
-        console.error(err);
+      } catch (error) {
+        const status = error?.response?.status;
+
+        if (status === 400) {
+          toastCustom.ToastCustomWarning(
+            "Membro não encontrado",
+          );
+        } else {
+          toastCustom.ToastCustomWarning(
+            "Erro ao buscar o membro",
+          );
+        }
+
+        console.error(error);
       }
     } else if (identificador.length === 5 && isNumber(identificador)) {
       let membro = await getMembroPorIdentificadorPaa(
@@ -799,7 +862,7 @@ export const NovoFormularioEditaAta = ({
         dataFormatada,
       );
 
-      if (membro.mensagem === "membro-encontrado") {
+      if (membro.mensagem !== "servidor-nao-encontrado") {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
           membro.nome ? membro.nome : "",
@@ -809,6 +872,10 @@ export const NovoFormularioEditaAta = ({
           membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, true);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            true;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            true;
       } else {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
@@ -819,12 +886,12 @@ export const NovoFormularioEditaAta = ({
           membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, false);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          false;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = false;
       }
-
-      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
-        true;
-      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
-        true;
     } else if (
       identificador.length === 14 &&
       valida_cpf_exportado(identificador)
@@ -845,6 +912,10 @@ export const NovoFormularioEditaAta = ({
           membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, true);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            true;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            true;
       } else {
         setFieldValue(
           `listaParticipantes[${index}].nome`,
@@ -855,12 +926,11 @@ export const NovoFormularioEditaAta = ({
           membro.cargo ? membro.cargo : "",
         );
         setFieldValue(`listaParticipantes[${index}].membro`, false);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            false;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            false;
       }
-
-      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
-        true;
-      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
-        true;
     } else {
       setFieldValue(`listaParticipantes[${index}].nome`, "");
       setFieldValue(`listaParticipantes[${index}].cargo`, "");
@@ -990,6 +1060,15 @@ export const NovoFormularioEditaAta = ({
     });
   };
 
+  const carregarIdentificadoresAnteriores = (listaParticipantes) => {
+    identificadoresAnteriores.current = {};
+
+    listaParticipantes.forEach((participante, index) => {
+      identificadoresAnteriores.current[index] =
+        participante?.identificacao || "";
+    });
+  };
+
   const handleConfirmarRemocaoParticipantes = () => {
     const { name, value, setFieldValue } = dataModalApagarParticipantesAta;
     setFieldValue(name, value);
@@ -1000,6 +1079,8 @@ export const NovoFormularioEditaAta = ({
       precisaProfessorGremio,
     );
     sincronizaListaParticipantes(listaComProfessor);
+
+    carregarIdentificadoresAnteriores(listaComProfessor);
 
     return setDataModalApagarParticipantesAta({
       show: false,
