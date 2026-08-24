@@ -171,14 +171,13 @@ describe("Componente <TabelaAcoes />", () => {
   test("deve navegar para '/parametro-acoes/reordenar' ao clicar no botão 'Alterar ordenação'", () => {
     renderComponent();
 
-    const recurso_uuid = "recurso-999-uuid";
     const btnAlterarOrdenacao = screen.getByRole("button", {
       name: "Alterar ordenação",
     });
     fireEvent.click(btnAlterarOrdenacao);
 
     expect(mockNavigate).toHaveBeenCalledTimes(1);
-    expect(mockNavigate).toHaveBeenCalledWith(`/parametro-acoes/reordenar?recurso_uuid=${recurso_uuid}`);
+    expect(mockNavigate).toHaveBeenCalledWith(`/parametro-acoes/reordenar`);
   });
 
   test("deve acionar handleOpenModalForm com os dados da linha (incluindo o recurso como UUID string) ao clicar no botão de editar", () => {
