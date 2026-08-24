@@ -45,6 +45,7 @@ export const EdicaoAtaPaa = () => {
     const repassesPendentes = useCarregaRepassesPendentesPorPeriodoAteAgora(uuid_associacao, periodoUuid)
 
     const [listaPresentesPadrao, setListaPresentesPadrao] = useState([]);
+
     const [stateFormEditarAta, setStateFormEditarAta] = useState({
         comentarios: "",
         parecer_conselho: "",
@@ -77,25 +78,50 @@ export const EdicaoAtaPaa = () => {
         }
         const fetchData = async () => {
             setIsLoadingPresentes(true)
+
             try{
                 let listaPresentesAta = await getListaPresentesAta(ataUuid);
                 let listaPresentesPadraoAta = await getListaPresentesPadraoAta(ataUuid);
 
-                for (let i = 0; i < listaPresentesAta.length; i++) {
-                    const presenteAta = listaPresentesAta[i];
 
-                    for (let j = 0; j < listaPresentesPadraoAta.length; j++) {
-                        const presentePadraoAta = listaPresentesPadraoAta[j];
+                const participantesNaoMembros = listaPresentesAta.filter(
+                    (participante) => participante.membro === false
+                );
 
-                        if (presenteAta.identificacao === presentePadraoAta.identificacao) {
-                            listaPresentesPadraoAta[j].presente = listaPresentesAta[i].presente;
+                for (const presenteAta of listaPresentesAta) {
+                    for (const presentePadraoAta of listaPresentesPadraoAta) {
+                        if (
+                            presenteAta.identificacao ===
+                            presentePadraoAta.identificacao
+                        ) {
+                            presentePadraoAta.presente = presenteAta.presente;
                         }
                     }
                 }
 
-                let participantesNaoMembros = listaPresentesAta.filter(participante => participante.membro === false);
+                const membrosParaAdicionar = listaPresentesAta.filter(
+                    (participante) => {
+                        if (!participante.membro) {
+                            return false;
+                        }
 
-                setListaPresentesPadrao(listaPresentesPadraoAta.concat(participantesNaoMembros))
+                        return !listaPresentesPadraoAta.some(
+                            (membroPadrao) =>
+                                membroPadrao.identificacao ===
+                                participante.identificacao
+                        );
+                    }
+                );
+
+                listaPresentesPadraoAta = [
+                    ...listaPresentesPadraoAta,
+                    ...membrosParaAdicionar,
+                ];
+
+                setListaPresentesPadrao(
+                    listaPresentesPadraoAta.concat(participantesNaoMembros)
+                );
+
             } catch (e) {
                 console.error('Erro ao obter lista de presentes', e)
             } finally {
@@ -210,7 +236,7 @@ export const EdicaoAtaPaa = () => {
     const getPresidenteAndSecretario = (participantes) => {
         let presidente = null;
         let secretario = null;
-        
+
         if (!participantes || !Array.isArray(participantes)) {
             return;
         }
@@ -254,11 +280,11 @@ export const EdicaoAtaPaa = () => {
         let dadosForm = formRef.current.values
         let retorno_erros = temErros(dadosForm)
 
-        
+
         if(
             dadosForm.stateFormEditarAta.tipo_ata === "RETIFICACAO" &&
             dadosForm.stateFormEditarAta.justificativa_retificacao.trim() === ''
-        ) 
+        )
         {
             toastCustom.ToastCustomError('O preenchimento do campo Justificativa da retificação é obrigatório')
             return;
@@ -329,7 +355,7 @@ export const EdicaoAtaPaa = () => {
             console.log("Erro ao fazer edição da Ata ", e.response)
             const mensagemErro = getErrorMessage(e);
             toastCustom.ToastCustomError(mensagemErro);
-            
+
         }
     }
     return (
@@ -371,6 +397,7 @@ export const EdicaoAtaPaa = () => {
                         repassesPendentes={repassesPendentes}
                         erros={erros}
                         editaStatusDePresencaMembro={editaStatusDePresencaMembro}
+                        precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
                     >
                     </FormularioEditaAta>}
                     </Spin>
