@@ -1,8 +1,8 @@
 import React, { useState } from "react"; 
 import { DataTable } from 'primereact/datatable'; 
 import { Column } from 'primereact/column'; 
-import useTagInformacaoAssociacaoEncerradaTemplate from "../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate"; 
-import { LegendaInformacao } from "../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
+import useTagInformacaoAssociacaoEncerradaTemplate from "../../../../../../hooks/Globais/TagsInformacoesAssociacoes/useTagInformacaoAssociacaoEncerradaTemplate"; 
+import { LegendaInformacao } from "../../../../../Globais/ModalLegendaInformacao/LegendaInformacao";
 import {Paginator} from 'primereact/paginator';
 
 export const TabelaAssociacaoAcao = ({

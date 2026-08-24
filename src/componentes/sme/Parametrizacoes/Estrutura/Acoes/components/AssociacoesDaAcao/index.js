@@ -1,24 +1,24 @@
 import React, {useEffect, useState} from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
-import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
-import Img404 from "../../../../../../assets/img/img-404.svg";
-import Loading from "../../../../../../utils/Loading";
+import "../../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
+import Img404 from "../../../../../../../assets/img/img-404.svg";
+import Loading from "../../../../../../../utils/Loading";
 import {Filtros} from "./FormFiltros";
 import {Button} from "antd";
-import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
-import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
+import {MsgImgCentralizada} from  "../../../../../../Globais/Mensagens/MsgImgCentralizada";
+import {MsgImgLadoDireito} from "../../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faPlus, faTimesCircle} from "@fortawesome/free-solid-svg-icons";
 import {ModalDesvincularLote} from "./Modais";
-import {Link, useParams} from 'react-router-dom';
-import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcaoAssociacao} from "../../../../../../services/sme/Parametrizacoes.service"
+import {Link, useParams, useSearchParams} from 'react-router-dom';
+import {PaginasContainer} from "../../../../../../../paginas/PaginasContainer";
+import {getUnidadesPorAcao, getAcao, deleteAcoesAssociacoesEmLote, deleteAcaoAssociacao} from "../../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmDesvincularAcaoAssociacao} from "./ModalConfirmDesvincularAcaoAssociacao"
 import { TabelaAssociacaoAcao } from "../TabelaAssociacaoAcao";
-import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
+import { getTabelaAssociacoes } from "../../../../../../../services/dres/Associacoes.service";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
 import {useNavigate} from "react-router-dom";
-import {toastCustom} from "../../../../../Globais/ToastCustom";
+import {toastCustom} from "../../../../../../Globais/ToastCustom";
 import "./associacoes.scss";
 
 export const AssociacoesDaAcao = () => {
@@ -46,6 +46,9 @@ export const AssociacoesDaAcao = () => {
 
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
+    const [searchParams] = useSearchParams();
+    const recurso_uuid_aba = searchParams.get("recurso_uuid");
+
     useEffect(() => {
         buscaUnidadesDaAcao(acao_uuid).then(() => setLoading(false));
     }, []);
@@ -53,13 +56,28 @@ export const AssociacoesDaAcao = () => {
     const buscaUnidadesDaAcao = async (acaoUuid, pagina = 1) => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
+            console.log(acao)
+            console.log(recurso_uuid_aba)
             setAcao(acao);
 
-            let _tabelaAssociacoes = await getTabelaAssociacoes();
+            let _tabelaAssociacoes = await getTabelaAssociacoes(recurso_uuid_aba);
             setTabelaAssociacoes(_tabelaAssociacoes);
 
-            let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid, pagina);
-            setUnidades(acoesAssociacoes);
+            let acoesAssociacoes = await getUnidadesPorAcao(acaoUuid, pagina, "", [], recurso_uuid_aba);
+            
+            let unis = (acoesAssociacoes.results || []).map(obj => {
+                return {
+                    ...obj,
+                    selecionado: false
+                }
+            });
+            
+            setUnidades({
+                results: unis,
+                count: acoesAssociacoes.count,
+                next: acoesAssociacoes.next,
+                previous: acoesAssociacoes.previous
+            });
 
             console.log(acoesAssociacoes)
 
@@ -72,7 +90,7 @@ export const AssociacoesDaAcao = () => {
         setCurrentPage(event.page + 1)
         setFirstPage(event.first)
 
-        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, event.page + 1, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
+        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, event.page + 1, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes, "", "", recurso_uuid_aba);
     
         let unis = resultado_filtros.results.map(obj => {
             return {
@@ -103,7 +121,7 @@ export const AssociacoesDaAcao = () => {
         if (event) {
             event.preventDefault();
         }
-        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, pagina, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
+        let resultado_filtros = await getUnidadesPorAcao(acao_uuid, pagina, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes, recurso_uuid_aba);
     
         let unis = resultado_filtros.results.map(obj => {
             return {
@@ -303,6 +321,7 @@ export const AssociacoesDaAcao = () => {
         setShowModalDesvincular(false);
 
     }
+
     const acoesTemplate = (rowData) => {
         const disabled = rowData.associacao.encerrada || !TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES
         return (
@@ -341,7 +360,7 @@ export const AssociacoesDaAcao = () => {
     const onDesvinculaAssociacaoTrue = async () => {
         setShowConfirmaDesvinculo(false);
         try {
-            await deleteAcaoAssociacao(acaoAssociacaoUuid);
+            await deleteAcaoAssociacao(acaoAssociacaoUuid, recurso_uuid_aba);
             toastCustom.ToastCustomSuccess("Associação desvinculada com sucesso!");
             await atualizaListaUnidades();
         } catch (e) {
@@ -426,7 +445,7 @@ export const AssociacoesDaAcao = () => {
                                 <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
                                     <button 
                                         disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
-                                        onClick={() => goTo(`/vincula-associacoes-a-acao/${acao_uuid}`)}
+                                        onClick={() => goTo(`/vincula-associacoes-a-acao/${acao_uuid}?recurso_uuid=${recurso_uuid_aba}`)}
                                         type="button" 
                                         className="btn btn-success ml-2"
                                     >

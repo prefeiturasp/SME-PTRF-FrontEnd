@@ -1,7 +1,7 @@
-import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
+import {ModalBootstrap} from "../../../../../../Globais/ModalBootstrap";
 import React from "react";
 
-export const ModalInfoNaoPodeExcluir = (props) => {
+export const ModalConfirmDesvincularAcaoAssociacao = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
@@ -11,6 +11,9 @@ export const ModalInfoNaoPodeExcluir = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
+            segundoBotaoOnclick={props.onDeleteAcaoTrue}
+            segundoBotaoCss={props.segundoBotaoCss}
+            segundoBotaoTexto={props.segundoBotaoTexto}
         />
     )
 };

@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ModalDesvincularLote } from "../../AssociacoesDaAcao/Modais";
+import { ModalDesvincularLote } from "../../components/AssociacoesDaAcao/Modais";
 
 describe("ModalDesvincularLote", () => {
   const defaultProps = {
