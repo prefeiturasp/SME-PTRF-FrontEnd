@@ -11,7 +11,7 @@ import { getMembrosComissao, getComissoes, getMembrosComissaoFiltro, postMembroC
 import { ModalAdicionarMembroComissao, ModalEditarMembroComissao, ModalConfirmaExclusaoMembroComissao } from "./Modais";
 import { consultarRF } from "../../../../services/escolas/Associacao.service";
 import { apenasNumero } from "../../../../utils/ValidacoesAdicionaisFormularios";
-import { ModalInfoNaoPodeGravar } from "../../../sme/Parametrizacoes/Estrutura/Acoes/ModalInfoNaoPodeGravar";
+import { ModalInfoNaoPodeGravar } from "../../../sme/Parametrizacoes/Estrutura/Acoes/components/ModalInfoNaoPodeGravar";
 
 export const Comissoes = () => {
     const estadoInicialFiltros = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { TabelaAssociacaoAcaoNaoVinculadas } from '../TabelaAssociacaoAcaoNaoVinculadas';
-import { mockUnidades } from '../../__fixtures__/mockData';
+import { mockUnidades } from '../../../__fixtures__/mockData';
 
 
 const mockHandleVinculaUE = jest.fn();
