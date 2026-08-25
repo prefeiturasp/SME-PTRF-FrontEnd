@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Checkbox, Flex, Spin } from "antd";
+import { Checkbox, Flex, Spin, Button } from "antd";
 import { useGetReceitasPrevistas } from "./hooks/useGetReceitasPrevistas";
 import "./style.css";
 import ReceitasPrevistasModalForm from "./ReceitasPrevistasModalForm";
@@ -53,7 +53,7 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
   }, [queryClient, paa.uuid]);
 
   const onTogglePararAtualizacoesSaldo = (e) => {
-    setValorCheckPararAtualizacaoSaldo(e.target.checked);
+    setValorCheckPararAtualizacaoSaldo(!!!paa?.saldo_congelado_em);
     setShowModalConfirmaPararAtualizacaoSaldo(true);
   };
 
@@ -88,10 +88,13 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
           <Flex align="center">
             {!!paa?.uuid && paa?.status !== "EM_RETIFICACAO" && (
               <>
-                <Checkbox
+                <Button
                   data-testid="checkbox-parar-atualizacoes-saldo"
-                  checked={!!paa?.saldo_congelado_em}
-                  onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
+                  type={!!paa?.saldo_congelado_em ? "default" : "primary"}
+                  onClick={(e) => {                    
+                    onTogglePararAtualizacoesSaldo(e);
+                  }}
+                  style={{height: 'auto', padding: '10px'}}
                   disabled={
                     !visoesService.getPermissoes(["custom_change_paa"]) ||
                     isLoadingReceitasPrevistas ||
@@ -99,8 +102,11 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
                     isFetchingPaa
                   }
                 >
-                  Parar atualizações do saldo
-                </Checkbox>
+                    {!!paa?.saldo_congelado_em ? 
+                        <b>Desbloquear atualização <br/> de saldo da PC</b> :
+                        <b>Bloquear atualização <br/> de saldo da PC</b> 
+                    }
+                </Button>
                 <Icon
                   tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
                   icon="faExclamationCircle"
