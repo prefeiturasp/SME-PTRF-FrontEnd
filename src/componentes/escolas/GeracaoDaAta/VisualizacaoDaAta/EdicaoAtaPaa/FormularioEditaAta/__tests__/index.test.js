@@ -122,7 +122,7 @@ describe("FormularioEditaAta - professor orientador do grêmio", () => {
 			cargo: "Professor",
 		});
 
-		const { container, getByLabelText } = render(
+		const { container } = render(
 			<FormularioEditaAta
 				{...propsBase}
 				formRef={{
@@ -205,5 +205,44 @@ describe("FormularioEditaAta - professor orientador do grêmio", () => {
 				"Participante inserido com sucesso",
 			);
 		});
+	});
+
+	it("deve incluir o novo membro como presente", async () => {
+		getMembroPorIdentificadorPaa.mockResolvedValue({
+			mensagem: "servidor-encontrado",
+			nome: "Membro da Associação",
+			cargo: "Membro",
+		});
+
+		const { getByText } = render(
+			<FormularioEditaAta
+				{...propsBase}
+				listaPresentesPadrao={[]}
+				precisaProfessorGremio={false}
+				formRef={{
+					current: { values: { listaPresentesPadrao: [] } },
+				}}
+			/>,
+		);
+
+		fireEvent.click(getByText("+ Adicionar presente"));
+
+		const campoRf = await screen.findByRole("textbox", {
+			name: "Identificador (opcional)",
+		});
+		fireEvent.change(campoRf, { target: { value: "1234567" } });
+		fireEvent.blur(campoRf);
+
+		await waitFor(() => {
+			expect(getMembroPorIdentificadorPaa).toHaveBeenCalledWith(
+				"uuid-123",
+				"1234567",
+			);
+		});
+
+		fireEvent.click(getByText("Confirmar"));
+
+		const statusPresenca = await screen.findByRole("switch");
+		expect(statusPresenca).toHaveAttribute("aria-checked", "true");
 	});
 });

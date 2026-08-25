@@ -845,7 +845,13 @@ export const FormularioEditaAta = ({
                                                                                 </div>
                                                                                 <div className="row">
                                                                                     <Switch
-                                                                                        onChange={() => editaStatusDePresencaMembro(membro.identificacao)}
+                                                                                        onChange={() => {
+                                                                                            setFieldValue(
+                                                                                                `listaPresentesPadrao[${index}].presente`,
+                                                                                                !membro.presente,
+                                                                                            );
+                                                                                            editaStatusDePresencaMembro(membro.identificacao);
+                                                                                        }}
                                                                                         checked={membro.presente}
                                                                                         name="statusPresidenteSwitch"
                                                                                         checkedChildren="Presente"
@@ -934,6 +940,7 @@ export const FormularioEditaAta = ({
                                                                         editavel: true,
                                                                         nome: '',
                                                                         membro: false,
+                                                                        presente: true,
                                                                         adicao: true
                                                                     });
                                                                 }}
