@@ -53,7 +53,7 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
   }, [queryClient, paa.uuid]);
 
   const onTogglePararAtualizacoesSaldo = (e) => {
-    setValorCheckPararAtualizacaoSaldo(!!!paa?.saldo_congelado_em);
+    setValorCheckPararAtualizacaoSaldo(!paa?.saldo_congelado_em);
     setShowModalConfirmaPararAtualizacaoSaldo(true);
   };
 
