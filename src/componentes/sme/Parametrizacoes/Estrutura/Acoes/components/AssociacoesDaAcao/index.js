@@ -56,8 +56,6 @@ export const AssociacoesDaAcao = () => {
     const buscaUnidadesDaAcao = async (acaoUuid, pagina = 1) => {
         if (acaoUuid){
             let acao = await getAcao(acaoUuid)
-            console.log(acao)
-            console.log(recurso_uuid_aba)
             setAcao(acao);
 
             let _tabelaAssociacoes = await getTabelaAssociacoes(recurso_uuid_aba);
@@ -78,8 +76,6 @@ export const AssociacoesDaAcao = () => {
                 next: acoesAssociacoes.next,
                 previous: acoesAssociacoes.previous
             });
-
-            console.log(acoesAssociacoes)
 
             setQuantidadeSelecionada(0);
         }
@@ -431,8 +427,12 @@ export const AssociacoesDaAcao = () => {
                         <>
                             <div className="d-flex  justify-content-end mt-n2">
                                 <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
-                                    <Link
-                                        to='/parametro-acoes'
+                                    <button
+                                        onClick={() => navigate(`/parametro-acoes`, {
+                                            state: { recurso_uuid: recurso_uuid_aba },
+                                            replace: true
+                                        })}
+                                        type="button"
                                         className="btn btn-outline-success ml-2"
                                     >
                                         <FontAwesomeIcon
@@ -440,7 +440,7 @@ export const AssociacoesDaAcao = () => {
                                             icon={faArrowLeft}
                                         />
                                         Voltar para lista de Ações
-                                    </Link>
+                                    </button>
                                 </div>
                                 <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
                                     <button 
