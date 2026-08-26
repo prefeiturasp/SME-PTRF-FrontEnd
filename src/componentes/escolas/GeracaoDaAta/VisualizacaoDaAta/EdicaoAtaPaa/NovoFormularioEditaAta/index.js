@@ -1880,6 +1880,7 @@ export const NovoFormularioEditaAta = ({
                                       editavel: true,
                                       nome: "",
                                       membro: false,
+                                      presente: true,
                                       adicao: true,
                                       professor_gremio: false,
                                     });
