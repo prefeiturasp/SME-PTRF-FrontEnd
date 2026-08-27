@@ -149,6 +149,7 @@ export const EdicaoAtaParecerTecnico = () => {
                             formRef={formRef}
                             onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
                             setDisableBtnSalvar={setDisableBtnSalvar}
+                            portariaPublicada={dadosAta?.portaria_publicada || ""}
                         />
                     }
                 </div>
