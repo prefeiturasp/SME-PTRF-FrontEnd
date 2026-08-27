@@ -170,10 +170,14 @@ export const ReordenarAcoesContextProvider = ({ children, recursoUuid }) => {
         recursoAtivo
     ]);
 
+    const resultsKey = results ? results.map((acao) => acao.uuid).join(',') : '';
+
     useEffect(() => {
-        setTempResults(results);
-        setUuidsOrdenados(results.map((acao) => acao.uuid));
-    }, [results]);
+        if (results && results.length > 0) {
+            setTempResults(results);
+            setUuidsOrdenados(results.map((acao) => acao.uuid));
+        }
+    }, [resultsKey]);
 
     return <ReordenarAcoesContext.Provider value={contextValue}>
       {children}
