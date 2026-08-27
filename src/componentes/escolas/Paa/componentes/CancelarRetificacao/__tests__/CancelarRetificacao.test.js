@@ -21,6 +21,7 @@ jest.mock("react-router-dom", () => ({
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     featureFlagAtiva: jest.fn(),
+    getPermissoes: jest.fn()
   },
 }));
 
@@ -47,6 +48,7 @@ describe("CancelarRetificacao", () => {
     jest.clearAllMocks();
 
     visoesService.featureFlagAtiva.mockReturnValue(true);
+    jest.spyOn(visoesService, 'getPermissoes').mockReturnValue(true);
 
     usePostCancelarRetificacaoPaa.mockReturnValue({
       mutationPost: {
@@ -265,5 +267,19 @@ describe("CancelarRetificacao", () => {
     });
 
     consoleSpy.mockRestore();
+  });
+
+  it("deve deixar o botão desabilitado quando o usuário não pode editar", () => {
+      jest
+      .spyOn(visoesService, "getPermissoes")
+      .mockReturnValue(false);
+
+      renderComponent();
+
+      const botao = screen.getByRole("button", {
+          name: "Cancelar Retificação",
+      });
+      
+      expect(botao).toBeDisabled();
   });
 });

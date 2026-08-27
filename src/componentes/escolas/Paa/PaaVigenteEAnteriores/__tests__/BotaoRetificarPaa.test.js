@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act, waitFor } from '@testing-library/react'
 import { BotaoRetificarPaa } from '../components/BotaoRetificarPaa/BotaoRetificarPaa';
 import { usePostIniciarRetificacaoPaa } from '../../componentes/hooks/usePostIniciarRetificacaoPaa';
 import { toastCustom } from '../../../../Globais/ToastCustom';
+import { visoesService } from "../../../../../services/visoes.service";
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -54,6 +55,9 @@ describe('BotaoRetificarPaa', () => {
     beforeEach(() => {
         jest.clearAllMocks();
         capturedModalProps = null;
+
+        jest.spyOn(visoesService, 'getPermissoes').mockReturnValue(true);
+
         usePostIniciarRetificacaoPaa.mockReturnValue({
             mutationPost: { mutateAsync: mockMutateAsync },
         });
@@ -266,6 +270,20 @@ describe('BotaoRetificarPaa', () => {
             });
 
             expect(capturedModalProps.isLoading).toBe(false);
+        });
+
+        it("deve deixar o botão desabilitado quando o usuário não pode editar", () => {
+            jest
+            .spyOn(visoesService, "getPermissoes")
+            .mockReturnValue(false);
+
+            renderComponent();
+
+            const botao = screen.getByRole("button", {
+            name: "Retificar o PAA",
+            });
+
+            expect(botao).toBeDisabled();
         });
     });
 });
