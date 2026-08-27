@@ -23,7 +23,7 @@ import { ModalInfoUpdateNaoPermitido } from "./ModalInfoUpdateNaoPermitido";
 import { ModalConfirmarExclusao } from "../../componentes/ModalConfirmarExclusao";
 import { BtnAdd } from "./BtnAdd";
 import Loading from "../../../../../utils/Loading";
-import { ModalInfoNaoPodeExcluir } from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
+import { ModalInfoNaoPodeExcluir } from "./ModalInfoNaoPodeExcluir";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
 import { EditIconButton } from "../../../../Globais/UI/Button";

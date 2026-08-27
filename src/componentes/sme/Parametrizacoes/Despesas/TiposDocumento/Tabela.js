@@ -3,6 +3,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { Icon } from "../../../../Globais/UI/Icon";
+import './scss/Table.scss';
 
 const Tabela = (props)=>{
     const templateHeaderApenasDigito = ()=>{
@@ -34,6 +35,7 @@ const Tabela = (props)=>{
                 data-qa="tabela-col-tipo-documento-nome"
                 field="nome"
                 header="Nome"
+                headerClassName="field-name-tipo-documento"
             />
             <Column
                 data-qa="tabela-col-tipo-documento-numero-documento-digitado"

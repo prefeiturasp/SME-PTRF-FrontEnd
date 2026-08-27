@@ -1,24 +1,24 @@
 import React, {useEffect, useState} from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
-import "../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
-import Img404 from "../../../../../../assets/img/img-404.svg";
-import Loading from "../../../../../../utils/Loading";
+import "../../../../../../Globais/ModalBootstrap/modal-bootstrap.scss"
+import Img404 from "../../../../../../../assets/img/img-404.svg";
+import Loading from "../../../../../../../utils/Loading";
 import {Filtros} from "./FormFiltros";
 import {Button} from "antd";
-import {MsgImgCentralizada} from  "../../../../../Globais/Mensagens/MsgImgCentralizada";
-import {MsgImgLadoDireito} from "../../../../../Globais/Mensagens/MsgImgLadoDireito";
+import {MsgImgCentralizada} from  "../../../../../../Globais/Mensagens/MsgImgCentralizada";
+import {MsgImgLadoDireito} from "../../../../../../Globais/Mensagens/MsgImgLadoDireito";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import {ModalVincularLote} from "./Modais";
 import "./associacoes.scss";
-import {Link, useParams} from 'react-router-dom';
-import {PaginasContainer} from "../../../../../../paginas/PaginasContainer";
-import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../services/sme/Parametrizacoes.service"
+import {Link, useParams, useSearchParams} from 'react-router-dom';
+import {PaginasContainer} from "../../../../../../../paginas/PaginasContainer";
+import {getAssociacoesNaoVinculadasAAcao, getAcao, postAddAcaoAssociacao, addAcoesAssociacoesEmLote} from "../../../../../../../services/sme/Parametrizacoes.service"
 import {ModalConfirmVincularAcaoAssociacao} from "./ModalConfirmVincularAcaoAssociacao"
 import { TabelaAssociacaoAcaoNaoVinculadas } from "./TabelaAssociacaoAcaoNaoVinculadas";
-import { getTabelaAssociacoes } from "../../../../../../services/dres/Associacoes.service";
-import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
-import {toastCustom} from "../../../../../Globais/ToastCustom";
+import { getTabelaAssociacoes } from "../../../../../../../services/dres/Associacoes.service";
+import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";// Preparação para react-router-dom-v6
+import {toastCustom} from "../../../../../../Globais/ToastCustom";
 
 export const VinculaAssociacoesAAcao = () => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -41,6 +41,9 @@ export const VinculaAssociacoesAAcao = () => {
     const [showConfirmaVinculo, setShowConfirmaVinculo] = useState(false);
     const [tabelaAssociacoes, setTabelaAssociacoes] = useState({});
 
+    const [searchParams] = useSearchParams();
+    const recurso_uuid_aba = searchParams.get("recurso_uuid");
+
     useEffect(() => {
         buscaUnidadesNaoVinculadasAAcao(acao_uuid).then(() => setLoading(false));
     }, []);
@@ -50,10 +53,10 @@ export const VinculaAssociacoesAAcao = () => {
             let acao = await getAcao(acaoUuid)
             setAcao(acao);
 
-            let _tabelaAssociacoes = await getTabelaAssociacoes();
+            let _tabelaAssociacoes = await getTabelaAssociacoes(recurso_uuid_aba);
             setTabelaAssociacoes(_tabelaAssociacoes);
 
-            let associacoes = await getAssociacoesNaoVinculadasAAcao(acaoUuid);
+            let associacoes = await getAssociacoesNaoVinculadasAAcao(acaoUuid, "", [], recurso_uuid_aba);
             setUnidades(associacoes);
 
             setQuantidadeSelecionada(0);
@@ -75,7 +78,7 @@ export const VinculaAssociacoesAAcao = () => {
             event.preventDefault();
         }
 
-        let resultado_filtros = await getAssociacoesNaoVinculadasAAcao(acao_uuid, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes);
+        let resultado_filtros = await getAssociacoesNaoVinculadasAAcao(acao_uuid, estadoFiltros.filtrar_por_nome, estadoFiltros.filtro_informacoes, recurso_uuid_aba);
 
         let unis = resultado_filtros.map(obj => {
             return {
@@ -374,7 +377,7 @@ export const VinculaAssociacoesAAcao = () => {
                         <>
                             <div className="p-2 bd-highlight pt-3 justify-content-end d-flex">
                                 <Link
-                                    to={`/associacoes-da-acao/${acao_uuid}`}
+                                    to={`/associacoes-da-acao/${acao_uuid}?recurso_uuid=${recurso_uuid_aba}`}
                                     className="btn btn-success ml-2"
                                 >
                                     <FontAwesomeIcon

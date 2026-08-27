@@ -1,7 +1,7 @@
-import {ModalBootstrap} from "../../../../Globais/ModalBootstrap";
+import {ModalBootstrap} from "../../../../../../Globais/ModalBootstrap";
 import React from "react";
 
-export const ModalInfoNaoPodeGravar = (props) => {
+export const ModalConfirmVincularAcaoAssociacao = (props) => {
     return (
         <ModalBootstrap
             show={props.show}
@@ -11,6 +11,9 @@ export const ModalInfoNaoPodeGravar = (props) => {
             primeiroBotaoOnclick={props.handleClose}
             primeiroBotaoTexto={props.primeiroBotaoTexto}
             primeiroBotaoCss={props.primeiroBotaoCss}
+            segundoBotaoOnclick={props.onDeleteAcaoTrue}
+            segundoBotaoCss={props.segundoBotaoCss}
+            segundoBotaoTexto={props.segundoBotaoTexto}
         />
     )
 };

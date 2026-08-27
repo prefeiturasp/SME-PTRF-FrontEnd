@@ -73,7 +73,7 @@ describe('ModalConfirmaPararAtualizacaoSaldo', () => {
   it('deve renderizar corretamente com `check=true`', () => {
     renderComponent(propsMockCheckTrue);
 
-    expect(screen.getByText(/Parar atualização do saldo/i)).toBeInTheDocument();
+    expect(screen.getByText(/Bloquear atualização do saldo/i)).toBeInTheDocument();
     expect(screen.getByText(/bloqueado na data e hora atual/i)).toBeInTheDocument();
   });
 

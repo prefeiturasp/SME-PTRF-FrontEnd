@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ModalVincularLote } from "../../VinculaAssociacoesAAcao/Modais";
+import { ModalVincularLote } from "../../components/VinculaAssociacoesAAcao/Modais";
 
 describe("ModalVincularLote", () => {
   const defaultProps = {
