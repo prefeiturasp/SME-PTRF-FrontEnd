@@ -1,12 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Spin } from 'antd';
 import { ModalRetificarPAA } from '../ModalRetificarPaa/ModalRetificarPaa';
 import { useNavigate } from 'react-router-dom';
 import { toastCustom } from '../../../../../Globais/ToastCustom';
 import { usePostIniciarRetificacaoPaa } from '../../../componentes/hooks/usePostIniciarRetificacaoPaa';
+import { visoesService } from "../../../../../../services/visoes.service";
 
 export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
     const navigate = useNavigate();
+
+    const podeEditar = useMemo(() => visoesService.getPermissoes(["custom_change_paa"]), []);
 
     const [abrirRetificacao, setAbrirRetificacao] = useState(false);
 
@@ -63,6 +66,7 @@ export const BotaoRetificarPaa = ({paa, statusDocumento}) => {
                     type="button"
                     className="btn btn-outline-success"
                     onClick={handleAbrirModal}
+                    disabled={!podeEditar}
                     style={{ fontWeight: 600, marginRight: '10px' }}>
                     {paa.status === "EM_RETIFICACAO" ? 'Continuar Retificação' : 'Retificar o PAA'}
                 </button>
