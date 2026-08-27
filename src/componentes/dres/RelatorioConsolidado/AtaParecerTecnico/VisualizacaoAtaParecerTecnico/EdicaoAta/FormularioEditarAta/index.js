@@ -35,8 +35,6 @@ export const FormularioEditaAta = ({
     setDadosForm(obj);
   };
 
-  console.log('dadosForm', stateFormEditarAta)
-
   const handleChangeRf = async (e, setFieldValue, index, listaPresentes) => {
     let erros = {};
     let rf = e.target.value;
