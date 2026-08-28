@@ -20,6 +20,7 @@ import { EdicaoAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta
 import { EdicaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAtaPaa";
 import { VisualizacaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/VisualizacaoAtaPaa";
 import { MembrosDaAssociacaoPage } from "../paginas/escolas/MembrosDaAssociacao";
+import { PaginaCadastroHistoricoDeMembrosVacancia } from "../componentes/escolas/MembrosDaAssociacaoVacancia/pages/PaginaCadastroHistoricoDeMembrosVacancia";
 import { PaginaMandatoVigente } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import { DadosDasContasPage } from "../paginas/escolas/DadosDasContasAssociacao";
@@ -225,6 +226,12 @@ const routesConfig = [
     exact: true,
     path: "/cadastro-historico-de-membros/:composicaoUuid?",
     component: PaginaCadastroHistoricoDeMembros,
+    permissoes: ["access_dados_associacao", "change_associacao"],
+  },
+  {
+    exact: true,
+    path: "/cadastro-historico-de-membros-vacancia/:composicaoUuid?",
+    component: PaginaCadastroHistoricoDeMembrosVacancia,
     permissoes: ["access_dados_associacao", "change_associacao"],
   },
   {
