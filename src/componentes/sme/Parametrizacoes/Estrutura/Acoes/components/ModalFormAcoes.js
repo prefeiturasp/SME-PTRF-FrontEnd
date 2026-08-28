@@ -123,23 +123,6 @@ export const ModalFormAcoes = () => {
                                             />
                                         </div>
                                     </div>
-
-                                    {/* <div className='col'>
-                                        <div className="form-group">
-                                            <label htmlFor="posicao_nas_pesquisas">Posição nas pesquisas</label>
-                                            <input
-                                                value={values.posicao_nas_pesquisas}
-                                                name='posicao_nas_pesquisas'
-                                                id="posicao_nas_pesquisas"
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Posição nas pesquisas (Ex: AAAAAAA)"
-                                                onChange={props.handleChange}
-                                                maxLength={10}
-                                                disabled={readOnly}
-                                            />
-                                        </div>
-                                    </div> */}
                                 </div>
 
                                 <div className="form-row">

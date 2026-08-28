@@ -666,6 +666,14 @@ export const getListaDeAcoes = async (recurso_uuid = null) => {
   return (await api.get(`/api/acoes/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
+export const getListaDeAcoesOrdenadasPorOrdemDeExibicao = async (recurso_uuid = null) => {
+  return (await api.get(`/api/acoes/ordenadas/`, { ...authHeader(), params: { recurso_uuid } })).data;
+}
+
+export const postNovaOrdemAcoes = async (payload) => {
+  return (await api.post(`/api/acoes/reordenar/`, payload, authHeader())).data;
+}
+
 export const getListaDeAcertosLancamentos = async (recurso_uuid = null) => {
   const config = recurso_uuid ? { ...authHeader(), params: { recurso_uuid } } : authHeader();
   return (await api.get(`/api/tipos-acerto-lancamento/`, config)).data;

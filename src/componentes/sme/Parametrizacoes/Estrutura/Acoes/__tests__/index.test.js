@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, configure } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { Acoes } from "../index";
+import { MemoryRouter } from "react-router-dom";
 
 // Configura o Testing Library para identificar o atributo 'data-qa'
 configure({ testIdAttribute: "data-qa" });
@@ -53,14 +54,22 @@ describe("Componente Refatorado <Acoes />", () => {
   });
 
   test("deve renderizar os wrappers principais (PaginasContainer e AcoesContextProvider)", () => {
-    render(<Acoes />);
+    render(
+      <MemoryRouter>
+        <Acoes />
+      </MemoryRouter>
+    );
 
     expect(screen.getByTestId("paginas-container")).toBeInTheDocument();
     expect(screen.getByTestId("acoes-context-provider")).toBeInTheDocument();
   });
 
   test("deve renderizar o título principal da página h1 com a classe CSS e texto corretos", () => {
-    render(<Acoes />);
+    render(
+      <MemoryRouter>
+        <Acoes />
+      </MemoryRouter>
+    );
 
     const titulo = screen.getByRole("heading", { level: 1, name: "Ações" });
     expect(titulo).toBeInTheDocument();
@@ -68,7 +77,11 @@ describe("Componente Refatorado <Acoes />", () => {
   });
 
   test("deve renderizar todos os subcomponentes na árvore DOM na estrutura esperada", () => {
-    render(<Acoes />);
+    render(
+      <MemoryRouter>
+        <Acoes />
+      </MemoryRouter>
+    );
 
     // Seções principais
     expect(screen.getByTestId("abas-por-recurso")).toBeInTheDocument();
@@ -82,7 +95,11 @@ describe("Componente Refatorado <Acoes />", () => {
   });
 
   test("deve garantir que os elementos são descendentes do AcoesContextProvider", () => {
-    render(<Acoes />);
+    render(
+      <MemoryRouter>
+        <Acoes />
+      </MemoryRouter>
+    );
 
     const provider = screen.getByTestId("acoes-context-provider");
 
