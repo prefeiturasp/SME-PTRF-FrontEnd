@@ -89,7 +89,6 @@ const mockBemProduzidoDespesas = [
               uuid: "bdcbc8ce-7bab-48b3-959a-f866c6644579",
               nome: "PTRF Básico",
               e_recursos_proprios: false,
-              posicao_nas_pesquisas: "AAAAAAAAAA",
               aceita_capital: true,
               aceita_custeio: true,
               aceita_livre: true,

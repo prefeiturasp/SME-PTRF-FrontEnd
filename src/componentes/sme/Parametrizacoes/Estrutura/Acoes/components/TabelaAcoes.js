@@ -2,17 +2,24 @@ import React from "react";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import { useAbasPorRecursoContext } from "../../../componentes/AbasPorRecurso/hooks/useAbasPorRecursoContext";
 import { MsgImgCentralizada } from "../../../../../Globais/Mensagens/MsgImgCentralizada";
-import { faClipboardList, faTimesCircle, faCheckCircle, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { TotalRegistros } from "../../../componentes/TotalRegistros";
-import { EditIconButton } from "../../../../../Globais/UI/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Img404 from "../../../../../../assets/img/img-404.svg";
 import { useAcoesContext } from "../hooks/useAcoesContext";
-import { Tooltip as ReactTooltip } from 'react-tooltip';
 import Loading from "../../../../../../utils/Loading";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
+import {
+    aceitaCapitalTemplate,
+    aceitaCusteioTemplate,
+    aceitaLivreTemplate,
+    recursosPropriosTemplate,
+    exibePaaTemplate,
+    ordenacaoTemplate,
+    ordenacaoHeaderTemplate,
+    conferirUnidadesTemplate,
+    acoesTemplate
+} from "../templates/acoesTemplates";
 
 export const TabelaAcoes = () => {
     const navigate = useNavigate();
@@ -20,102 +27,8 @@ export const TabelaAcoes = () => {
     const { recursoSelecionado } = useRecursoSelecionadoContext();
     const { selectedRecurso } = useAbasPorRecursoContext();
 
-    const acoesTemplate = (rowData) => {
-        return (
-            <EditIconButton
-                onClick={() => handleOpenModalForm(rowData)}
-            />            
-        )
-    };
-
-    const conferirUnidadesTemplate = (rowData) => {
-        return (
-            <div>
-                <Link to={`/associacoes-da-acao/${rowData['uuid']}?recurso_uuid=${selectedRecurso?.uuid}`} className="link-green" onClick={() => {}}>
-                    <FontAwesomeIcon
-                        style={{fontSize: '15px', marginRight: "0"}}
-                        icon={faClipboardList}
-                    />
-                    <span> Ver UEs vinculadas</span>
-                </Link>
-            </div>
-        )
-    };
-
-    const booleanTemplate = (value) => {
-        const opcoes = {
-          true: { icone: faCheckCircle, cor: "#297805", texto: "Sim" },
-          false: { icone: faTimesCircle, cor: "#B40C02", texto: "Não" },
-        };
-        const iconeData = opcoes[value];
-        const estiloFlag = {
-          fontSize: "14px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: iconeData.cor,
-        };
-        return (
-          <div style={estiloFlag}>
-            <FontAwesomeIcon
-              style={{ fontSize: "16px", marginRight: "5px", color: iconeData.cor }}
-              icon={iconeData.icone}
-            />
-          </div>
-        );
-    };
-
-    const aceitaCapitalTemplate = (rowData) => {
-        return booleanTemplate(rowData.aceita_capital);
-    };
-
-    const aceitaCusteioTemplate = (rowData) => {
-        return booleanTemplate(rowData.aceita_custeio);
-    };
-
-    const aceitaLivreTemplate = (rowData) => {
-        return booleanTemplate(rowData.aceita_livre);
-    };
-
-    const recursosPropriosTemplate = (rowData) => {
-        return booleanTemplate(rowData.e_recursos_proprios);
-    };
-
-    const exibePaa = (rowData) => {
-        return booleanTemplate(rowData.exibir_paa);
-    };
-
-    const ordenacaoTemplate = (rowData) => {
-        return (
-            <div style={{ textAlign: 'center' }}>
-                {rowData.ordem_exibicao}
-            </div>
-        );
-    };
-
-    const ordenacaoHeaderTemplate = () => {
-        const corRecurso = recursoSelecionado?.cor;
-        const tooltipId = "ordenacao-header-tooltip";
-        return (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span>Ordenação</span>
-                <FontAwesomeIcon 
-                    id={tooltipId}
-                    icon={faInfoCircle}
-                    style={{ fontSize: '12px', color: corRecurso, cursor: 'pointer' }}
-                />
-                <ReactTooltip 
-                    anchorId={tooltipId}
-                    content="Ordem de exibição da ação nas pesquisas"
-                    place="top"
-                    className="p-tooltip-text-white"
-                />
-            </div>
-        );
-    };
-
     const handleAlterarOrdenacao = () => {
-        navigate('/parametro-acoes/reordenar');
+        navigate(`/parametro-acoes/reordenar?recurso_uuid=${selectedRecurso?.uuid}`);
     };
 
     return(
@@ -153,9 +66,9 @@ export const TabelaAcoes = () => {
                             >
                                 <Column field="nome" header="Nome"/>
 
-                                <Column body={ordenacaoTemplate} header={ordenacaoHeaderTemplate()} />
+                                <Column body={ordenacaoTemplate} header={ordenacaoHeaderTemplate(recursoSelecionado?.cor)} />
 
-                                <Column body={conferirUnidadesTemplate} header='UEs vinculadas'
+                                <Column body={(rowData) => conferirUnidadesTemplate(rowData, selectedRecurso?.uuid)} header='UEs vinculadas'
                                                                     style={{textAlign: 'center', width:'140px',}}/>
                                 <Column body={aceitaCapitalTemplate} header='Aceita Capital?'
                                                                     style={{textAlign: 'center', width:'110px',}}/>
@@ -165,13 +78,13 @@ export const TabelaAcoes = () => {
                                                                     style={{textAlign: 'center', width:'110px',}}/>
                                 <Column body={recursosPropriosTemplate} header='Recursos externos?'
                                                                     style={{textAlign: 'center', width:'110px',}}/>
-                                <Column body={exibePaa} header='Exibe no PAA?'
+                                <Column body={exibePaaTemplate} header='Exibe no PAA?'
                                                                     style={{textAlign: 'center', width:'110px',}}/>
 
                                 <Column
                                     field="acoes"
                                     header="Ações"
-                                    body={acoesTemplate}
+                                    body={(rowData) => acoesTemplate(rowData, handleOpenModalForm)}
                                     style={{width:'80px', textAlign: 'center'}}
                                 />
                             </DataTable>

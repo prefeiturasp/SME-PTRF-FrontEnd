@@ -15,7 +15,6 @@ const initialFilters = {
 const initialStateFormModal = {
     nome: "",
     e_recursos_proprios: false,
-    posicao_nas_pesquisas: "",
     aceita_capital: false,
     aceita_custeio: false,
     aceita_livre: false,
@@ -142,7 +141,6 @@ export const AcoesContextProvider = ({ children }) => {
         const payload = {
             nome: values.nome,
             e_recursos_proprios: values.e_recursos_proprios,
-            posicao_nas_pesquisas: values.posicao_nas_pesquisas,
             aceita_capital: values.aceita_capital,
             aceita_custeio: values.aceita_custeio,
             aceita_livre: values.aceita_livre,

@@ -148,7 +148,6 @@ const TestConsumer = () => {
           context.handleSubmitFormModal({
             nome: "Nova Ação",
             e_recursos_proprios: false,
-            posicao_nas_pesquisas: 1,
             aceita_capital: true,
             aceita_custeio: false,
             aceita_livre: false,
