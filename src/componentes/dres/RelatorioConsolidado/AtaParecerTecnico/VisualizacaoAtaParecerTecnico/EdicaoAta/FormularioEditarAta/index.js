@@ -16,7 +16,7 @@ export const FormularioEditaAta = ({
   formRef,
   onSubmitFormEdicaoAta,
   setDisableBtnSalvar,
-  portariaPublicada,
+  ehPortariaPublicada,
 }) => {
   const podeEditarAta = [["change_ata_parecer_tecnico"]].some(visoesService.getPermissoes);
   const [dadosForm, setDadosForm] = useState({});
@@ -224,7 +224,7 @@ export const FormularioEditaAta = ({
 
                     <div className="col">
                       <label htmlFor="stateFormEditarAta.data_portaria">
-                        {!portariaPublicada || portariaPublicada.includes("de ") ? "Data da portaria" :
+                        {!ehPortariaPublicada ? "Data da portaria" :
                             "Data da publicação da portaria"}
                       </label>
                       <DatePickerField
