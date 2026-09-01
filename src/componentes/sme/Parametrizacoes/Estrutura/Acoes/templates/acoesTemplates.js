@@ -82,7 +82,7 @@ export const ordenacaoHeaderTemplate = (corRecurso) => {
             />
             <ReactTooltip 
                 anchorId={tooltipId}
-                content="Ordem de exibição da ação nas pesquisas"
+                content="A ordenação será exibida em todas as listas de ações"
                 place="top"
                 className="p-tooltip-text-white"
             />
