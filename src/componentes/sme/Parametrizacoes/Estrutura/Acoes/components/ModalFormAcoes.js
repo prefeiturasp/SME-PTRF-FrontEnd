@@ -106,7 +106,7 @@ export const ModalFormAcoes = () => {
                                             </div>
                                             <ReactTooltip 
                                                 id="tooltip-ordenacao"
-                                                content="Ordem de exibição da ação nas pesquisas"
+                                                content="A ordenação será exibida em todas as listas de ações"
                                                 place="top"
                                                 className="p-tooltip-text-white"
                                             />
