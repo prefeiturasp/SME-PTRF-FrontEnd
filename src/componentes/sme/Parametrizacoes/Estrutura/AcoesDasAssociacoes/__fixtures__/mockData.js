@@ -206,7 +206,6 @@ export const mockAcoes = {
                 "uuid": "920e1373-7b6f-46ec-a7e3-9e47d5751be7",
                 "nome": "Fazendo Futuro",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "CCCCCCCCCC",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -244,7 +243,6 @@ export const mockAcoes = {
                 "uuid": "d37b76f8-ef62-4ae0-9821-c4f947c55a51",
                 "nome": "Mais Escola",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "HHHHHHHHHH",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -282,7 +280,6 @@ export const mockAcoes = {
                 "uuid": "8006c807-d113-4c41-8337-64fb2f0f7931",
                 "nome": "Material Complementar",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "NNNNNNNNNN",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -320,7 +317,6 @@ export const mockAcoes = {
                 "uuid": "4e56e1f9-f2d0-4a05-84b1-2a7a449f73c3",
                 "nome": "Material Pedagógico",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "IIIIIIIIII",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -355,7 +351,6 @@ export const mockAcoes = {
                 "uuid": "1abb18d7-481f-4fae-8758-ec4e3a1bd523",
                 "nome": "Orçamento Grêmio Estudantil",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "EEEEEEEEEE",
                 "aceita_capital": true,
                 "aceita_custeio": true,
                 "aceita_livre": true
@@ -396,7 +391,6 @@ export const mockAcoes = {
                 "uuid": "882801b1-461d-42f2-bb2a-e4b691d15bea",
                 "nome": "Programa de Cuidados com as Estudantes",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "LLLLLLLLLL",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -434,7 +428,6 @@ export const mockAcoes = {
                 "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
                 "nome": "PTRF Básico",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "AAAAAAAAAA",
                 "aceita_capital": true,
                 "aceita_custeio": true,
                 "aceita_livre": true
@@ -472,7 +465,6 @@ export const mockAcoes = {
                 "uuid": "d266beb2-903a-4b4f-ae6e-c2eec185aa6b",
                 "nome": "Recurso Externo",
                 "e_recursos_proprios": true,
-                "posicao_nas_pesquisas": "ZZZZZZZZZZ",
                 "aceita_capital": true,
                 "aceita_custeio": true,
                 "aceita_livre": true
@@ -510,7 +502,6 @@ export const mockAcoes = {
                 "uuid": "e47b636b-3d28-45d3-a4fb-09427202aa80",
                 "nome": "Rolê Cultural",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "DDDDDDDDDD",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -548,7 +539,6 @@ export const mockAcoes = {
                 "uuid": "d04e1b77-2db4-482a-86b7-04a788935ffe",
                 "nome": "Salas e Espaços de Leitura",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "JJJJJJJJJJ",
                 "aceita_capital": false,
                 "aceita_custeio": false,
                 "aceita_livre": true
@@ -586,7 +576,6 @@ export const mockAcoes = {
                 "uuid": "82a4bd9a-5884-4a43-9ae9-4fee0855f9b7",
                 "nome": "Volta às aulas",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "BBBBBBBBBB",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -624,7 +613,6 @@ export const mockAcoes = {
                 "uuid": "b80996f8-2e58-4764-afe2-5d58e50ed364",
                 "nome": "Formação",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "GGGGGGGGGG",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -662,7 +650,6 @@ export const mockAcoes = {
                 "uuid": "8006c807-d113-4c41-8337-64fb2f0f7931",
                 "nome": "Material Complementar",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "NNNNNNNNNN",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -700,7 +687,6 @@ export const mockAcoes = {
                 "uuid": "4e56e1f9-f2d0-4a05-84b1-2a7a449f73c3",
                 "nome": "Material Pedagógico",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "IIIIIIIIII",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -738,7 +724,6 @@ export const mockAcoes = {
                 "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
                 "nome": "PTRF Básico",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "AAAAAAAAAA",
                 "aceita_capital": true,
                 "aceita_custeio": true,
                 "aceita_livre": true
@@ -776,7 +761,6 @@ export const mockAcoes = {
                 "uuid": "d266beb2-903a-4b4f-ae6e-c2eec185aa6b",
                 "nome": "Recurso Externo",
                 "e_recursos_proprios": true,
-                "posicao_nas_pesquisas": "ZZZZZZZZZZ",
                 "aceita_capital": true,
                 "aceita_custeio": true,
                 "aceita_livre": true
@@ -814,7 +798,6 @@ export const mockAcoes = {
                 "uuid": "e47b636b-3d28-45d3-a4fb-09427202aa80",
                 "nome": "Rolê Cultural",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "DDDDDDDDDD",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -852,7 +835,6 @@ export const mockAcoes = {
                 "uuid": "d04e1b77-2db4-482a-86b7-04a788935ffe",
                 "nome": "Salas e Espaços de Leitura",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "JJJJJJJJJJ",
                 "aceita_capital": false,
                 "aceita_custeio": false,
                 "aceita_livre": true
@@ -890,7 +872,6 @@ export const mockAcoes = {
                 "uuid": "b80996f8-2e58-4764-afe2-5d58e50ed364",
                 "nome": "Formação",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "GGGGGGGGGG",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false
@@ -928,7 +909,6 @@ export const mockAcoes = {
                 "uuid": "8006c807-d113-4c41-8337-64fb2f0f7931",
                 "nome": "Material Complementar",
                 "e_recursos_proprios": false,
-                "posicao_nas_pesquisas": "NNNNNNNNNN",
                 "aceita_capital": false,
                 "aceita_custeio": true,
                 "aceita_livre": false

@@ -20,6 +20,7 @@ import { EdicaoAta } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta
 import { EdicaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/EdicaoAtaPaa";
 import { VisualizacaoAtaPaa } from "../componentes/escolas/GeracaoDaAta/VisualizacaoDaAta/VisualizacaoAtaPaa";
 import { MembrosDaAssociacaoPage } from "../paginas/escolas/MembrosDaAssociacao";
+import { PaginaCadastroHistoricoDeMembrosVacancia } from "../componentes/escolas/MembrosDaAssociacaoVacancia/pages/PaginaCadastroHistoricoDeMembrosVacancia";
 import { PaginaMandatoVigente } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatoVigente";
 import { ValoresReprogramados } from "../componentes/Globais/ValoresReprogramados";
 import { DadosDasContasPage } from "../paginas/escolas/DadosDasContasAssociacao";
@@ -68,8 +69,8 @@ import { AcompanhamentoRelatorioConsolidadosSmeListagem } from "../componentes/s
 import { AcoesDasAssociacoes } from "../componentes/sme/Parametrizacoes/Estrutura/AcoesDasAssociacoes";
 import { ContasDasAssociacoes } from "../componentes/sme/Parametrizacoes/Estrutura/ContasDasAssociacoes";
 import { Acoes } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes";
-import { AssociacoesDaAcao } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/AssociacoesDaAcao";
-import { VinculaAssociacoesAAcao } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/VinculaAssociacoesAAcao";
+import { AssociacoesDaAcao } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/components/AssociacoesDaAcao";
+import { VinculaAssociacoesAAcao } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/components/VinculaAssociacoesAAcao";
 import { Periodos } from "../componentes/sme/Parametrizacoes/Estrutura/Periodos";
 import { Associacoes } from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes";
 import { Tags } from "../componentes/sme/Parametrizacoes/Estrutura/Tags";
@@ -140,6 +141,7 @@ import { ParametrizacoesMotivosReprovacaoPc } from "../componentes/sme/Parametri
 import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametrizacoes/Receitas/DetalhesTiposCredito";
 import { ParametrizacoesComissoes } from "../componentes/sme/Parametrizacoes/Dre/Comissoes";
 import { FormualarioAssociacao } from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes/FormualarioAssociacao";
+import { ReordenarAcoes } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/components/ReordenarAcoes";
 
 const routesConfig = [
   {
@@ -224,6 +226,12 @@ const routesConfig = [
     exact: true,
     path: "/cadastro-historico-de-membros/:composicaoUuid?",
     component: PaginaCadastroHistoricoDeMembros,
+    permissoes: ["access_dados_associacao", "change_associacao"],
+  },
+  {
+    exact: true,
+    path: "/cadastro-historico-de-membros-vacancia/:composicaoUuid?",
+    component: PaginaCadastroHistoricoDeMembrosVacancia,
     permissoes: ["access_dados_associacao", "change_associacao"],
   },
   {
@@ -620,6 +628,12 @@ const routesConfig = [
     exact: true,
     path: "/parametro-acoes",
     component: Acoes,
+    permissoes: ["access_painel_parametrizacoes"],
+  },
+  {
+    exact: true,
+    path: "/parametro-acoes/reordenar",
+    component: ReordenarAcoes,
     permissoes: ["access_painel_parametrizacoes"],
   },
   {

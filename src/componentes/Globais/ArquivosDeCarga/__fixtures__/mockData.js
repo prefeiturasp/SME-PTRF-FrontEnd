@@ -274,7 +274,7 @@ export const mockListaArquivos = [
         tipo_carga: "CARGA_ACOES_ASSOCIACOES",
         tipo_delimitador: "DELIMITADOR_PONTO_VIRGULA",
         status: "ERRO",
-        log: "\nLinha:1 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, posicao_nas_pesquisas, uuid\nLinha:2 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, posicao_nas_pesquisas, uuid\nLinha:3 Houve um erro na carga dessa linha:list index out of range\n0 linha(s) importada(s) com sucesso. 3 erro(s) reportado(s).",
+        log: "\nLinha:1 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, uuid\nLinha:2 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, uuid\nLinha:3 Houve um erro na carga dessa linha:list index out of range\n0 linha(s) importada(s) com sucesso. 3 erro(s) reportado(s).",
         ultima_execucao: "2025-02-05T10:13:10.305515"
     },
     {
@@ -304,7 +304,7 @@ export const mockListaArquivos = [
         tipo_carga: "CARGA_CONTAS_ASSOCIACOES",
         tipo_delimitador: "DELIMITADOR_PONTO_VIRGULA",
         status: "SUCESSO",
-        log: "\nLinha:1 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, posicao_nas_pesquisas, uuid\nLinha:2 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, posicao_nas_pesquisas, uuid\nLinha:3 Houve um erro na carga dessa linha:list index out of range\n0 linha(s) importada(s) com sucesso. 3 erro(s) reportado(s).",
+        log: "\nLinha:1 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, uuid\nLinha:2 Houve um erro na carga dessa linha:Cannot resolve keyword 'nome_iexact' into field. Choices are: aceita_capital, aceita_custeio, aceita_livre, alterado_em, associacoes_da_acao, criado_em, e_recursos_proprios, history, id, nome, uuid\nLinha:3 Houve um erro na carga dessa linha:list index out of range\n0 linha(s) importada(s) com sucesso. 3 erro(s) reportado(s).",
         ultima_execucao: "2025-02-05T10:12:50.515539"
     }
 ]

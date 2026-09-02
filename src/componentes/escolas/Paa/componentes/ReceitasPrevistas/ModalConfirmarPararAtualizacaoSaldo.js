@@ -1,8 +1,9 @@
 import { memo } from "react";
 import { Row, Spin, Modal } from "antd";
 import { useAtivarSaldoPAA, useDesativarSaldoPAA } from './hooks/usePararAtualizacaoSaldoPaa';
+import IconeAviso from "../../../../../assets/img/icone-modal-confirmacao.svg"
 import IconeAvisoVermelho from "../../../../../assets/img/icone-modal-aviso-vermelho.svg"
-
+import { visoesService } from "../../../../../services/visoes.service";
 
 const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmitParadaSaldo}) => {
 
@@ -19,6 +20,9 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
 
   const { mutationPost: mutationPostAtivar } = useAtivarSaldoPAA(onSuccess, onError);
   const { mutationPost: mutationPostDesativar } = useDesativarSaldoPAA(onSuccess, onError);
+
+  // Usado para reestilização do botão para parar/bloquear saldo
+  const FLAG_PAA_RECEITAS_PREVISTA =  visoesService.featureFlagAtiva("paa-receitas-prevista")
 
   const onSubmit = () => {
     if (check) {
@@ -56,10 +60,13 @@ const ModalConfirmaPararAtualizacaoSaldo = ({ open, onClose, check, paa, onSubmi
         >
           <Spin spinning={mutationPostAtivar.isPending || mutationPostDesativar.isPending }>
             <Row justify="center">
-              <img src={IconeAvisoVermelho} alt="" className="img-fluid my-3"/>
+              <img src={FLAG_PAA_RECEITAS_PREVISTA ? IconeAviso : IconeAvisoVermelho} alt="" className="img-fluid my-3"/>
             </Row>
             <Row justify="center">
-                <p className="title-modal-antdesign-aviso">{`${check ? 'Parar' : 'Desbloquear'} atualização do saldo`}</p>
+                {FLAG_PAA_RECEITAS_PREVISTA ?
+                    <p className="title-modal-antdesign-aviso">{`${check ? 'Bloquear' : 'Desbloquear'} atualização do saldo`}</p>
+                    : <p className="title-modal-antdesign-aviso">{`${check ? 'Parar' : 'Desbloquear'} atualização do saldo`}</p>
+                }
             </Row>
             <Row justify="center">
                 <div className="body-text-modal-antdesign-aviso my-3 text-center">

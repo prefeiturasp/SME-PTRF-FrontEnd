@@ -1229,8 +1229,9 @@ describe('Testes para funções de análise', () => {
     test('getAcoesFiltradas deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const nome = 'Acao Teste';
-        const result = await getAcoesFiltradas(nome);
-        const url = `/api/acoes/?nome=${nome}`;
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getAcoesFiltradas(nome, recurso_uuid);
+        const url = `/api/acoes/?nome=${nome.replace(/ /g, '+')}&recurso_uuid=${recurso_uuid}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1333,8 +1334,9 @@ describe('Testes para funções de análise', () => {
         const pagina = 2;
         const nome = 'Unidade Teste';
         const informacoes = ['info1', 'info2'];
-        const result = await getUnidadesPorAcao(acao_uuid, pagina, nome, informacoes);
-        const url = `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=${pagina}&nome=${nome}&filtro_informacoes=${informacoes.join(',')}`;
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getUnidadesPorAcao(acao_uuid, pagina, nome, informacoes, recurso_uuid);
+        const url = `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=${pagina}&nome=${nome}&filtro_informacoes=${informacoes.join(',')}&recurso_uuid=${recurso_uuid}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1342,8 +1344,9 @@ describe('Testes para funções de análise', () => {
     test('getUnidadesPorAcao deve chamar a API corretamente com parâmetros default', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const acao_uuid = 'uuid-acao-unidades-default';
-        const result = await getUnidadesPorAcao(acao_uuid);
-        const url = `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=1&nome=&filtro_informacoes=`;
+        const recurso_uuid = 'recurso-uuid'
+        const result = await getUnidadesPorAcao(acao_uuid, 1, "", [], recurso_uuid);
+        const url = `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=1&nome=&filtro_informacoes=&recurso_uuid=${recurso_uuid}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1370,8 +1373,9 @@ describe('Testes para funções de análise', () => {
         api.get.mockResolvedValue({ data: mockData });
         const acao_uuid = 'uuid-acao-nao-vinc';
         const filtro_informacoes = ['infoA', 'infoB'];
-        const result = await getAssociacoesNaoVinculadasAAcao(acao_uuid, "", filtro_informacoes);
-        const url = `api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes.join(',')}`;
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getAssociacoesNaoVinculadasAAcao(acao_uuid, "", filtro_informacoes, recurso_uuid);
+        const url = `api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes.join(',')}&recurso_uuid=${recurso_uuid}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });
@@ -1381,8 +1385,9 @@ describe('Testes para funções de análise', () => {
         const acao_uuid = 'uuid-acao-nao-vinc-nome';
         const nome = 'Assoc Nome';
         const filtro_informacoes = ['infoC'];
-        const result = await getAssociacoesNaoVinculadasAAcao(acao_uuid, nome, filtro_informacoes);
-        const url = `api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes.join(',')}`;
+        const recurso_uuid = 'recurso-uuid';
+        const result = await getAssociacoesNaoVinculadasAAcao(acao_uuid, nome, filtro_informacoes, recurso_uuid);
+        const url = `api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes.join(',')}&recurso_uuid=${recurso_uuid}`;
         expect(api.get).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });

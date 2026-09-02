@@ -15,6 +15,7 @@ jest.mock(
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: jest.fn(),
+    featureFlagAtiva: jest.fn(),
   },
 }));
 jest.mock("../../PaaContext");
@@ -108,6 +109,7 @@ describe("ReceitasPrevistasPTRF Component", () => {
     });
 
     visoesService.getPermissoes.mockReturnValue(true);
+    visoesService.featureFlagAtiva.mockReturnValue(true);
   };
 
   const renderComponent = (props = {}) => {
@@ -168,122 +170,109 @@ describe("ReceitasPrevistasPTRF Component", () => {
       renderComponent();
 
       expect(
-        screen.getByText("Parar atualizações do saldo")
+        screen.getByRole("button", {
+            name: /Bloquear atualização de saldo da PC/i,
+        })
       ).toBeInTheDocument();
     });
   });
 
-  describe("Exibição Condicional do Checkbox de Atualização do Saldo", () => {
-    it("deve exibir o checkbox quando paa.uuid existir e o status NÃO for 'EM_RETIFICACAO'", () => {
-      setupDefaultMocks({ uuid: "valid-uuid", status: "EM_ELABORACAO" });
-      renderComponent();
+  describe("Exibição Condicional do Botão de Atualização do Saldo", () => {
+    it("deve exibir o botão quando paa.uuid existir e o status NÃO for 'EM_RETIFICACAO'", () => {
+        setupDefaultMocks({ uuid: "valid-uuid", status: "EM_ELABORACAO" });
+        renderComponent();
 
-      expect(
+        expect(
         screen.getByTestId("checkbox-parar-atualizacoes-saldo")
-      ).toBeInTheDocument();
+        ).toBeInTheDocument();
     });
 
-    it("não deve exibir o checkbox se paa não tiver uuid", () => {
-      setupDefaultMocks({ uuid: null });
-      renderComponent();
+    it("não deve exibir o botão se paa não tiver uuid", () => {
+        setupDefaultMocks({ uuid: null });
+        renderComponent();
 
-      expect(
+        expect(
         screen.queryByTestId("checkbox-parar-atualizacoes-saldo")
-      ).not.toBeInTheDocument();
+        ).not.toBeInTheDocument();
     });
 
-    it("não deve exibir o checkbox se paa.status for 'EM_RETIFICACAO'", () => {
-      setupDefaultMocks({ uuid: "valid-uuid", status: "EM_RETIFICACAO" });
-      renderComponent();
+    it("não deve exibir o botão se paa.status for 'EM_RETIFICACAO'", () => {
+        setupDefaultMocks({ uuid: "valid-uuid", status: "EM_RETIFICACAO" });
+        renderComponent();
 
-      expect(
+        expect(
         screen.queryByTestId("checkbox-parar-atualizacoes-saldo")
-      ).not.toBeInTheDocument();
+        ).not.toBeInTheDocument();
     });
-  });
-
-  describe("Estados de Habilitação do Checkbox", () => {
-    it("deve manter o checkbox habilitado quando tiver permissão e não houver pendências de carregamento", () => {
-      setupDefaultMocks();
-      renderComponent();
-
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeEnabled();
     });
 
-    it("deve desabilitar o checkbox quando o usuário não tiver permissão 'custom_change_paa'", () => {
-      setupDefaultMocks();
-      visoesService.getPermissoes.mockReturnValue(false);
-      renderComponent();
+    describe("Estados de Habilitação do Botão", () => {
+    it("deve manter o botão habilitado quando tiver permissão e não houver pendências de carregamento", () => {
+        setupDefaultMocks();
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeDisabled();
+        const button = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
+
+        expect(button).toBeEnabled();
     });
 
-    it("deve desabilitar o checkbox quando isLoadingReceitasPrevistas for true", () => {
-      setupDefaultMocks();
-      useGetReceitasPrevistas.mockReturnValue({
+    it("deve desabilitar o botão quando o usuário não tiver permissão 'custom_change_paa'", () => {
+        setupDefaultMocks();
+        visoesService.getPermissoes.mockReturnValue(false);
+        renderComponent();
+
+        const button = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
+
+        expect(button).toBeDisabled();
+    });
+
+    it("deve desabilitar o botão quando isLoadingReceitasPrevistas for true", () => {
+        setupDefaultMocks();
+        useGetReceitasPrevistas.mockReturnValue({
         data: [],
         isLoading: true,
         refetch: mockRefetchReceitasPrevistas,
         isFetching: false,
-      });
-      renderComponent();
+        });
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeDisabled();
+        const button = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
+
+        expect(button).toBeDisabled();
     });
 
-    it("deve desabilitar o checkbox quando isFetchingReceitasPrevistas for true", () => {
-      setupDefaultMocks();
-      useGetReceitasPrevistas.mockReturnValue({
+    it("deve desabilitar o botão quando isFetchingReceitasPrevistas for true", () => {
+        setupDefaultMocks();
+        useGetReceitasPrevistas.mockReturnValue({
         data: [],
         isLoading: false,
         refetch: mockRefetchReceitasPrevistas,
         isFetching: true,
-      });
-      renderComponent();
+        });
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeDisabled();
+        const button = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
+
+        expect(button).toBeDisabled();
     });
 
-    it("deve desabilitar o checkbox quando isFetchingPaa do contexto for true", () => {
-      setupDefaultMocks({}, { isFetching: true });
-      renderComponent();
+    it("deve desabilitar o botão quando isFetchingPaa do contexto for true", () => {
+        setupDefaultMocks({}, { isFetching: true });
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeDisabled();
-    });
+        const button = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
 
-    it("deve iniciar o checkbox desmarcado se paa.saldo_congelado_em for falsy", () => {
-      setupDefaultMocks({ saldo_congelado_em: null });
-      renderComponent();
-
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).not.toBeChecked();
-    });
-
-    it("deve iniciar o checkbox marcado se paa.saldo_congelado_em tiver valor", () => {
-      setupDefaultMocks({ saldo_congelado_em: "2026-01-01T10:00:00Z" });
-      renderComponent();
-
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      expect(checkbox).toBeChecked();
+        expect(button).toBeDisabled();
     });
   });
 
@@ -316,103 +305,112 @@ describe("ReceitasPrevistasPTRF Component", () => {
   });
 
   describe("Fluxo do Modal de Confirmação de Parada do Saldo", () => {
-    it("deve abrir o modal de confirmação ao clicar no checkbox de parada de saldo", () => {
-      setupDefaultMocks({ saldo_congelado_em: null });
-      renderComponent();
+    it("deve abrir o modal de confirmação ao clicar no botão de parada de saldo", () => {
+        setupDefaultMocks({ saldo_congelado_em: null });
+        renderComponent();
 
-      expect(
+        expect(
         screen.queryByTestId("modal-confirmar-parada-saldo")
-      ).not.toBeInTheDocument();
+        ).not.toBeInTheDocument();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      fireEvent.click(checkbox);
+        const botao = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
 
-      expect(
+        fireEvent.click(botao);
+
+        expect(
         screen.getByTestId("modal-confirmar-parada-saldo")
-      ).toBeInTheDocument();
-      expect(screen.getByText("Status Check: true")).toBeInTheDocument();
+        ).toBeInTheDocument();
+
+        expect(screen.getByText("Status Check: true")).toBeInTheDocument();
     });
 
     it("deve fechar o modal de confirmação ao clicar em cancelar", () => {
-      setupDefaultMocks();
-      renderComponent();
+        setupDefaultMocks();
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      fireEvent.click(checkbox);
+        const botao = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
 
-      expect(
+        fireEvent.click(botao);
+
+        expect(
         screen.getByTestId("modal-confirmar-parada-saldo")
-      ).toBeInTheDocument();
+        ).toBeInTheDocument();
 
-      const botaoCancelar = screen.getByRole("button", {
+        const botaoCancelar = screen.getByRole("button", {
         name: "Cancelar Parada",
-      });
-      fireEvent.click(botaoCancelar);
+        });
 
-      expect(
+        fireEvent.click(botaoCancelar);
+
+        expect(
         screen.queryByTestId("modal-confirmar-parada-saldo")
-      ).not.toBeInTheDocument();
+        ).not.toBeInTheDocument();
     });
 
     it("deve refazer a busca de receitas e PAA e fechar o modal ao confirmar a parada do saldo", async () => {
-      setupDefaultMocks();
-      renderComponent();
+        setupDefaultMocks();
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      fireEvent.click(checkbox);
+        const botao = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
 
-      const botaoConfirmar = screen.getByRole("button", {
+        fireEvent.click(botao);
+
+        const botaoConfirmar = screen.getByRole("button", {
         name: "Confirmar Parada",
-      });
-      fireEvent.click(botaoConfirmar);
+        });
 
-      await waitFor(() => {
+        fireEvent.click(botaoConfirmar);
+
+        await waitFor(() => {
         expect(mockRefetchReceitasPrevistas).toHaveBeenCalledTimes(1);
         expect(mockRefetchPaa).toHaveBeenCalledTimes(1);
         expect(
-          screen.queryByTestId("modal-confirmar-parada-saldo")
+            screen.queryByTestId("modal-confirmar-parada-saldo")
         ).not.toBeInTheDocument();
-      });
+        });
     });
   });
 
   describe("Efeitos do Spin / Carregamento", () => {
     it("deve ativar o indicador de carregamento do Spin quando o modal de confirmação estiver aberto", () => {
-      setupDefaultMocks();
-      renderComponent();
+        setupDefaultMocks();
+        renderComponent();
 
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      fireEvent.click(checkbox);
+        const botao = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
 
-      expect(
+        fireEvent.click(botao);
+
+        expect(
         screen.getByTestId("modal-confirmar-parada-saldo")
-      ).toBeInTheDocument();
+        ).toBeInTheDocument();
     });
 
     it("deve disparar invalidação de queries do react-query com a chave retrieve-paa", async () => {
-      setupDefaultMocks();
-      renderComponent();
+        setupDefaultMocks();
+        renderComponent();
 
-      const invalidateQueriesSpy = jest.spyOn(
+        const invalidateQueriesSpy = jest.spyOn(
         queryClient,
         "invalidateQueries"
-      );
+        );
 
-      const user = userEvent.setup();
-      const checkbox = screen.getByRole("checkbox", {
-        name: /parar atualizações do saldo/i,
-      });
-      await user.click(checkbox);
+        const user = userEvent.setup();
 
-      expect(checkbox).toBeInTheDocument();
+        const botao = screen.getByRole("button", {
+        name: /bloquear atualização de saldo da pc/i,
+        });
+
+        await user.click(botao);
+
+        expect(botao).toBeInTheDocument();
     });
   });
 });

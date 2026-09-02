@@ -22,7 +22,7 @@ export const TextoDinamicoSuperior = ({retornaDadosAtaFormatado, retornaTituloCo
         const textoBase = `${retornaDadosAtaFormatado("data_reuniao")}, às ${retornaDadosAtaFormatado("hora_reuniao")},
          reuniu-se a ${comissaoResponsavelPCNome} da Diretoria Regional de Educação 
          ${retornaDadosAtaFormatado("nome_dre")}, instituída pela Portaria DRE-${retornaDadosAtaFormatado("nome_dre")} 
-         nº ${retornaDadosAtaFormatado("numero_portaria")} de ${retornaDadosAtaFormatado("data_portaria")},`
+         nº ${retornaDadosAtaFormatado("numero_portaria")} ${retornaDadosAtaFormatado("portaria_publicada")},`
 
         const textoObjetivo = `para análise das prestações de contas ${ehRetificacao ? "RETIFICADAS" : ""} 
         dos recursos transferidos pelo ${recursoSelecionado?.nome}, 

@@ -18,7 +18,7 @@ import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentrali
 import {ModalConfirmDelete} from "./ModalConfirmDelete";
 import {BtnAdd} from "./BtnAdd";
 import Loading from "../../../../../utils/Loading";
-import {ModalInfoNaoPodeExcluir} from "../../Estrutura/Acoes/ModalInfoNaoPodeExcluir";
+import {ModalInfoNaoPodeExcluir} from "./ModalInfoNaoPodeExcluir";
 import {toastCustom} from "../../../../Globais/ToastCustom";
 import './tipo_transacao.scss'
 import { EditIconButton } from "../../../../Globais/UI/Button";

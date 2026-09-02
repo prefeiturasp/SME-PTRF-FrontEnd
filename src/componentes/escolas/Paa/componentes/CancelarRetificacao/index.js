@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Modal, Spinner } from "react-bootstrap";
 import { visoesService } from "../../../../../services/visoes.service";
 import { usePostCancelarRetificacaoPaa } from "./hooks/usePostCancelarRetificacao";
 
 const CancelarRetificacao = ({ paa }) => {
   const flagRetificacao = visoesService.featureFlagAtiva("paa-retificacao");
+  const podeEditar = useMemo(() => visoesService.getPermissoes(["custom_change_paa"]), []);
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -39,6 +41,7 @@ const CancelarRetificacao = ({ paa }) => {
         className="btn btn-success d-flex align-items-center"
         onClick={handleCancelarRetificacaoPaa}
         style={{ minWidth: "180px", justifyContent: "center" }}
+        disabled={!podeEditar}
       >
         Cancelar Retificação
       </button>
