@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import ModalConfirmaPararAtualizacaoSaldo from '../ModalConfirmarPararAtualizacaoSaldo';
 import { useAtivarSaldoPAA, useDesativarSaldoPAA } from '../hooks/usePararAtualizacaoSaldoPaa';
 import { postAtivarAtualizacaoSaldoPAA } from '../../../../../../services/escolas/Paa.service';
+import { visoesService } from "../../../../../../services/visoes.service";
 
 jest.mock('../hooks/usePararAtualizacaoSaldoPaa', () => ({
   useAtivarSaldoPAA: jest.fn(),
@@ -12,6 +13,12 @@ jest.mock('../hooks/usePararAtualizacaoSaldoPaa', () => ({
 jest.mock("../../../../../../services/escolas/Paa.service", () => ({
   postDesativarAtualizacaoSaldoPAA: jest.fn(),
   postAtivarAtualizacaoSaldoPAA: jest.fn(),
+}));
+
+jest.mock("../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(),
+  },
 }));
 
 const mockMutateAtivar = jest.fn();
@@ -68,6 +75,7 @@ describe('ModalConfirmaPararAtualizacaoSaldo', () => {
                 isLoading: false
             }
         });
+        visoesService.featureFlagAtiva.mockReturnValue(true);
     });
 
   it('deve renderizar corretamente com `check=true`', () => {
