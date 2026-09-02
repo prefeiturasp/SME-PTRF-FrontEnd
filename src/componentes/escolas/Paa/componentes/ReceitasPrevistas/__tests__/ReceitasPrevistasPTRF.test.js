@@ -15,6 +15,7 @@ jest.mock(
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: jest.fn(),
+    featureFlagAtiva: jest.fn(),
   },
 }));
 jest.mock("../../PaaContext");
@@ -108,6 +109,7 @@ describe("ReceitasPrevistasPTRF Component", () => {
     });
 
     visoesService.getPermissoes.mockReturnValue(true);
+    visoesService.featureFlagAtiva.mockReturnValue(true);
   };
 
   const renderComponent = (props = {}) => {

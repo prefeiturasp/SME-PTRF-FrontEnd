@@ -37,6 +37,9 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
     paa.uuid,
   );
 
+  // Usado para reestilização do botão para parar/bloquear saldo
+  const FLAG_PAA_RECEITAS_PREVISTA =  visoesService.featureFlagAtiva("paa-receitas-prevista")
+
   const handleOpenEditar = (rowData) => {
     setModalForm({ open: true, data: rowData });
   };
@@ -53,7 +56,11 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
   }, [queryClient, paa.uuid]);
 
   const onTogglePararAtualizacoesSaldo = (e) => {
-    setValorCheckPararAtualizacaoSaldo(!paa?.saldo_congelado_em);
+    if(FLAG_PAA_RECEITAS_PREVISTA) {
+        setValorCheckPararAtualizacaoSaldo(!paa?.saldo_congelado_em);
+    }else {
+        setValorCheckPararAtualizacaoSaldo(e.target.checked);
+    }
     setShowModalConfirmaPararAtualizacaoSaldo(true);
   };
 
@@ -88,25 +95,41 @@ const ReceitasPrevistasPTRF = ({tituloMenu="Ações PTRF"}) => {
           <Flex align="center">
             {!!paa?.uuid && paa?.status !== "EM_RETIFICACAO" && (
               <>
-                <Button
-                  data-testid="checkbox-parar-atualizacoes-saldo"
-                  type={!!paa?.saldo_congelado_em ? "default" : "primary"}
-                  onClick={(e) => {                    
-                    onTogglePararAtualizacoesSaldo(e);
-                  }}
-                  style={{height: 'auto', padding: '10px'}}
-                  disabled={
-                    !visoesService.getPermissoes(["custom_change_paa"]) ||
-                    isLoadingReceitasPrevistas ||
-                    isFetchingReceitasPrevistas ||
-                    isFetchingPaa
-                  }
-                >
-                    {!!paa?.saldo_congelado_em ? 
-                        <b>Desbloquear atualização <br/> de saldo da PC</b> :
-                        <b>Bloquear atualização <br/> de saldo da PC</b> 
+                {FLAG_PAA_RECEITAS_PREVISTA ? 
+                    <Button
+                    data-testid="checkbox-parar-atualizacoes-saldo"
+                    type={!!paa?.saldo_congelado_em ? "default" : "primary"}
+                    onClick={(e) => {                    
+                        onTogglePararAtualizacoesSaldo(e);
+                    }}
+                    style={{height: 'auto', padding: '10px'}}
+                    disabled={
+                        !visoesService.getPermissoes(["custom_change_paa"]) ||
+                        isLoadingReceitasPrevistas ||
+                        isFetchingReceitasPrevistas ||
+                        isFetchingPaa
                     }
-                </Button>
+                    >
+                        {!!paa?.saldo_congelado_em ? 
+                            <b>Desbloquear atualização <br/> de saldo da PC</b> :
+                            <b>Bloquear atualização <br/> de saldo da PC</b> 
+                        }
+                    </Button>
+                    :
+                    <Checkbox
+                        data-testid="checkbox-parar-atualizacoes-saldo"
+                        checked={!!paa?.saldo_congelado_em}
+                        onChange={(e) => onTogglePararAtualizacoesSaldo(e)}
+                        disabled={
+                            !visoesService.getPermissoes(["custom_change_paa"]) ||
+                            isLoadingReceitasPrevistas ||
+                            isFetchingReceitasPrevistas ||
+                            isFetchingPaa
+                        }
+                        >
+                        Parar atualizações do saldo
+                    </Checkbox>
+                }
                 <Icon
                   tooltipMessage="Ao selecionar esta opção os valores dos recursos não serão atualizados e serão mantidos os valores da última atualização automática ou da edição realizada."
                   icon="faExclamationCircle"
