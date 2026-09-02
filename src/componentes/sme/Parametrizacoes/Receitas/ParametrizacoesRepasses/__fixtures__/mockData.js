@@ -176,7 +176,6 @@ export const mockTabela = {
             "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
             "nome": "PTRF Básico",
             "e_recursos_proprios": false,
-            "posicao_nas_pesquisas": "AAAAAAAAAA",
             "aceita_capital": true,
             "aceita_custeio": true,
             "aceita_livre": true
@@ -186,7 +185,6 @@ export const mockTabela = {
             "uuid": "5ac37eb7-bb70-4e1f-80fd-23b2a00f9e45",
             "nome": "Sala de Recursos Multifuncionais",
             "e_recursos_proprios": false,
-            "posicao_nas_pesquisas": "MMMMMMMMMM",
             "aceita_capital": false,
             "aceita_custeio": false,
             "aceita_livre": true
@@ -196,7 +194,6 @@ export const mockTabela = {
             "uuid": "1abb18d7-481f-4fae-8758-ec4e3a1bd523",
             "nome": "Orçamento Grêmio Estudantil",
             "e_recursos_proprios": false,
-            "posicao_nas_pesquisas": "EEEEEEEEEE",
             "aceita_capital": true,
             "aceita_custeio": true,
             "aceita_livre": true
@@ -206,7 +203,6 @@ export const mockTabela = {
             "uuid": "8006c807-d113-4c41-8337-64fb2f0f7931",
             "nome": "Material Complementar",
             "e_recursos_proprios": false,
-            "posicao_nas_pesquisas": "NNNNNNNNNN",
             "aceita_capital": false,
             "aceita_custeio": true,
             "aceita_livre": false
@@ -216,7 +212,6 @@ export const mockTabela = {
             "uuid": "882801b1-461d-42f2-bb2a-e4b691d15bea",
             "nome": "Programa de Cuidados com as Estudantes",
             "e_recursos_proprios": false,
-            "posicao_nas_pesquisas": "LLLLLLLLLL",
             "aceita_capital": false,
             "aceita_custeio": true,
             "aceita_livre": false
@@ -282,7 +277,6 @@ export const mockRepasses = {
                     "uuid": "4e56e1f9-f2d0-4a05-84b1-2a7a449f73c3",
                     "nome": "Material Pedagógico",
                     "e_recursos_proprios": false,
-                    "posicao_nas_pesquisas": "IIIIIIIIII",
                     "aceita_capital": false,
                     "aceita_custeio": true,
                     "aceita_livre": false
@@ -358,7 +352,6 @@ export const mockRepasses = {
                     "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
                     "nome": "PTRF Básico",
                     "e_recursos_proprios": false,
-                    "posicao_nas_pesquisas": "AAAAAAAAAA",
                     "aceita_capital": true,
                     "aceita_custeio": true,
                     "aceita_livre": true
@@ -431,7 +424,6 @@ export const mockRepasses = {
                     "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
                     "nome": "PTRF Básico",
                     "e_recursos_proprios": false,
-                    "posicao_nas_pesquisas": "AAAAAAAAAA",
                     "aceita_capital": true,
                     "aceita_custeio": true,
                     "aceita_livre": true
@@ -507,7 +499,6 @@ export const mockRepasses = {
                     "uuid": "bdcbc8ce-7bab-48b3-959a-f866c6644579",
                     "nome": "PTRF Básico",
                     "e_recursos_proprios": false,
-                    "posicao_nas_pesquisas": "AAAAAAAAAA",
                     "aceita_capital": true,
                     "aceita_custeio": true,
                     "aceita_livre": true

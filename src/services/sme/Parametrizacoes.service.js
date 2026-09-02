@@ -666,6 +666,14 @@ export const getListaDeAcoes = async (recurso_uuid = null) => {
   return (await api.get(`/api/acoes/`, { ...authHeader(), params: { recurso_uuid } })).data;
 };
 
+export const getListaDeAcoesOrdenadasPorOrdemDeExibicao = async (recurso_uuid = null) => {
+  return (await api.get(`/api/acoes/ordenadas/`, { ...authHeader(), params: { recurso_uuid } })).data;
+}
+
+export const postNovaOrdemAcoes = async (payload) => {
+  return (await api.post(`/api/acoes/reordenar/`, payload, authHeader())).data;
+}
+
 export const getListaDeAcertosLancamentos = async (recurso_uuid = null) => {
   const config = recurso_uuid ? { ...authHeader(), params: { recurso_uuid } } : authHeader();
   return (await api.get(`/api/tipos-acerto-lancamento/`, config)).data;
@@ -802,8 +810,15 @@ export const deleteAcaoAssociacao = async (acao_associacao_uuid, recurso_uuid = 
   );
 };
 
-export const getAcoesFiltradas = async (nome = "") => {
-  return (await api.get(`/api/acoes/?nome=${nome}`, authHeader())).data;
+export const getAcoesFiltradas = async (nome = "", recurso_uuid = "") => {
+  const params = new URLSearchParams();
+  if (nome) {
+    params.append("nome", nome);
+  }
+  if (recurso_uuid) {
+    params.append("recurso_uuid", recurso_uuid);
+  }
+  return (await api.get(`/api/acoes/?${params.toString()}`, authHeader())).data;
 };
 
 export const getAcertosLancamentosFiltrados = async (
@@ -883,11 +898,12 @@ export const getUnidadesPorAcao = async (
   acao_uuid,
   pagina = 1,
   nome = "",
-  informacoes = []
+  informacoes = [],
+  recurso_uuid = ""
 ) => {
   return (
     await api.get(
-      `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=${pagina}&nome=${nome}&filtro_informacoes=${informacoes}`,
+      `api/acoes-associacoes/?acao__uuid=${acao_uuid}&page=${pagina}&nome=${nome}&filtro_informacoes=${informacoes}&recurso_uuid=${recurso_uuid}`,
       authHeader()
     )
   ).data;
@@ -906,19 +922,20 @@ export const deleteAcoesAssociacoesEmLote = async (payload) => {
 export const getAssociacoesNaoVinculadasAAcao = async (
   acao_uuid,
   nome = "",
-  filtro_informacoes = []
+  filtro_informacoes = [],
+  recurso_uuid = ""
 ) => {
   if (nome === "") {
     return (
       await api.get(
-        `api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes}`,
+        `api/acoes/${acao_uuid}/associacoes-nao-vinculadas/?filtro_informacoes=${filtro_informacoes}&recurso_uuid=${recurso_uuid}`,
         authHeader()
       )
     ).data;
   } else {
     return (
       await api.get(
-        `api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes}`,
+        `api/acoes/${acao_uuid}/associacoes-nao-vinculadas-por-nome/${nome}/?filtro_informacoes=${filtro_informacoes}&recurso_uuid=${recurso_uuid}`,
         authHeader()
       )
     ).data;

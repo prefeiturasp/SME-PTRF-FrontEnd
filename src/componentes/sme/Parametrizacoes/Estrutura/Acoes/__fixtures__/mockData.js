@@ -5,7 +5,6 @@ export const mockAcoes = [
         "nome": "Educom - Imprensa Jovem",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "FFFFFFFFF",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -16,7 +15,6 @@ export const mockAcoes = [
         "nome": "Ensino Médio",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "KKKKKKKKKK",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": true
@@ -27,7 +25,6 @@ export const mockAcoes = [
         "nome": "Fazendo Futuro",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "CCCCCCCCCC",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -38,7 +35,6 @@ export const mockAcoes = [
         "nome": "Formação",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "GGGGGGGGGG",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -49,7 +45,6 @@ export const mockAcoes = [
         "nome": "Mais Escola",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "HHHHHHHHHH",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -60,7 +55,6 @@ export const mockAcoes = [
         "nome": "Material Complementar",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "NNNNNNNNNN",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -71,7 +65,6 @@ export const mockAcoes = [
         "nome": "Material Pedagógico",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "IIIIIIIIII",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -82,7 +75,6 @@ export const mockAcoes = [
         "nome": "Orçamento Grêmio Estudantil",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "EEEEEEEEEE",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": true
@@ -93,7 +85,6 @@ export const mockAcoes = [
         "nome": "Programa de Cuidados com as Estudantes",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "LLLLLLLLLL",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -104,7 +95,6 @@ export const mockAcoes = [
         "nome": "PTRF Básico",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "AAAAAAAAAA",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": true
@@ -115,7 +105,6 @@ export const mockAcoes = [
         "nome": "PTRF JOSUÉ",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "33",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -126,7 +115,6 @@ export const mockAcoes = [
         "nome": "Recurso Externo",
         "e_recursos_proprios": true,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "ZZZZZZZZZZ",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": true
@@ -137,7 +125,6 @@ export const mockAcoes = [
         "nome": "Rolê Cultural",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "DDDDDDDDDD",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -148,7 +135,6 @@ export const mockAcoes = [
         "nome": "Sala de Recursos Multifuncionais",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "MMMMMMMMMM",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": true
@@ -159,7 +145,6 @@ export const mockAcoes = [
         "nome": "Salas e Espaços de Leitura",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "JJJJJJJJJJ",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": true
@@ -170,7 +155,6 @@ export const mockAcoes = [
         "nome": "teste",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -181,7 +165,6 @@ export const mockAcoes = [
         "nome": "Teste",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -192,7 +175,6 @@ export const mockAcoes = [
         "nome": "teste 2",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -203,7 +185,6 @@ export const mockAcoes = [
         "nome": "Teste SME",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -214,7 +195,6 @@ export const mockAcoes = [
         "nome": "Teste VHC 01",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "0",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -225,7 +205,6 @@ export const mockAcoes = [
         "nome": "Teste VHC 02",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "0",
         "aceita_capital": false,
         "aceita_custeio": false,
         "aceita_livre": false
@@ -236,7 +215,6 @@ export const mockAcoes = [
         "nome": "Volta às aulas",
         "e_recursos_proprios": false,
         "exibir_paa": false,
-        "posicao_nas_pesquisas": "BBBBBBBBBB",
         "aceita_capital": false,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -249,7 +227,6 @@ export const mockCreate = {
     "nome": "Teste",
     "e_recursos_proprios": false,
     "exibir_paa": false,
-    "posicao_nas_pesquisas": "BBBBBBBBBB",
     "aceita_capital": false,
     "aceita_custeio": true,
     "aceita_livre": false
@@ -283,7 +260,6 @@ export const mockUnidades = [
         "uuid": "dfg76u9f-0156-4dba-c81b-abc123c7985b",
         "nome": "Educom - Imprensa Jovem",
         "e_recursos_proprios": false,
-        "posicao_nas_pesquisas": "AAAAAAAAA",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": false
@@ -318,7 +294,6 @@ export const mockUnidades = [
         "uuid": "dfg76u9f-0156-4dba-c81b-abc123c7985b",
         "nome": "Educom - Imprensa Jovem",
         "e_recursos_proprios": false,
-        "posicao_nas_pesquisas": "AAAAAAAAA",
         "aceita_capital": true,
         "aceita_custeio": true,
         "aceita_livre": false
