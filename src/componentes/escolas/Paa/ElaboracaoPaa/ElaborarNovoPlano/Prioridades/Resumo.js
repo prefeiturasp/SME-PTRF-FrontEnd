@@ -12,6 +12,7 @@ export const Resumo = () => {
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [informeBloqueioPrioridades, setInformeBloqueioPrioridades] = useState('');
     const exibeInformeBloqueioPrioridades = visoesService.featureFlagAtiva('informe-bloqueio-prioridades-paa');
+    const exibeSaldoCongelado = visoesService.featureFlagAtiva('paa-receitas-prevista');
 
     const { isFetching: isLoadingResumoPrioridades, resumoPrioridades } = useGetResumoPrioridades();
 
@@ -75,7 +76,7 @@ export const Resumo = () => {
                 gap: '10px',
             }}>
                 {text}
-            {record.recurso === 'PTRF Total' && record.mensagem_saldo_congelado && (
+            {exibeSaldoCongelado && record.recurso === 'PTRF Total' && record.mensagem_saldo_congelado && (
                 <Tooltip
                     title={record.mensagem_saldo_congelado}
                 >
