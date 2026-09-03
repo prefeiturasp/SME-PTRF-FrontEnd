@@ -308,22 +308,20 @@ describe('Resumo Component', () => {
             const recursoColumn = Table.mock.calls[0][0].columns.find(
                 column => column.dataIndex === 'recurso'
             );
-            const saldoCongeladoEm = '31/12/2025';
+            const mensagemSaldoCongelado = 'Saldo congelado em 31/12/2025';
             const resultado = recursoColumn.render('PTRF Total', {
                 recurso: 'PTRF Total',
-                saldo_congelado_em: saldoCongeladoEm,
+                mensagem_saldo_congelado: mensagemSaldoCongelado,
                 level: 0,
                 key: 'ptrf-total'
             });
             const alertaSaldoCongelado = resultado.props.children[1];
 
             expect(alertaSaldoCongelado.type).toBe(Tooltip);
-            expect(alertaSaldoCongelado.props.title).toBe(
-                `Saldo congelado em ${saldoCongeladoEm}`
-            );
+            expect(alertaSaldoCongelado.props.title).toBe(mensagemSaldoCongelado);
         });
 
-        it('não deve exibir o alerta de saldo congelado para PTRF Total sem data', () => {
+        it('não deve exibir o alerta de saldo congelado para PTRF Total sem mensagem', () => {
             const { Table, Tooltip } = require('antd');
             render(<Resumo />);
 
@@ -350,7 +348,7 @@ describe('Resumo Component', () => {
             );
             const resultado = recursoColumn.render('PDDE Total', {
                 recurso: 'PDDE Total',
-                saldo_congelado_em: '31/12/2025',
+                mensagem_saldo_congelado: 'Saldo congelado em 31/12/2025',
                 level: 0,
                 key: 'pdde-total'
             });

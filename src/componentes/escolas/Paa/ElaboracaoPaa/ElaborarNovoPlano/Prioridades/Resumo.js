@@ -75,9 +75,9 @@ export const Resumo = () => {
                 gap: '10px',
             }}>
                 {text}
-            {record.recurso === 'PTRF Total' && record.saldo_congelado_em && (
+            {record.recurso === 'PTRF Total' && record.mensagem_saldo_congelado && (
                 <Tooltip
-                    title={`Saldo congelado em ${record.saldo_congelado_em}`}
+                    title={record.mensagem_saldo_congelado}
                 >
                     <ExclamationCircleFilled
                         style={{
