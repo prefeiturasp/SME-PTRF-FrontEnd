@@ -13,10 +13,13 @@ import moment from "moment";
 
 import { IconeDataSaldoBancarioPendentes } from "./IconeDataSaldoBancarioPendentes";
 import { formataData } from "../../../../../utils/FormataData";
+import Loading from "../../../../../utils/Loading";
 
 const DataSaldoBancario = ({
   valoresPendentes,
   dataSaldoBancario,
+  loading,
+  erroCarregamento,
   handleChangaDataSaldo,
   nomeComprovanteExtrato,
   exibeBtnDownload,
@@ -36,6 +39,7 @@ const DataSaldoBancario = ({
   setShowModalSalvarDataSaldoExtrato,
 }) => {
   const permissaoEditarConciliacao = visoesService.getPermissoes(["change_conciliacao_bancaria"]);
+  const camposDesabilitados = Boolean(erroCarregamento) || !permiteEditarCamposExtrato || !permissaoEditarConciliacao;
   const handleOnClick = () => {
     if (
       dataSaldoBancarioSolicitacaoEncerramento &&
@@ -58,6 +62,10 @@ const DataSaldoBancario = ({
     salvarExtratoBancario();
   };
 
+  if (loading) {
+    return <Loading corGrafico="black" corFonte="dark" marginTop="0" marginBottom="0" />;
+  }
+
   return (
     <>
       <form method="post" encType="multipart/form-data">
@@ -71,6 +79,7 @@ const DataSaldoBancario = ({
                 <p className="text-right">
                   <span className="font-weight-bold">* Preenchimento obrigatório</span>
                 </p>
+                {erroCarregamento && <div className="alert alert-danger">{erroCarregamento}</div>}
                 <div className="row">
                   <div className="col-6">
                     <div className="row">
@@ -110,7 +119,7 @@ const DataSaldoBancario = ({
                           name="saldo_extrato"
                           className="form-control"
                           onChangeEvent={(value) => handleChangaDataSaldo("saldo_extrato", value)}
-                          disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
+                          disabled={camposDesabilitados}
                         />
                         {dataSaldoBancarioSolicitacaoEncerramento?.possui_solicitacao_encerramento === true && (
                           <span>
@@ -130,9 +139,9 @@ const DataSaldoBancario = ({
                       <div className="container-upload-extrato">
                         <Upload
                           beforeUpload={() => false}
-                          disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
+                          disabled={camposDesabilitados}
                           className={`${
-                            !permiteEditarCamposExtrato || !permissaoEditarConciliacao ? "disabled_upload" : ""
+                            camposDesabilitados ? "disabled_upload" : ""
                           }`}
                           {...{
                             name: "file",
@@ -174,7 +183,7 @@ const DataSaldoBancario = ({
 
                             <div className="col-lg-4 mt-2 text-right">
                               <button
-                                disabled={!permiteEditarCamposExtrato || !permissaoEditarConciliacao}
+                                disabled={camposDesabilitados}
                                 className="btn-editar-membro btn-apagar-comprovante-extrato ml-2"
                                 type="button"
                                 onClick={reiniciaUploadExtrato}
@@ -250,7 +259,7 @@ const DataSaldoBancario = ({
           )}
 
           <button
-            disabled={btnSalvarExtratoBancarioDisable}
+            disabled={Boolean(erroCarregamento) || btnSalvarExtratoBancarioDisable}
             type="button"
             className={`btn btn-${classBtnSalvarExtratoBancario} mt-2`}
             onClick={handleOnClick}

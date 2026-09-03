@@ -72,6 +72,17 @@ const renderComponent = () =>
     </SidebarContext.Provider>
   );
 
+const criaPromiseControlada = () => {
+  let resolver;
+  let rejeitador;
+  const promise = new Promise((resolve, reject) => {
+    resolver = resolve;
+    rejeitador = reject;
+  });
+
+  return { promise, resolver, rejeitador };
+};
+
 describe("DetalheDasPrestacoes", () => {
 
     beforeEach(() => {
@@ -149,7 +160,7 @@ describe("DetalheDasPrestacoes", () => {
             expect(associacaoService.getContas).toHaveBeenCalledTimes(1);
         });
     });
-    
+
     it("renderiza o componente e periodo_uuid SEM parâmetro de url e SEM localStorage periodoConta (else em getPeriodoConta())", async () => {
         useParams.mockReturnValue({ periodo_uuid: null });
         // conciliacaoStorageService.getPeriodoConta returns null (default from beforeEach)
@@ -235,5 +246,101 @@ describe("DetalheDasPrestacoes", () => {
         });
         expect(useLocation).toHaveBeenCalled();
         expect(useParams).toHaveBeenCalled();
+    });
+
+    it("exibe loading e limpa os dados do extrato antes de carregar carregaObservacoes", async () => {
+      const observacao = criaPromiseControlada();
+      conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
+      associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{
+        uuid: 'periodo-uuid',
+        data_inicio_realizacao_despesas: '2025-01-01',
+      }]);
+      associacaoService.getContas.mockResolvedValue([{
+        uuid: 'conta-uuid',
+        nome: 'Conta principal',
+        tipo_conta: { nome: 'conta-tipo' },
+      }]);
+      prestacaoService.getObservacoes.mockReturnValue(observacao.promise);
+
+      renderComponent();
+
+      expect(await screen.findByText('Carregando...')).toBeInTheDocument();
+
+      observacao.resolver({
+        possui_solicitacao_encerramento: false,
+        data_extrato: '2025-07-05',
+        saldo_extrato: 100,
+        comprovante_extrato: 'extrato-atual.pdf',
+        data_atualizacao_comprovante_extrato: '2025-07-05T10:00:00',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('extrato-atual.pdf')).toBeInTheDocument();
+        expect(screen.queryByText('Carregando...')).not.toBeInTheDocument();
+      });
+    });
+
+    it("exibe erro e remove os dados do extrato quando getObservacoes falha", async () => {
+      conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: 'periodo-uuid', conta: 'conta-uuid' });
+      associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{
+        uuid: 'periodo-uuid',
+        data_inicio_realizacao_despesas: '2025-01-01',
+      }]);
+      associacaoService.getContas.mockResolvedValue([{
+        uuid: 'conta-uuid',
+        nome: 'Conta principal',
+        tipo_conta: { nome: 'conta-tipo' },
+      }]);
+      prestacaoService.getObservacoes.mockRejectedValue(new Error('falha de rede'));
+
+      renderComponent();
+
+      expect(await screen.findByText(/Não foi possível carregar os dados do saldo bancário/)).toBeInTheDocument();
+      expect(screen.queryByText('Carregando...')).not.toBeInTheDocument();
+      expect(screen.queryByText('comprovante.pdf')).not.toBeInTheDocument();
+    });
+
+    it("ignora a resposta antiga de carregaObservacoes quando uma nova conta é selecionada", async () => {
+      const primeiraObservacao = criaPromiseControlada();
+      const segundaObservacao = criaPromiseControlada();
+      conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: 'periodo-uuid', conta: 'conta-1' });
+      associacaoService.getPeriodosDePrestacaoDeContasDaAssociacao.mockResolvedValue([{
+        uuid: 'periodo-uuid',
+        referencia: '2025',
+        data_inicio_realizacao_despesas: '2025-01-01',
+      }]);
+      associacaoService.getContas.mockResolvedValue([
+        { uuid: 'conta-1', nome: 'Conta 1', tipo_conta: { nome: 'corrente' } },
+        { uuid: 'conta-2', nome: 'Conta 2', tipo_conta: { nome: 'poupança' } },
+      ]);
+      prestacaoService.getObservacoes
+        .mockReturnValueOnce(primeiraObservacao.promise)
+        .mockReturnValueOnce(segundaObservacao.promise);
+
+      renderComponent();
+      await waitFor(() => expect(prestacaoService.getObservacoes).toHaveBeenCalledTimes(1));
+
+      fireEvent.change(screen.getByLabelText('Conta:'), { target: { value: 'conta-2' } });
+      await waitFor(() => expect(prestacaoService.getObservacoes).toHaveBeenCalledTimes(2));
+
+      segundaObservacao.resolver({
+        possui_solicitacao_encerramento: false,
+        data_extrato: '2025-07-06',
+        saldo_extrato: 222,
+        comprovante_extrato: 'conta-2.pdf',
+      });
+      await screen.findByText('conta-2.pdf');
+
+      primeiraObservacao.resolver({
+        possui_solicitacao_encerramento: false,
+        data_extrato: '2025-07-05',
+        saldo_extrato: 111,
+        comprovante_extrato: 'conta-1.pdf',
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText('conta-2.pdf')).toBeInTheDocument();
+        expect(screen.queryByText('conta-1.pdf')).not.toBeInTheDocument();
+      });
     });
 });
