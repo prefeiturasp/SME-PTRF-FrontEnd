@@ -11,8 +11,15 @@ const authHeader = () => ({
   },
 });
 
+const queryAssociacaoSelecionada = () => {
+  // Visão UE/suporte: associação da unidade do menu. DRE/SME: não enviar UUID de
+  // DRE/SME aqui (não é associação) — o backend já recorta pelas UEs do perfil.
+  const uuid = getUuidAssociacao();
+  return uuid ? `?associacao__uuid=${uuid}` : "";
+};
+
 export const deleteDespesa = async (uuid) => {
-  return (await api.delete(`api/despesas/${uuid}/`, authHeader())).data;
+  return (await api.delete(`api/despesas/${uuid}/${queryAssociacaoSelecionada()}`, authHeader())).data;
 };
 
 export const getDespesasTabelas = async (associacao_uuid = null) => {
@@ -54,7 +61,7 @@ export const getEspecificacoesPorAplicacao = async () => {
 };
 
 export const getDespesa = async (idDespesa) => {
-  return (await api.get(`api/despesas/${idDespesa}`, authHeader())).data;
+  return (await api.get(`api/despesas/${idDespesa}${queryAssociacaoSelecionada()}`, authHeader())).data;
 };
 
 export const getListaDespesas = async () => {
@@ -194,7 +201,7 @@ export const criarDespesa = async (payload) => {
 
 export const alterarDespesa = async (payload, idDespesa) => {
   return api
-    .put(`api/despesas/${idDespesa}/`, payload, authHeader())
+    .put(`api/despesas/${idDespesa}/${queryAssociacaoSelecionada()}`, payload, authHeader())
     .then((response) => {
       return response;
     })

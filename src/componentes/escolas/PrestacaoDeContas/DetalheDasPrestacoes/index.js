@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useContext, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useState, useContext, useMemo } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { TopoComBotoes } from "./TopoComBotoes";
@@ -73,6 +73,9 @@ export const DetalheDasPrestacoes = () => {
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
   const permissaoEditarConciliacao = visoesService.getPermissoes(["change_conciliacao_bancaria"]);
+
+  // Evita aplicar respostas de getObservacoes de um periodo/conta anterior que cheguem fora de ordem
+  const observacoesRequestIdRef = useRef(0);
 
   useEffect(() => {
     const carregar = async () => {
@@ -251,14 +254,44 @@ export const DetalheDasPrestacoes = () => {
     return new Date(year, month - 1, day);
   };
 
+  const limpaDadosExtratoBancario = () => {
+    setDataSaldoBancario({ data_extrato: null, saldo_extrato: 0 });
+    setDataSaldoBancarioSolicitacaoEncerramento({});
+    setObservacaoUuid("");
+    setSelectedFile(null);
+    setNomeComprovanteExtrato("");
+    setDataAtualizacaoComprovanteExtrato("");
+    setDataAtualizacaoComprovanteExtratoView("");
+    setExibeBtnDownload(false);
+  };
+
   const carregaObservacoes = async () => {
     if (periodosAssociacao && periodoConta.periodo && periodoConta.conta) {
       const periodo_uuid = periodoConta.periodo;
       const conta_uuid = periodoConta.conta;
+      const requestId = ++observacoesRequestIdRef.current;
+      setLoadingExtratoBancario(true);
+      setErroCarregamentoExtrato("");
+      limpaDadosExtratoBancario();
 
       const periodo = periodosAssociacao.find((o) => o.uuid === periodo_uuid);
 
-      const observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+      let observacao;
+      try {
+        observacao = await getObservacoes(periodo_uuid, conta_uuid, associacaoUuid);
+      } catch (error) {
+        if (requestId === observacoesRequestIdRef.current) {
+          limpaDadosExtratoBancario();
+          setErroCarregamentoExtrato("Não foi possível carregar os dados do saldo bancário. Verifique sua conexão e tente novamente.");
+          setLoadingExtratoBancario(false);
+        }
+        return;
+      }
+
+      // periodoConta mudou enquanto a requisição estava em andamento: descarta esta resposta obsoleta
+      if (requestId !== observacoesRequestIdRef.current) {
+        return;
+      }
 
       if (observacao) {
         setPermiteEditarCamposExtrato(observacao.permite_editar_campos_extrato);
@@ -266,6 +299,9 @@ export const DetalheDasPrestacoes = () => {
 
       try {
         const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);
+        if (requestId !== observacoesRequestIdRef.current) {
+          return;
+        }
         if (
           response.prestacao_contas_status &&
           (!response.prestacao_contas_status.periodo_bloqueado ||
@@ -311,7 +347,7 @@ export const DetalheDasPrestacoes = () => {
             setExibeBtnDownload(false);
           }
         }
-      } else {
+      } else if (observacao) {
         setObservacaoUuid(observacao.observacao_uuid);
 
         setTextareaJustificativa(observacao.observacao ? observacao.observacao : "");
@@ -333,6 +369,10 @@ export const DetalheDasPrestacoes = () => {
         }
 
         setDataSaldoBancarioSolicitacaoEncerramento({});
+      }
+
+      if (requestId === observacoesRequestIdRef.current) {
+        setLoadingExtratoBancario(false);
       }
     }
   };
@@ -394,6 +434,7 @@ export const DetalheDasPrestacoes = () => {
       const periodo = periodosAssociacao.find((o) => o.uuid === periodoConta.periodo);
       try {
         const response = await fetchStatusPeriodo(periodo.data_inicio_realizacao_despesas);
+
         checaPendenciaSaldoBancario(response);
       } catch (error) {
         //
@@ -510,6 +551,8 @@ export const DetalheDasPrestacoes = () => {
   // Data Saldo Bancário
   const [dataSaldoBancario, setDataSaldoBancario] = useState({});
   const [dataSaldoBancarioSolicitacaoEncerramento, setDataSaldoBancarioSolicitacaoEncerramento] = useState({});
+  const [loadingExtratoBancario, setLoadingExtratoBancario] = useState(false);
+  const [erroCarregamentoExtrato, setErroCarregamentoExtrato] = useState("");
   const [showModalSalvarDataSaldoExtrato, setShowModalSalvarDataSaldoExtrato] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [nomeComprovanteExtrato, setNomeComprovanteExtrato] = useState("");
@@ -714,6 +757,8 @@ export const DetalheDasPrestacoes = () => {
                 <DataSaldoBancario
                   valoresPendentes={valoresPendentes}
                   dataSaldoBancario={dataSaldoBancario}
+                  loading={loadingExtratoBancario}
+                  erroCarregamento={erroCarregamentoExtrato}
                   handleChangaDataSaldo={handleChangaDataSaldo}
                   periodoFechado={periodoFechado}
                   nomeComprovanteExtrato={nomeComprovanteExtrato}
