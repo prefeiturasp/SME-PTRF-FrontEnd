@@ -23,6 +23,9 @@ jest.mock('antd', () => ({
     Table: jest.fn(({ children, ...props }) => {
         return <div data-testid="antd-table" {...props}>{children}</div>;
     }),
+    Tooltip: jest.fn(({ children, title }) => (
+        <span data-testid="saldo-congelado-tooltip" title={title}>{children}</span>
+    )),
     Typography: {
         Title: jest.fn(({ children, ...props }) => (
             <h1 data-testid="antd-typography-title" {...props}>{children}</h1>
@@ -33,7 +36,10 @@ jest.mock('antd', () => ({
 // Mock dos ícones
 jest.mock('@ant-design/icons', () => ({
     UpOutlined: jest.fn(() => <span>▼</span>),
-    DownOutlined: jest.fn(() => <span>▶</span>)
+    DownOutlined: jest.fn(() => <span>▶</span>),
+    ExclamationCircleFilled: jest.fn(() => (
+        <span data-testid="saldo-congelado-icon" />
+    ))
 }));
 
 jest.mock('../resumo.scss', () => ({}));
@@ -285,14 +291,71 @@ describe('Resumo Component', () => {
         it('deve ter função renderTipoRecurso configurada com propriedades específicas', () => {
             const { Table } = require('antd');
             render(<Resumo />);
-            
+
             const tableCall = Table.mock.calls[0][0];
             const recursoColumn = tableCall.columns.find(col => col.dataIndex === 'recurso');
-            
+
             expect(recursoColumn).toBeDefined();
             expect(recursoColumn.render).toBeDefined();
             expect(typeof recursoColumn.render).toBe('function');
             expect(recursoColumn.align).toBe('left');
+        });
+
+        it('deve exibir o alerta de saldo congelado para PTRF Total', () => {
+            const { Table, Tooltip } = require('antd');
+            render(<Resumo />);
+
+            const recursoColumn = Table.mock.calls[0][0].columns.find(
+                column => column.dataIndex === 'recurso'
+            );
+            const mensagemSaldoCongelado = 'Saldo congelado em 31/12/2025';
+            const resultado = recursoColumn.render('PTRF Total', {
+                recurso: 'PTRF Total',
+                mensagem_saldo_congelado: mensagemSaldoCongelado,
+                level: 0,
+                key: 'ptrf-total'
+            });
+            const alertaSaldoCongelado = resultado.props.children[1];
+
+            expect(alertaSaldoCongelado.type).toBe(Tooltip);
+            expect(alertaSaldoCongelado.props.title).toBe(mensagemSaldoCongelado);
+        });
+
+        it('não deve exibir o alerta de saldo congelado para PTRF Total sem mensagem', () => {
+            const { Table, Tooltip } = require('antd');
+            render(<Resumo />);
+
+            const recursoColumn = Table.mock.calls[0][0].columns.find(
+                column => column.dataIndex === 'recurso'
+            );
+            const resultado = recursoColumn.render('PTRF Total', {
+                recurso: 'PTRF Total',
+                level: 0,
+                key: 'ptrf-total'
+            });
+            const alertaSaldoCongelado = resultado.props.children[1];
+
+            expect(alertaSaldoCongelado).toBeFalsy();
+            expect(alertaSaldoCongelado?.type).not.toBe(Tooltip);
+        });
+
+        it('não deve exibir o alerta de saldo congelado para outros recursos', () => {
+            const { Table, Tooltip } = require('antd');
+            render(<Resumo />);
+
+            const recursoColumn = Table.mock.calls[0][0].columns.find(
+                column => column.dataIndex === 'recurso'
+            );
+            const resultado = recursoColumn.render('PDDE Total', {
+                recurso: 'PDDE Total',
+                mensagem_saldo_congelado: 'Saldo congelado em 31/12/2025',
+                level: 0,
+                key: 'pdde-total'
+            });
+            const alertaSaldoCongelado = resultado.props.children[1];
+
+            expect(alertaSaldoCongelado).toBeFalsy();
+            expect(alertaSaldoCongelado?.type).not.toBe(Tooltip);
         });
     });
 
@@ -300,7 +363,7 @@ describe('Resumo Component', () => {
         it('deve ter função valoresStyle configurada na coluna de Custeio', () => {
             const { Table } = require('antd');
             render(<Resumo />);
-            
+
             expect(Table).toHaveBeenCalledWith(
                 expect.objectContaining({
                     columns: expect.arrayContaining([
