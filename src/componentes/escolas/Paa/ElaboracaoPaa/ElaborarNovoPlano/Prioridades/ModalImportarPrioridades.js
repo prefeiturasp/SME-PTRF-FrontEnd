@@ -6,6 +6,7 @@ import { usePostImportarPrioridades } from "./hooks/usePostImportarPrioridades";
 import { importaPrioridadesValidationSchema } from "./validationSchema";
 import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) => {
   const [form] = Form.useForm();
@@ -13,6 +14,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
   const dispatch = useDispatch();
 
   const { mutationImportarPrioridades } = usePostImportarPrioridades(onClose);
+  const exibeImportacaoDePrioridades = visoesService.featureFlagAtiva("paa-receitas-prevista");
 
   const isLoading = false;
   const initialValues = {
@@ -85,7 +87,9 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
     <ModalFormBodyText
       show={open}
       onHide={onClose}
-      titulo={`Importação de prioridades de PAA anterior`}
+      titulo={exibeImportacaoDePrioridades
+        ? `Importação de prioridades de PAA anterior`
+        : `Importação de PAA anterior`}
       // size="lg"
       bodyText={
         <Spin spinning={ isLoading }>
@@ -97,7 +101,9 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
             className="p-2"
             >
             <Typography.Text>
-                Selecione o ano em que deseja importar as prioridades para o PAA atual.
+                {exibeImportacaoDePrioridades
+                  ? `Selecione o ano em que deseja importar as prioridades para o PAA atual.`
+                  : `Selecione o ano em que deseja importar os dados para o PAA atual.`}
             </Typography.Text>
             <Row gutter={[16, 8]} className="mt-3">
               <Col md={24}>

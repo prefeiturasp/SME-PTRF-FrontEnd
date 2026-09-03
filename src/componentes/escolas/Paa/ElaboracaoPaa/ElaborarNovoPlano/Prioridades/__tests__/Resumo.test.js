@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Resumo } from '../Resumo';
 import { useGetResumoPrioridades } from '../hooks/useGetResumoPrioridades';
+import { visoesService } from '../../../../../../../services/visoes.service';
 
 // Mock do hook
 jest.mock('../hooks/useGetResumoPrioridades');
@@ -14,7 +15,7 @@ jest.mock('../../../../../../../services/escolas/Paa.service', () => ({
 
 jest.mock('../../../../../../../services/visoes.service', () => ({
     visoesService: {
-        featureFlagAtiva: jest.fn(() => false),
+        featureFlagAtiva: jest.fn((featureFlag) => featureFlag === 'paa-receitas-prevista'),
     },
 }));
 
@@ -303,6 +304,7 @@ describe('Resumo Component', () => {
 
         it('deve exibir o alerta de saldo congelado para PTRF Total', () => {
             const { Table, Tooltip } = require('antd');
+            visoesService.featureFlagAtiva.mockReturnValue(true);
             render(<Resumo />);
 
             const recursoColumn = Table.mock.calls[0][0].columns.find(
@@ -317,8 +319,29 @@ describe('Resumo Component', () => {
             });
             const alertaSaldoCongelado = resultado.props.children[1];
 
+            expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith('paa-receitas-prevista');
             expect(alertaSaldoCongelado.type).toBe(Tooltip);
             expect(alertaSaldoCongelado.props.title).toBe(mensagemSaldoCongelado);
+        });
+
+        it('não deve exibir o alerta quando a feature flag estiver desativada', () => {
+            const { Table, Tooltip } = require('antd');
+            visoesService.featureFlagAtiva.mockReturnValue(false);
+            render(<Resumo />);
+
+            const recursoColumn = Table.mock.calls[0][0].columns.find(
+                column => column.dataIndex === 'recurso'
+            );
+            const resultado = recursoColumn.render('PTRF Total', {
+                recurso: 'PTRF Total',
+                mensagem_saldo_congelado: 'Saldo congelado em 31/12/2025',
+                level: 0,
+                key: 'ptrf-total'
+            });
+            const alertaSaldoCongelado = resultado.props.children[1];
+
+            expect(alertaSaldoCongelado).toBeFalsy();
+            expect(alertaSaldoCongelado?.type).not.toBe(Tooltip);
         });
 
         it('não deve exibir o alerta de saldo congelado para PTRF Total sem mensagem', () => {
