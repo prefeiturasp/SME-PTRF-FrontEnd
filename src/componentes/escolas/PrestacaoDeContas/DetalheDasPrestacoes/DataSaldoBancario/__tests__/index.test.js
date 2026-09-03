@@ -133,4 +133,32 @@ describe('DataSaldoBancario', () => {
 
         expect(setShowModalSalvarDataSaldoExtrato).toHaveBeenCalledWith(true);
     });
+
+    it('deve exibir carregamento enquanto os dados são carregados', () => {
+        render(<DataSaldoBancario {...defaultProps} loading />);
+
+        expect(screen.getByText('Carregando...')).toBeInTheDocument();
+        expect(screen.queryByRole('button', { name: /salvar saldo/i })).not.toBeInTheDocument();
+    });
+
+    it('deve exibir o erro de carregamento e desabilitar o botão salvar', () => {
+        render(<DataSaldoBancario {...defaultProps} erroCarregamento="Falha ao carregar saldo" />);
+
+        expect(screen.getByText('Falha ao carregar saldo')).toBeInTheDocument();
+        expect(screen.getByRole('button', { name: /salvar saldo/i })).toBeDisabled();
+    });
+
+    it('deve desabilitar os campos editáveis quando camposDesabilitados for true', () => {
+        render(<DataSaldoBancario {...defaultProps} permiteEditarCamposExtrato={false} />);
+
+        expect(screen.getByTestId('react-number-format-mock')).toBeDisabled();
+        expect(document.querySelector('.ant-upload-disabled')).toBeInTheDocument();
+        expect(document.querySelector('.btn-apagar-comprovante-extrato')).toBeDisabled();
+    });
+
+    it('deve exibir o status salvo quando o salvamento tiver sido concluído', () => {
+        render(<DataSaldoBancario {...defaultProps} checkSalvarExtratoBancario />);
+
+        expect(screen.getByText('Salvo')).toBeInTheDocument();
+    });
 });
