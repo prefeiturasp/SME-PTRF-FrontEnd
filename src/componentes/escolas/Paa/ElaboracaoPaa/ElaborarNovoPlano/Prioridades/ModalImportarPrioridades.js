@@ -80,12 +80,12 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
       }
     }
   };
-  
+
   return (
     <ModalFormBodyText
       show={open}
       onHide={onClose}
-      titulo={`Importação de PAA anterior`}
+      titulo={`Importação de prioridades de PAA anterior`}
       // size="lg"
       bodyText={
         <Spin spinning={ isLoading }>
@@ -97,7 +97,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
             className="p-2"
             >
             <Typography.Text>
-                Selecione o ano em que deseja importar os dados para o PAA atual.
+                Selecione o ano em que deseja importar as prioridades para o PAA atual.
             </Typography.Text>
             <Row gutter={[16, 8]} className="mt-3">
               <Col md={24}>

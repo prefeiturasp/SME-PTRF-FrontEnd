@@ -59,7 +59,7 @@ jest.mock('../ModalImportarPrioridades', () => ({
   default: ({ open, onClose }) =>
     open ? (
       <div>
-        <span className="modal-title">Importação de PAA anterior</span>
+        <span className="modal-title">Importação de prioridades de PAA anterior</span>
         <button onClick={onClose}>Fechar Importar</button>
       </div>
     ) : null,
@@ -76,7 +76,7 @@ jest.mock('../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclu
 // Mock do ModalFormAdicionarPrioridade
 jest.mock('../ModalFormAdicionarPrioridade', () => ({
   __esModule: true,
-  default: ({ open, onClose }) => 
+  default: ({ open, onClose }) =>
     open ? (
       <div data-testid="modal-form">
         <button onClick={onClose}>Fechar Modal</button>
@@ -230,7 +230,7 @@ describe('Prioridades', () => {
     const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
     fireEvent.click(botaoImportar);
 
-    const tituloModal = screen.getByText("Importação de PAA anterior", {selector: ".modal-title"})
+    const tituloModal = screen.getByText("Importação de prioridades de PAA anterior", {selector: ".modal-title"})
 
     expect(tituloModal).toBeInTheDocument();
   });
