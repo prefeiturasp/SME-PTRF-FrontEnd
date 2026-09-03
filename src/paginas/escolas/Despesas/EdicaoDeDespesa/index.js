@@ -44,9 +44,24 @@ export const EdicaoDeDespesa = () =>{
     const navigate = useNavigate();
     const veioDeSituacaoPatrimonial = parametroLocation.state?.origem === 'situacao_patrimonial';
     const visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+    const [despesaCarregada, setDespesaCarregada] = useState(false);
+
+    const despesaNaoPertenceAUnidadeSelecionada = (despesa) => {
+        if (visao_selecionada !== "UE") {
+            return false;
+        }
+        const associacaoSelecionada = localStorage.getItem(ASSOCIACAO_UUID);
+        const uuidAssociacaoDespesa = despesa?.associacao?.uuid;
+        return Boolean(
+            associacaoSelecionada
+            && uuidAssociacaoDespesa
+            && String(uuidAssociacaoDespesa) !== String(associacaoSelecionada)
+        );
+    };
 
     useEffect(() => {       
         setCarregandoDespesa(true);
+        setDespesaCarregada(false);
         (async function setValoresIniciais() {
             await despesaContext.setVerboHttp("PUT");
             await despesaContext.setIdDespesa(associacao);           
@@ -54,6 +69,11 @@ export const EdicaoDeDespesa = () =>{
             await getDespesa(associacao)
             .then(response =>{
                 const resp = response;
+
+                if (despesaNaoPertenceAUnidadeSelecionada(resp)) {
+                    navigate('/lista-de-despesas');
+                    return;
+                }
 
                 let rateios_tratados = resp.rateios.map((item) =>{
 
@@ -152,10 +172,16 @@ export const EdicaoDeDespesa = () =>{
                     }) : "",
                 }               
                 despesaContext.setInitialValues(init)
-            }).catch(error => {         
+                setDespesaCarregada(true)
+            }).catch(error => {
+                if (error.response?.status === 404 && visao_selecionada === "UE") {
+                    navigate('/lista-de-despesas');
+                    return;
+                }
                 console.log(error);
+            }).finally(() => {
+                setCarregandoDespesa(false);
             });
-            setCarregandoDespesa(false);
         })();
     }, []);
 
@@ -181,10 +207,11 @@ export const EdicaoDeDespesa = () =>{
                         marginTop="50"
                         marginBottom="0"/>
                     </> :
+                    despesaCarregada ? (
                     <CadastroDeDespesas
                         veioDeSituacaoPatrimonial={veioDeSituacaoPatrimonial}
                         verbo_http={"PUT"}
-                    /> }
+                    /> ) : null }
                 <hr />
                 {veioDeSituacaoPatrimonial && (
                     <div className="d-flex justify-content-end mb-4">
