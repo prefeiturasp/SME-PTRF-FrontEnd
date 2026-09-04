@@ -19,7 +19,8 @@ const initialStateFormModal = {
   uuid: "",
   id: "",
   operacao: 'create',
-  recurso: ""
+  recurso: "",
+  permite_consulta_integracao_bb: false,
 };
 
 // Filtros
@@ -90,7 +91,8 @@ export const useTiposContas = () => {
       uuid: rowData.uuid,
       id: rowData.id,
       operacao: 'edit',
-      recurso: { uuid: rowData.recurso }
+      recurso: { uuid: rowData.recurso },
+      permite_consulta_integracao_bb: rowData.permite_consulta_integracao_bb,
     });
     setShowModalForm(true)
   }, [stateFormModal, selectedRecurso]);
@@ -112,6 +114,7 @@ export const useTiposContas = () => {
       numero_cartao: values.numero_cartao,
       apenas_leitura: values.apenas_leitura,
       permite_inativacao: values.permite_inativacao,
+      permite_consulta_integracao_bb: values.permite_consulta_integracao_bb,
       recurso: values.recurso.uuid
     };
 
