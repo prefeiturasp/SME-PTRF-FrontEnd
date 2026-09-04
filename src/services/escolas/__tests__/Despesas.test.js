@@ -70,7 +70,7 @@ describe('Testes para funções de análise', () => {
         const result = await deleteDespesa(uuid);
 
         expect(api.delete).toHaveBeenCalledWith(
-            `api/despesas/${uuid}/`,
+            `api/despesas/${uuid}/?associacao__uuid=${associacao_uuid}`,
             getAuthHeader()
         );
         expect(result).toEqual(mockData);
@@ -139,7 +139,7 @@ describe('Testes para funções de análise', () => {
         const idDespesa = '1234'
         const result = await getDespesa(idDespesa);
         expect(api.get).toHaveBeenCalledWith(
-            `api/despesas/${idDespesa}`,
+            `api/despesas/${idDespesa}?associacao__uuid=${associacao_uuid}`,
             getAuthHeader()
         );
         expect(result).toEqual(mockData);
@@ -245,7 +245,7 @@ describe('Testes para funções de análise', () => {
         const idDespesa = 1
         const result = await alterarDespesa(payload, idDespesa);
         expect(api.put).toHaveBeenCalledWith(
-            `api/despesas/${idDespesa}/`,
+            `api/despesas/${idDespesa}/?associacao__uuid=${associacao_uuid}`,
             payload,
             getAuthHeader()
         );
@@ -258,7 +258,7 @@ describe('Testes para funções de análise', () => {
         const idDespesa = 1
         const result = await alterarDespesa(payload, idDespesa);
         expect(api.put).toHaveBeenCalledWith(
-            `api/despesas/${idDespesa}/`,
+            `api/despesas/${idDespesa}/?associacao__uuid=${associacao_uuid}`,
             payload,
             getAuthHeader()
         );
