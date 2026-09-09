@@ -204,7 +204,18 @@ export function InputsPeriodosIniciais({
                                             ))}
                                         </select>
                                         {errosPeriodosIniciais[index]?.status_valores_reprogramados && <span className="span_erro text-danger mt-1"> {errosPeriodosIniciais[index].status_valores_reprogramados} </span>}
+                                        
+                                        <small className="form-text text-muted">
+                                            <FontAwesomeIcon
+                                                style={{fontSize: '12px', marginRight:'4px'}}
+                                                icon={faExclamationCircle}
+                                            />
+                                            <span>
+                                                Os valores reprogramados iniciais, quando necessário, são indicados no período inicial de referência.
+                                            </span>
+                                        </small>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
