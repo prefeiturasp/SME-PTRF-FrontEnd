@@ -31,6 +31,7 @@ export const ModalBootstrap = (propriedades) => {
                     <Button data-qa={propriedades && propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.primeiroBotaoTexto}` : ""} variant={
                             propriedades.primeiroBotaoCss ? propriedades.primeiroBotaoCss : "primary"
                         }
+                        disabled={propriedades.primeiroBotaoDisabled}
                         onClick={
                             propriedades.primeiroBotaoOnclick
                     }>

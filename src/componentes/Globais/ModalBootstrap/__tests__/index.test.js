@@ -67,6 +67,22 @@ it('aplica corretamente o atributo data-qa nos botões do ModalBootstrap se forn
     expect(btnSegundo).toHaveAttribute('data-qa', 'meu-modal-btn-Cancelar');
   });
 
+  it('desabilita o primeiro botão quando primeiroBotaoDisabled é true', () => {
+    render(
+      <ModalBootstrap
+        show={true}
+        titulo="Título"
+        bodyText="Texto"
+        primeiroBotaoTexto="Confirmar"
+        primeiroBotaoOnclick={() => {}}
+        primeiroBotaoDisabled={true}
+        onHide={() => {}}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: /confirmar/i })).toBeDisabled();
+  });
+
   it('renderiza botões dinâmicos no ModalBootstrapAcoesExtras a partir de bodyActions e dispara o clique', () => {
     const mockCallbackExtra = jest.fn();
     const acoesExtras = [
