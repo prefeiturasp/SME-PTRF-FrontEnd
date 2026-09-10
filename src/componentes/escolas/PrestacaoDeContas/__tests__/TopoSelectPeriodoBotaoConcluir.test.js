@@ -125,6 +125,30 @@ describe('TopoSelectPeriodoBotaoConcluir', () => {
     expect(concluirPeriodo).toHaveBeenCalled();
   });
 
+  it('desabilita o botão concluir enquanto a conclusão está em andamento', () => {
+    render(
+      <TopoSelectPeriodoBotaoConcluir
+        periodoPrestacaoDeConta={periodoSelecionado}
+        handleChangePeriodoPrestacaoDeConta={handleChangePeriodoPrestacaoDeConta}
+        periodosAssociacao={mockPeriodos}
+        retornaObjetoPeriodoPrestacaoDeConta={retornaObjetoPeriodoPrestacaoDeConta}
+        statusPrestacaoDeConta={statusPrestacaoDeConta}
+        checkCondicaoExibicao={() => true}
+        podeConcluir={true}
+        concluirPeriodo={concluirPeriodo}
+        textoBotaoConcluir={textoBotaoConcluir}
+        contasAssociacao={mockContasAssociacoes}
+        concluindoPeriodo={true}
+      />
+    );
+
+    const botao = screen.getByRole('button', { selector: '.btn-success' });
+    expect(botao).toBeDisabled();
+
+    fireEvent.click(botao);
+    expect(concluirPeriodo).not.toHaveBeenCalled();
+  });
+
   it('não exibe o botão concluir se podeConcluir for falso', () => {
     render(
       <TopoSelectPeriodoBotaoConcluir
