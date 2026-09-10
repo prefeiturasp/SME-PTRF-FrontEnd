@@ -2,6 +2,11 @@ import api from '../api';
 import {
     getMandatoVigente,
     getMandatosAnterioresVacancia,
+    getMandatosVacancia,
+    postMandatoVacancia,
+    patchMandatoVacancia,
+    deleteMandatoVacancia,
+    getMandatoMaisRecenteVacancia,
     getComposicaoVigenteVacancia,
     getCargosComposicaoVacanciaPorData,
     getCargosDaComposicaoVacancia,
@@ -66,6 +71,73 @@ describe('MandatosVacancia.service', () => {
 
         expect(api.get).toHaveBeenCalledWith(
             '/api/mandatos-vacancia/mandatos-anteriores/',
+            authHeader()
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getMandatosVacancia deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: { count: 0, results: [] } });
+        const referencia = '2023 a 2025';
+        const page = 1;
+
+        const result = await getMandatosVacancia(referencia, page);
+
+        expect(api.get).toHaveBeenCalledWith(
+            '/api/mandatos-vacancia/',
+            { ...authHeader(), params: { referencia, page } }
+        );
+        expect(result).toEqual({ count: 0, results: [] });
+    });
+
+    test('postMandatoVacancia deve chamar a API corretamente', async () => {
+        api.post.mockResolvedValue({ data: mockData });
+        const payload = { referencia_mandato: '2023 a 2025', data_inicial: '2023-01-01', data_final: '2025-12-31' };
+
+        const result = await postMandatoVacancia(payload);
+
+        expect(api.post).toHaveBeenCalledWith(
+            '/api/mandatos-vacancia/',
+            { ...payload },
+            authHeader(),
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('patchMandatoVacancia deve chamar a API corretamente', async () => {
+        api.patch.mockResolvedValue({ data: mockData });
+        const uuidMandato = 'mandato-1';
+        const payload = { referencia_mandato: '2023 a 2025 editado' };
+
+        const result = await patchMandatoVacancia(uuidMandato, payload);
+
+        expect(api.patch).toHaveBeenCalledWith(
+            `/api/mandatos-vacancia/${uuidMandato}/`,
+            { ...payload },
+            authHeader(),
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('deleteMandatoVacancia deve chamar a API corretamente', async () => {
+        api.delete.mockResolvedValue({});
+        const uuidMandato = 'mandato-1';
+
+        await deleteMandatoVacancia(uuidMandato);
+
+        expect(api.delete).toHaveBeenCalledWith(
+            `/api/mandatos-vacancia/${uuidMandato}/`,
+            authHeader(),
+        );
+    });
+
+    test('getMandatoMaisRecenteVacancia deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+
+        const result = await getMandatoMaisRecenteVacancia();
+
+        expect(api.get).toHaveBeenCalledWith(
+            '/api/mandatos-vacancia/mandato-mais-recente/',
             authHeader()
         );
         expect(result).toEqual(mockData);
