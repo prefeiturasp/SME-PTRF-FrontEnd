@@ -1,22 +1,65 @@
 .paa-card {
-  &__titulo-versao {
-    font-size: 16px;
-    font-weight: 700;
-    color: #42474a;
-  }
+    &__titulo-versao {
+        font-size: 16px;
+        font-weight: 700;
+        color: #42474a;
+    }
 
-  &__col-ata {
-    min-width: 200px;
-  }
+    &__col-ata {
+        min-width: 200px;
+    }
 
-  &__separador {
-    border-color: #dadada;
-  }
+    &__separador {
+        border-color: #dadada;
+    }
 
-  &__resumo-assembleia {
-    font-size: 12px;
-    line-height: 1.45;
-    color: #60686A;
-    font-weight: 400;
-  }
+    &__resumo-assembleia {
+        font-size: 12px;
+        line-height: 1.45;
+        color: #60686a;
+        font-weight: 400;
+    }
+}
+
+.retificacoes-anteriores {
+    margin: 2rem -1rem -14px -1rem;
+
+    .paa-card-barra-titulo {
+        border-radius: 0;
+    }
+
+    .ret-container {
+        padding: 0 1rem;
+        max-height: calc(150px * 3);
+        overflow-y: auto; 
+
+        .ret-item {
+            padding-bottom: 15px;
+            padding-top: 15px;
+            height: 150px;
+
+            &:not(:last-child) {
+                border-bottom: 1px solid #dadada;
+            }
+
+            h4 {
+                color: #8c8c8c;
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+            .resumo-assembleia {
+                margin-top: 5px;
+                color: #60686a;
+            }
+
+            .linha {
+                font-size: 14px;
+                span {
+                    font-weight: 700;
+                    margin-left: 10px;
+                }
+            }
+        }
+    }
 }
