@@ -135,7 +135,7 @@ describe('PaaVigenteEAnteriores', () => {
 
     it('deve exibir status do plano e da ata quando expandido', () => {
       renderComponent();
-      expect(screen.getAllByText('Plano anual').length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText('Plano Anual').length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText('Ata de apresentação do PAA').length).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByTestId('plano-mensagem').length).toBeGreaterThanOrEqual(1);
     });
