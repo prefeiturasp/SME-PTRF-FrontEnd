@@ -117,7 +117,7 @@ describe('PaaCard', () => {
       },
     };
     render(<PaaCard dados={dados} />);
-    expect(screen.getAllByText('Plano anual').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Plano Anual').length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByText('PAA Original')).not.toBeInTheDocument();
   });
 
@@ -242,7 +242,7 @@ describe('PaaCard', () => {
       },
     };
     render(<PaaCard dados={dados} />);
-    const planoHeading = screen.getByRole('heading', { name: 'Plano anual' });
+    const planoHeading = screen.getByRole('heading', { name: 'Plano Anual' });
     const [btnVisualizarPlano] = within(planoHeading.parentElement).getAllByRole('button');
     await act(async () => {
       fireEvent.click(btnVisualizarPlano);
@@ -284,7 +284,7 @@ describe('PaaCard', () => {
       },
     };
     render(<PaaCard dados={dados} />);
-    const planoHeading = screen.getByRole('heading', { name: 'Plano anual' });
+    const planoHeading = screen.getByRole('heading', { name: 'Plano Anual' });
     const botoesPlano = within(planoHeading.parentElement).getAllByRole('button');
     await act(async () => {
       fireEvent.click(botoesPlano[1]);

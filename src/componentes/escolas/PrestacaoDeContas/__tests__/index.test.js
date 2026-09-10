@@ -477,6 +477,35 @@ describe('PrestacaoDeContas', () => {
         });
     });
 
+    it('não dispara postConcluirPeriodo duas vezes no duplo clique em confirmar', async () => {
+        let resolvePost;
+        prestacaoService.postConcluirPeriodo.mockImplementation(
+            () => new Promise((resolve) => {
+                resolvePost = resolve;
+            })
+        );
+        prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoSemPendencia);
+        notificacaoService.getRegistrosFalhaGeracaoPc.mockResolvedValue([]);
+        renderComponent();
+
+        await clickConcluirViaAviso();
+
+        await waitFor(() => {
+            expect(screen.getByTestId('modal-concluir-periodo-confirmar')).toBeInTheDocument();
+        });
+
+        await act(async () => {
+            fireEvent.click(screen.getByTestId('modal-concluir-periodo-confirmar'));
+            fireEvent.click(screen.getByTestId('modal-concluir-periodo-confirmar'));
+        });
+
+        expect(prestacaoService.postConcluirPeriodo).toHaveBeenCalledTimes(1);
+
+        await act(async () => {
+            resolvePost({ uuid: 'uuid-pc-concluido' });
+        });
+    });
+
     it('fecha modal concluir período chamando onHandleClose', async () => {
         prestacaoService.getStatusPeriodoPorData.mockResolvedValue(mockStatusPeriodoCondicaoSemPendencia);
         notificacaoService.getRegistrosFalhaGeracaoPc.mockResolvedValue([]);

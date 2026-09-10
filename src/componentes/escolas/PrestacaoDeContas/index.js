@@ -1,4 +1,4 @@
-import React, {useEffect, useState, Fragment, useCallback, useContext} from "react";
+import React, {useEffect, useState, Fragment, useCallback, useContext, useRef} from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import {useDispatch} from "react-redux";
 import {TopoSelectPeriodoBotaoConcluir} from "./TopoSelectPeriodoBotaoConcluir";
@@ -62,6 +62,8 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     const [modalPendenciasCadastrais, setModalPendenciasCadastrais] = useState({show: false, title: '', message: '', actions: []});
     const [showModalDevolucaoNaoPermitida, setShowModalDevolucaoNaoPermitida] = useState(false);
     const [mensagemDevolucaoNaoPermitida, setMensagemDevolucaoNaoPermitida] = useState('');
+    const [concluindoPeriodo, setConcluindoPeriodo] = useState(false);
+    const concluindoPeriodoRef = useRef(false);
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -282,7 +284,12 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     const concluirPeriodo = useCallback( async (justificativaPendencia='') =>{
+        if (concluindoPeriodoRef.current) {
+            return;
+        }
         if (periodoPrestacaoDeConta && periodoPrestacaoDeConta.periodo_uuid){
+            concluindoPeriodoRef.current = true;
+            setConcluindoPeriodo(true);
             try {
                 let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
                 setUuidPrestacaoConta(status_concluir_periodo.uuid);
@@ -312,6 +319,11 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                 }
 
                 throw error;
+            } finally {
+                if (concluindoPeriodoRef.current) {
+                    concluindoPeriodoRef.current = false;
+                    setConcluindoPeriodo(false);
+                }
             }
         }
     }, [periodoPrestacaoDeConta]);
@@ -378,6 +390,9 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     const handleConcluirPeriodo = () =>{
+        if (concluindoPeriodoRef.current) {
+            return;
+        }
         if(statusPrestacaoDeConta && statusPrestacaoDeConta.pendencias_cadastrais){
             checkPendenciasCadastrais();
         } else {
@@ -488,6 +503,9 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     };
 
     const onConcluirSemPendencias = () => {
+        if (concluindoPeriodoRef.current) {
+            return;
+        }
         setShowConcluir(false);
         setShowConcluirAcertosSemPendencias(false);
         
@@ -665,6 +683,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                                 concluirPeriodo={handleConcluirPeriodo}
                                 podeConcluir={podeConcluir}
                                 textoBotaoConcluir={textoBotaoConcluir}
+                                concluindoPeriodo={concluindoPeriodo}
                             />
                             {checkCondicaoExibicao(periodoPrestacaoDeConta)  ? (
                                     <>
@@ -755,6 +774,9 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             segundoBotaoCss={`${registroFalhaGeracaoPc.excede_tentativas ? null : "success"}`}
                             segundoBotaoOnclick={
                             registroFalhaGeracaoPc && !registroFalhaGeracaoPc.excede_tentativas ? ()=> {
+                                if (concluindoPeriodoRef.current) {
+                                    return;
+                                }
                                 setShowExibeModalErroConcluirPc(false)
                                 concluirPeriodo()
                             } : null }
@@ -769,6 +791,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluir}
                             handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
+                            confirmando={concluindoPeriodo}
                             titulo="Concluir Prestação de Contas"
                             texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
@@ -802,6 +825,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluirAcertosSemPendencias}
                             handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
+                            confirmando={concluindoPeriodo}
                             titulo="Concluir acerto da Prestação de Contas"
                             texto="<p>Ao concluir a Prestação de Contas, o sistema <strong>bloqueará</strong> 
                             o cadastro e a edição de qualquer crédito ou despesa nesse período.
