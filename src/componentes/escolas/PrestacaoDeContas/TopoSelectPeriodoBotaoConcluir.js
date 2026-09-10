@@ -11,7 +11,8 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                                    podeConcluir,
                                                    concluirPeriodo,
                                                    textoBotaoConcluir,
-                                                   contasAssociacao
+                                                   contasAssociacao,
+                                                   concluindoPeriodo = false
                                                }) => {
     return (
         <>
@@ -70,7 +71,9 @@ export const TopoSelectPeriodoBotaoConcluir = ({
                                 onClick={concluirPeriodo}
                                 className='btn btn-success'
                                 data-qa={`btn-${textoBotaoConcluir(statusPrestacaoDeConta)}`}
-                                type="button">{textoBotaoConcluir(statusPrestacaoDeConta)}
+                                type="button"
+                                disabled={concluindoPeriodo}
+                            >{textoBotaoConcluir(statusPrestacaoDeConta)}
                             </button>
                         }
                     </div>
