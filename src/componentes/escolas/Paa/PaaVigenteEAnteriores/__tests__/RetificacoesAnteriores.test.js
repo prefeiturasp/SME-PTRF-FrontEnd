@@ -65,7 +65,7 @@ describe('RetificacoesAnteriores', () => {
             'true'
         );
 
-        expect(screen.getByText('PAA Retificacao #1')).toBeInTheDocument();
+        expect(screen.getByText('Retificacao #1')).toBeInTheDocument();
     });
 
     it('retrai a seção ao clicar novamente na barra de título', () => {
@@ -79,7 +79,7 @@ describe('RetificacoesAnteriores', () => {
 
         fireEvent.click(barraTitulo);
 
-        expect(screen.getByText('PAA Retificacao #1')).toBeInTheDocument();
+        expect(screen.getByText('Retificacao #1')).toBeInTheDocument();
 
         fireEvent.click(barraTitulo);
 
@@ -100,7 +100,7 @@ describe('RetificacoesAnteriores', () => {
 
         fireEvent.click(screen.getByTestId('barra-titulo'));
 
-        expect(screen.getByText('PAA Retificacao #1')).toBeInTheDocument();
+        expect(screen.getByText('Retificacao #1')).toBeInTheDocument();
         expect(screen.getByText('Plano Anual')).toBeInTheDocument();
         expect(
             screen.getByText('Documento gerado com sucesso.')
@@ -140,25 +140,11 @@ describe('RetificacoesAnteriores', () => {
 
         fireEvent.click(screen.getByTestId('barra-titulo'));
 
-        expect(screen.getByText('PAA Ret #1')).toBeInTheDocument();
-        expect(screen.getByText('PAA Ret #2')).toBeInTheDocument();
-        expect(screen.getByText('PAA Ret #3')).toBeInTheDocument();
+        expect(screen.getByText('Ret #1')).toBeInTheDocument();
+        expect(screen.getByText('Ret #2')).toBeInTheDocument();
+        expect(screen.getByText('Ret #3')).toBeInTheDocument();
     });
 
-    it('renderiza a seção sem itens quando a lista está vazia', () => {
-        render(
-            <RetificacoesAnteriores retificacoesAnteriores={[]} />
-        );
-
-        expect(
-            screen.getByText('PAA Retificações anteriores')
-        ).toBeInTheDocument();
-
-        expect(screen.getByTestId('barra-titulo')).toHaveAttribute(
-            'data-aberto',
-            'false'
-        );
-    });
 
     it('não renderiza a seção quando retificacoesAnteriores é null', () => {
         const { container } = render(

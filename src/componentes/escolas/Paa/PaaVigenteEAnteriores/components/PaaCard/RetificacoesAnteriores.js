@@ -15,7 +15,7 @@ const corMensagemParaHex = (corMensagem) =>
 const RetificacaoAnterior = ({ tituloSecao, documento, ata }) => {
     return (
         <div className="ret-item">
-            <h4>PAA {tituloSecao}</h4>
+            <h4>{tituloSecao}</h4>
             <div className="linha">
                 <strong>Plano Anual</strong>
                 <span
@@ -44,7 +44,7 @@ const RetificacaoAnterior = ({ tituloSecao, documento, ata }) => {
 const RetificacoesAnteriores = ({ retificacoesAnteriores = [] }) => {
     const [ehAberto, setEhAberto] = useState(false);
 
-    return retificacoesAnteriores ? (
+    return retificacoesAnteriores && retificacoesAnteriores.length > 0 ? (
         <div className="retificacoes-anteriores">
             <PaaCardBarraTitulo
                 titulo={"PAA Retificações anteriores"}
