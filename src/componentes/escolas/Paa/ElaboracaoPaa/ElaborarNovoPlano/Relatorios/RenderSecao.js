@@ -4,6 +4,8 @@ import chevronUp from "../../../../../../assets/img/icone-chevron-up.svg";
 import chevronDown from "../../../../../../assets/img/icone-chevron-down.svg";
 
 import { usePatchPaa } from "./hooks/usePatchPaa";
+import { useNavigate } from "react-router-dom";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 import { RelSecaoTextos } from "./RelSecaoTextos";
 import { RelSecaoObjetivos } from "./RelSecaoObjetivos";
@@ -22,6 +24,12 @@ export const RenderSecao = ({
   podeEditar = true,
 }) => {
   const { patchPaa, isLoading: isSaving } = usePatchPaa();
+  const navigate = useNavigate();
+  const exibeAtividadesPrevistas = visoesService.featureFlagAtiva?.("paa-receitas-prevista");
+
+  if (config.chave === "atividades-previstas" && !exibeAtividadesPrevistas) {
+    return null;
+  }
 
   const handleSalvarObjetivos = async (objetivos) => {
     if (!podeEditar || !paaVigente?.uuid) {
@@ -49,13 +57,23 @@ export const RenderSecao = ({
       <div className="subsecao-info">
         <div className="subsecao-header">
           <div className="subsecao-titulo">{config.titulo}</div>
-          <button className="btn-dropdown" onClick={() => toggleSection(secaoKey)}>
-            <img
-              src={isExpanded ? chevronUp : chevronDown}
-              alt={isExpanded ? "Fechar" : "Abrir"}
-              className="chevron-icon"
-            />
-          </button>
+          {config.tipo === "link" ? (
+            <button
+              type="button"
+              onClick={() => navigate(config.rota)}
+              className="btn btn-outline-success"
+            >
+              {config.acao}
+            </button>
+          ) : (
+            <button className="btn-dropdown" onClick={() => toggleSection(secaoKey)}>
+              <img
+                src={isExpanded ? chevronUp : chevronDown}
+                alt={isExpanded ? "Fechar" : "Abrir"}
+                className="chevron-icon"
+              />
+            </button>
+          )}
         </div>
         {/* Textos de introdução dentro do header */}
         {isExpanded && (

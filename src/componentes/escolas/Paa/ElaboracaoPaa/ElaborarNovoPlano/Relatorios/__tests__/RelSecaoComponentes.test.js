@@ -11,12 +11,18 @@ jest.mock("react-router-dom", () => ({
 
 jest.mock("../styles.css", () => ({}));
 
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn().mockReturnValue(false),
+  },
+}));
+
 describe("RelSecaoComponentes", () => {
   beforeEach(() => {
     mockNavigate.mockClear();
   });
 
-  test("renderiza os três componentes de seção", () => {
+  test("renderiza os três componentes de seção quando a flag está desativada", () => {
     render(<RelSecaoComponentes />);
 
     expect(screen.getByText("Plano de Aplicação")).toBeInTheDocument();
@@ -50,7 +56,7 @@ describe("RelSecaoComponentes", () => {
     expect(mockNavigate).toHaveBeenCalledWith("/relatorios-componentes/plano-orcamentario");
   });
 
-  test("navega para rota de Atividades Previstas ao clicar", () => {
+  test("navega para rota de Atividades Previstas quando a flag está desativada", () => {
     render(<RelSecaoComponentes />);
 
     fireEvent.click(screen.getAllByRole("button")[2]);

@@ -11,6 +11,7 @@ let mockStatusDocumento = {
 // 🔹 Mocks
 const mockNavigate = jest.fn();
 const mockRefetchPaaContext = jest.fn();
+let mockFeatureFlagAtiva = false;
 let mockPaaContextValue = {
   paa: { alteracoes: {}, status: "EM_ELABORACAO" },
   refetch: mockRefetchPaaContext,
@@ -27,6 +28,7 @@ jest.mock("../../../../componentes/TagRetificacao", () => ({
 jest.mock("../../../../../../../services/visoes.service", () => ({
   visoesService: {
     getPermissoes: () => true,
+    featureFlagAtiva: () => mockFeatureFlagAtiva,
   },
 }));
 
@@ -110,8 +112,11 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
 
 // Componentes filhos
 jest.mock("../RenderSecao", () => ({
-  RenderSecao: ({ secaoKey }) => (
-    <div data-testid={`secao-${secaoKey}`}>Secao {secaoKey}</div>
+  RenderSecao: ({ secaoKey, config }) => (
+    <div data-testid={`secao-${secaoKey}`}>
+      <span>{config.titulo}</span>
+      {config.tipo === "link" && <button onClick={() => mockNavigate(config.rota)}>{config.acao}</button>}
+    </div>
   ),
 }));
 
@@ -160,6 +165,7 @@ jest.mock("../ModalInfoGeracaoDocumento", () => ({
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockFeatureFlagAtiva = false;
   localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
   mockPaaContextValue = {
     paa: { alteracoes: {}, status: "EM_ELABORACAO" },
@@ -217,6 +223,36 @@ describe("Relatorios", () => {
     fireEvent.click(dropdownBtn);
 
     expect(screen.getByTestId("secao-introducao")).toBeInTheDocument();
+  });
+
+  it("deve exibir Atividades Previstas antes da conclusão quando a flag está ativa", () => {
+    mockFeatureFlagAtiva = true;
+    render(<Relatorios />);
+
+    fireEvent.click(document.querySelector("button.btn-dropdown"));
+
+    expect(screen.getByText("IV. Atividades Previstas")).toBeInTheDocument();
+    expect(screen.getByText("V. Conclusão")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Editar" })).toBeInTheDocument();
+  });
+
+  it("não deve exibir Atividades Previstas quando a flag está desativada", () => {
+    render(<Relatorios />);
+
+    fireEvent.click(document.querySelector("button.btn-dropdown"));
+
+    expect(screen.queryByText("IV. Atividades Previstas")).not.toBeInTheDocument();
+    expect(screen.getByText("IV. Conclusão")).toBeInTheDocument();
+  });
+
+  it("deve navegar para Atividades Previstas pelo botão da seção", () => {
+    mockFeatureFlagAtiva = true;
+    render(<Relatorios />);
+
+    fireEvent.click(document.querySelector("button.btn-dropdown"));
+    fireEvent.click(screen.getByRole("button", { name: "Editar" }));
+
+    expect(mockNavigate).toHaveBeenCalledWith("/relatorios-componentes/atividades-previstas");
   });
 
   test("navega ao visualizar ata", () => {

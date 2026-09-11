@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { VisualizarAtividadesPrevistas } from "../VisualizarAtividadesPrevistas";
 
 const mockNavigate = jest.fn();
+var mockFeatureFlagAtiva = false;
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: () => mockNavigate,
@@ -19,6 +20,12 @@ jest.mock("../../../../../componentes/PaaContext", () => ({
     Provider: ({ children }) => <>{children}</>,
   },
   usePaaContext: (...args) => mockUsePaaContext(...args),
+}));
+
+jest.mock("../../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: () => mockFeatureFlagAtiva,
+  },
 }));
 
 jest.mock("../AtividadesPrevistas", () => ({
@@ -69,6 +76,7 @@ const renderComponent = () => render(<VisualizarAtividadesPrevistas />);
 describe("VisualizarAtividadesPrevistas", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockFeatureFlagAtiva = false;
     localStorage.setItem("PAA", PAA_UUID);
     setupDefaultMocks();
   });
@@ -144,6 +152,43 @@ describe("VisualizarAtividadesPrevistas", () => {
           state: {
             activeTab: "relatorios",
             expandedSections: { planoAnual: true, componentes: true },
+          },
+        },
+      );
+    });
+
+    it("deve voltar expandindo apenas Plano Anual quando a flag está ativa", async () => {
+      mockFeatureFlagAtiva = true;
+      renderComponent();
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("btn-voltar"));
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+        state: {
+          activeTab: "relatorios",
+          expandedSections: { planoAnual: true },
+        },
+      });
+    });
+
+    it("deve voltar para retificação expandindo apenas Plano Anual quando a flag está ativa", async () => {
+      mockFeatureFlagAtiva = true;
+      const paaRetificacao = { uuid: PAA_UUID, status: "EM_RETIFICACAO" };
+      setupDefaultMocks({ paa: paaRetificacao });
+      renderComponent();
+
+      await act(async () => {
+        fireEvent.click(screen.getByTestId("btn-voltar"));
+      });
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        `/retificacao-paa/${PAA_UUID}`,
+        {
+          state: {
+            activeTab: "relatorios",
+            expandedSections: { planoAnual: true },
           },
         },
       );
