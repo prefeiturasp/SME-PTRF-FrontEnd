@@ -1,11 +1,14 @@
 import React from "react";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const TabelaExecucaoFinanceira = ({
     execucaoFinanceira, 
     valorTemplate, 
     comparaValores,
     exibe_devolucao_ao_tesouro
-}) =>{
+}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
 
     return(
         <>
@@ -23,7 +26,9 @@ export const TabelaExecucaoFinanceira = ({
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Saldo reprogramado período anterior</td>
+                        <td>
+                            { existeSaldoReprogramado ? 'Saldo reprogramado do período anterior' : 'Saldo do período anterior' }
+                        </td>
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_custeio) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_capital) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_periodo_anterior_livre) :'-'}</td>
@@ -83,7 +88,9 @@ export const TabelaExecucaoFinanceira = ({
                         <td>{execucaoFinanceira.despesas_no_periodo_total ? valorTemplate(execucaoFinanceira.despesas_no_periodo_total) :'-'}</td>
                     </tr>
                     <tr>
-                        <td>Saldo reprogramado próximo período</td>
+                        <td>
+                            { existeSaldoReprogramado ? "Saldo reprogramado do próximo período" : "Saldo do próximo período" }
+                        </td>
                         <td>{execucaoFinanceira.saldo_reprogramado_proximo_periodo_custeio ? valorTemplate(execucaoFinanceira.saldo_reprogramado_proximo_periodo_custeio) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_proximo_periodo_capital ? valorTemplate(execucaoFinanceira.saldo_reprogramado_proximo_periodo_capital) :'-'}</td>
                         <td>{execucaoFinanceira.saldo_reprogramado_proximo_periodo_livre ? valorTemplate(execucaoFinanceira.saldo_reprogramado_proximo_periodo_livre) :'-'}</td>

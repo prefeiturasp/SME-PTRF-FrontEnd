@@ -3,8 +3,12 @@ import '../../../paginas/escolas/404/pagina-404.scss'
 import {MsgImgLadoDireito} from "../Mensagens/MsgImgLadoDireito";
 import Img404 from '../../../assets/img/img-404.svg'
 import {exibeDataPT_BR, exibeDateTimePT_BR, exibeValorFormatadoPT_BR} from '../../../utils/ValidacoesAdicionaisFormularios'
+import { useRecursoSelecionadoContext } from '../../../context/RecursoSelecionado';
 
 export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque, statusPeriodoAssociacao}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return (
         <>
             {acoesAssociacao.info_acoes && acoesAssociacao.info_acoes.length > 0 ? (
@@ -21,7 +25,7 @@ export const DashboardCard = ({acoesAssociacao, getCorSaldo, getCssDestaque, sta
                                         <div className="row">
                                             <div className="col-12 col-md-6 mr-4 align-self-center container-lado-esquerdo">
                                                 <p className="pt-1 mb-4">
-                                                    Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
+                                                    { existeSaldoReprogramado ? 'Saldo reprogramado: ' : 'Saldo: ' } <strong>{exibeValorFormatadoPT_BR(acao.saldo_reprogramado)}</strong>
                                                 </p>
                                                 <p className="pt-1 mb-4">
                                                     Repasses no período: <strong>{exibeValorFormatadoPT_BR(acao.repasses_no_periodo)}</strong>

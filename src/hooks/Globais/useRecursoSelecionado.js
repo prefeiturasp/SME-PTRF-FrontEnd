@@ -37,7 +37,7 @@ const useRecursoSelecionado = ({ visoesService }) => {
   const [error, setError] = useState(null);
 
   const getTextValoresReprogramadosATA = () => {
-    if (recursoSelecionado.nome === "Prêmio Excelência Educacional") {
+    if (recursoSelecionado.nome === "Prêmio Excelência Educacional" || !recursoSelecionado.existe_saldo_reprogramado) {
       return "valores estes que serão tratados conforme a legislação vigente"
     }
 
