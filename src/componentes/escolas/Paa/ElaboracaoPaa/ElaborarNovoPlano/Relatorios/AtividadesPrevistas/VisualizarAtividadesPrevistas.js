@@ -7,28 +7,43 @@ import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
 import { AtividadesPrevistas } from "./AtividadesPrevistas";
 import { RecursosProprios } from "./RecursosProprios";
 import "./styles.scss";
+import { visoesService } from "../../../../../../../services/visoes.service";
 
 export const VisualizarAtividadesPrevistasContent = () => {
   const navigate = useNavigate();
+  const exibeAtividadesPrevistas = visoesService.featureFlagAtiva?.("paa-receitas-prevista");
 
   const { paa, isFetching: isLoadingPaa } = usePaaContext();
 
 
   const handleVoltar = useCallback(() => {
+
     let voltarRota = "/elaborar-novo-paa";
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
     }
-    navigate(voltarRota, {
-      state: {
-        activeTab: "relatorios",
-        expandedSections: {
-          planoAnual: true,
-          componentes: true,
+    if(exibeAtividadesPrevistas) {
+      navigate(voltarRota, {
+        state: {
+            activeTab: "relatorios",
+            expandedSections: {
+              planoAnual: true,
+            },
         },
-      },
-    });
+      });
+    }else {
+      navigate(voltarRota, {
+        state: {
+            activeTab: "relatorios",
+            expandedSections: {
+              planoAnual: true,
+              componentes: true,
+            },
+        },
+      });
+    }
+
   }, [navigate, paa]);
 
   return (
