@@ -22,7 +22,7 @@
 }
 
 .retificacoes-anteriores {
-    margin: 2rem -1rem -14px -1rem;
+    margin: 2rem -1rem 15px -1rem;
 
     .paa-card-barra-titulo {
         border-radius: 0;
@@ -30,13 +30,13 @@
 
     .ret-container {
         padding: 0 1rem;
-        max-height: calc(150px * 3);
-        overflow-y: auto; 
+        max-height: 421px;
+        overflow-y: auto;
+        border-bottom: 1px solid #dadada;
 
         .ret-item {
-            padding-bottom: 15px;
-            padding-top: 15px;
-            height: 150px;
+            padding-top: 20px;
+            height: 140px;
 
             &:not(:last-child) {
                 border-bottom: 1px solid #dadada;
