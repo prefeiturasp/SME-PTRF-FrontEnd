@@ -4,7 +4,7 @@ import { Modal, Spinner } from "react-bootstrap";
 import { visoesService } from "../../../../../services/visoes.service";
 import { usePostCancelarRetificacaoPaa } from "./hooks/usePostCancelarRetificacao";
 
-const CancelarRetificacao = ({ paa }) => {
+const CancelarRetificacao = ({ paa, outlined = false }) => {
     const flagRetificacao = visoesService.featureFlagAtiva("paa-retificacao");
     const podeEditar = useMemo(
         () => visoesService.getPermissoes(["custom_change_paa"]),
@@ -41,7 +41,7 @@ const CancelarRetificacao = ({ paa }) => {
     return flagRetificacao && paa?.status === "EM_RETIFICACAO" ? (
         <>
             <button
-                className="btn btn-success d-flex align-items-center"
+                className={`btn ${outlined ? "btn-outline-success" : "btn-success"} d-flex align-items-center`}
                 onClick={handleCancelarRetificacaoPaa}
                 style={{ minWidth: "180px", justifyContent: "center" }}
                 disabled={!podeEditar}

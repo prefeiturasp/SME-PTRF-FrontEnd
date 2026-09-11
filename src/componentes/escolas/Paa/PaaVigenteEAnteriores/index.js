@@ -118,6 +118,7 @@ export const PaaVigenteEAnteriores = () => {
                                     exibirBotaoRetificar ? (
                                         <>
                                             <CancelarRetificacao
+                                                outlined
                                                 paa={{
                                                     uuid: vigente.uuid,
                                                     status: vigente.esta_em_retificacao
