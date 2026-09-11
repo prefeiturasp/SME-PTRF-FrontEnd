@@ -13,57 +13,74 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
 import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
 import { TagRetificacao } from "../../../../componentes/TagRetificacao";
+import { visoesService } from "../../../../../../../services/visoes.service";
 const { Text } = Typography;
 
-const columnsDefinition = (ehOutrosRecursos = false) => [
-  {
-    title: ehOutrosRecursos ? "Recursos" : "Ação",
-    dataIndex: "acao",
-    key: "acao",
-    render: (_, record) => (
-      <Text>
-        {record.isTotal ? "TOTAL" : record.acao || "-"}
-        {record?.alteracao && <div><TagRetificacao /></div>}
-      </Text>
-    ),
-    width: 200,
-  },
-  {
-    title: "Tipo de aplicação",
-    dataIndex: ["tipo_aplicacao_objeto", "value"],
-    key: "tipo_aplicacao",
-    render: (_, record) =>
-      record.isTotal ? "" : record?.tipo_aplicacao_objeto?.value || "-",
-    width: 180,
-  },
-  {
-    title: "Tipo de despesa",
-    dataIndex: ["tipo_despesa_custeio_objeto", "nome"],
-    key: "tipo_despesa",
-    render: (_, record) =>
-      record.isTotal ? "" : record?.tipo_despesa_custeio_objeto?.nome || "-",
-    width: 220,
-  },
-  {
-    title: "Especificação do bem, material ou serviço",
-    dataIndex: ["especificacao_material_objeto", "nome"],
-    key: "especificacao_material",
-    render: (_, record) =>
-      record.isTotal ? "" : record?.especificacao_material_objeto?.nome || "-",
-    width: 300,
-  },
-  {
-    title: "Valor Total",
-    dataIndex: "valor_total",
-    key: "valor_total",
-    render: (valor, record) => {
-      if (valor || valor === 0) return formatMoneyBRL(valor);
-      return record.isTotal ? formatMoneyBRL(0) : "-";
-    },
-    align: "end",
-    width: 160,
-  },
-];
+const columnsDefinition = (ehOutrosRecursos = false) => {
+    const colunas = [
+        {
+            title: ehOutrosRecursos ? "Recursos" : "Ação",
+            dataIndex: "acao",
+            key: "acao",
+            render: (_, record) => (
+            <Text>
+                {record.isTotal ? "TOTAL" : record.acao || "-"}
+                {record?.alteracao && <div><TagRetificacao /></div>}
+            </Text>
+            ),
+            width: 200,
+        },
+        {
+            title: "Tipo de aplicação",
+            dataIndex: ["tipo_aplicacao_objeto", "value"],
+            key: "tipo_aplicacao",
+            render: (_, record) =>
+            record.isTotal ? "" : record?.tipo_aplicacao_objeto?.value || "-",
+            width: 180,
+        },
+        {
+            title: "Tipo de despesa",
+            dataIndex: ["tipo_despesa_custeio_objeto", "nome"],
+            key: "tipo_despesa",
+            render: (_, record) =>
+            record.isTotal ? "" : record?.tipo_despesa_custeio_objeto?.nome || "-",
+            width: 220,
+        },
+        {
+            title: "Especificação do bem, material ou serviço",
+            dataIndex: ["especificacao_material_objeto", "nome"],
+            key: "especificacao_material",
+            render: (_, record) =>
+            record.isTotal ? "" : record?.especificacao_material_objeto?.nome || "-",
+            width: 300,
+        },
+        {
+            title: "Descrição",
+            dataIndex: ["descricao"],
+            featureFlag: 'paa-receitas-prevista',
+            key: "descricao",
+            render: (_, record) =>
+            record.isTotal ? "" : record?.descricao || "-",
+            width: 200,
+        },
+        {
+            title: "Valor Total",
+            dataIndex: "valor_total",
+            key: "valor_total",
+            render: (valor, record) => {
+            if (valor || valor === 0) return formatMoneyBRL(valor);
+            return record.isTotal ? formatMoneyBRL(0) : "-";
+            },
+            align: "end",
+            width: 160,
+        },
+    ];
+
+    const colunasFiltradas = colunas.filter((c) => 
+        !c.featureFlag || visoesService.featureFlagAtiva(c.featureFlag));
+
+    return colunasFiltradas;
+}
 
 const VisualizarPlanoAplicacaoContent = () => {
   const navigate = useNavigate();
