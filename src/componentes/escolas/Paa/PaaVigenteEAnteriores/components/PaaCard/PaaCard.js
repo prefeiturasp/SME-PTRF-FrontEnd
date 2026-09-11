@@ -112,7 +112,8 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
         return null;
     }
 
-    const { retificacao, exibe_dados_retificacao } = dados;
+    const { retificacao, retificacao_anterior, exibe_dados_retificacao } =
+        dados;
 
     const resumoAssembleiaOriginal = original?.ata?.resumo_assembleia;
     const resumoAssembleiaRetificacao = retificacao?.ata?.resumo_assembleia;
@@ -138,6 +139,34 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
                         dadosPaa={dados}
                     />
 
+                    {retificacao_anterior ? (
+                        <>
+                            <hr className="my-4 paa-card__separador" />
+                            <PaaSecaoPlanoEAta
+                                tituloSecao={retificacao_anterior.secao_titulo}
+                                documento={retificacao_anterior.documento}
+                                ata={retificacao_anterior.ata}
+                                tituloAta="Ata de retificação do PAA"
+                                paaUuid={paaUuid}
+                                chaveVisualizacaoDocumento={
+                                    chaveVisualizacaoDocumento
+                                }
+                                visualizacaoEmAndamento={
+                                    visualizacaoEmAndamento
+                                }
+                                onVisualizarDocumento={onVisualizarDocumento}
+                                onDownloadDocumento={onDownloadDocumento}
+                                onVisualizarAta={onVisualizarAta}
+                                onDownloadAta={onDownloadAta}
+                                onDepoisDeGerarAta={onDadosAtualizados}
+                                resumoAssembleia={
+                                    retificacao_anterior?.ata?.resumo_assembleia
+                                }
+                                dadosPaa={dados}
+                            />
+                        </>
+                    ) : null}
+
                     {dados?.retificacoes_anteriores ? (
                         <RetificacoesAnteriores
                             retificacoesAnteriores={
@@ -146,7 +175,10 @@ export const PaaCard = ({ dados, onDadosAtualizados }) => {
                         />
                     ) : null}
 
-                    <hr className="my-4 paa-card__separador" />
+                    {!dados?.retificacoes_anteriores.length && (
+                        <hr className="my-4 paa-card__separador" />
+                    )}
+
                     <PaaSecaoPlanoEAta
                         tituloSecao={original.secao_titulo}
                         documento={original.documento}
