@@ -16,6 +16,11 @@ jest.mock("../hooks/usePatchPaa", () => ({
   }),
 }));
 
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => jest.fn(),
+}));
+
 jest.mock("../RelSecaoTextos", () => ({
   RelSecaoTextos: ({ handleSalvarTexto }) => (
     <div>
