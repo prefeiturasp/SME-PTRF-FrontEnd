@@ -31,7 +31,7 @@ export const ModalRetificarPAA = memo(
                             <br />
                             <br />
                             Os documentos da retificação anterior não ficarão
-                            mais disponíveis <br /> após a conclusão dessa nova
+                            mais disponíveis após a conclusão dessa nova
                             retificação. <br /> <br />
                             Deseja prosseguir com a retificação?
                         </p>
