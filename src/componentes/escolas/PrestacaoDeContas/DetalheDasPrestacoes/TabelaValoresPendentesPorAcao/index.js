@@ -1,7 +1,11 @@
 import React, {memo} from "react";
 import "./styles.css";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
-const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
+const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return(
         <>
             <p className="detalhe-das-prestacoes-titulo-lancamentos">Quadro resumo</p>
@@ -16,7 +20,9 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                 </thead>
                 <tbody>
                 <tr>
-                    <th scope="row">Saldo reprogramado anterior</th>
+                    <th scope="row">
+                        { existeSaldoReprogramado ? 'Saldo reprogramado anterior' : 'Saldo anterior' }
+                    </th>
                     <td>{valorTemplate(valoresPendentes.saldo_anterior)}</td>
                     <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior_conciliado)}</td>
                     <td className='coluna-cinza-escuro'>{valorTemplate(valoresPendentes.saldo_anterior_nao_conciliado)}</td>
@@ -34,7 +40,9 @@ const TabelaValoresPendentesPorAcao = ({valoresPendentes, valorTemplate}) =>{
                     <td>{valorTemplate(valoresPendentes.despesas_nao_conciliadas)}</td>
                 </tr>
                 <tr>
-                    <th scope="row">Saldo reprogramado</th>
+                    <th scope="row">
+                        { existeSaldoReprogramado ? 'Saldo reprogramado' : 'Saldo' }
+                    </th>
                     <td>{valorTemplate(valoresPendentes.saldo_posterior_total)}</td>
                     <td>{valorTemplate(valoresPendentes.saldo_posterior_conciliado)}</td>
                     <td>{valorTemplate(valoresPendentes.saldo_posterior_nao_conciliado)}</td>
