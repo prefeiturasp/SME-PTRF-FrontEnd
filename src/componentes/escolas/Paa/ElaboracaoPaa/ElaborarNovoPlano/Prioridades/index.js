@@ -39,7 +39,7 @@ const Prioridades = () => {
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
   const [showModalPararAtualizacaoSaldo, setShowModalPararAtualizacaoSaldo] = useState(false);
-
+  const flagAtividadesPrevistas = visoesService.featureFlagAtiva("paa-receitas-prevista");
   const tabelaRef = useRef(null);
 
   const paa_uuid = useMemo(() => localStorage.getItem("PAA"), []);
@@ -187,7 +187,7 @@ const Prioridades = () => {
                   className="btn btn-outline-success btn-sm mx-2"
                   onClick={abrirModalImportarPAAsAnteriores}
                   type="button">
-                    Importar PAAs anteriores
+                    {flagAtividadesPrevistas ? 'Importar PAA anterior' : 'Importar PAAs anteriores'}
                 </button>
               </Spin>
             )}
