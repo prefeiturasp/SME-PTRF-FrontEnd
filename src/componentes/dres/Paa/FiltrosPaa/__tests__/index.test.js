@@ -32,7 +32,7 @@ jest.mock('../../../../Globais/SelectFiltro', () => (props) => (
         <option value=''>default</option>
         {props.data?.map((item) => (
             <option key={item.id} value={item.id}>
-                {item.nome}
+                {props.optionLabel ? item[props.optionLabel] : item.nome}
             </option>
         ))}
     </select>
@@ -128,5 +128,154 @@ describe('FiltrosPaa Component', () => {
         );
 
         expect(screen.getByTestId('filtros-form')).toBeInTheDocument();
+    });
+
+    it('deve renderizar mesmo quando tabelaPaa não é informado (usa o valor padrão)', () => {
+        render(
+            <FiltrosPaa
+                filtros={{
+                    periodo: [],
+                    unidade: '',
+                    tipo_unidade: '',
+                    status: [],
+                }}
+                aoAlterarFiltro={mockAoAlterarFiltro}
+                aoSubmeterFiltros={mockAoSubmeterFiltros}
+                limpaFiltros={mockLimpaFiltros}
+                tipoUnidadeManual={false}
+            />,
+        );
+
+        expect(screen.getByTestId('filtros-form')).toBeInTheDocument();
+    });
+
+    it('não filtra as unidades por tipo quando tipoUnidadeManual é falso, mesmo com tipo_unidade selecionado', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                unidades: [
+                    { uuid: 'u1', unidade_educacional: 'Escola A', tipo_unidade: 'EMEF' },
+                    { uuid: 'u2', unidade_educacional: 'Escola B', tipo_unidade: 'EMEI' },
+                ],
+            },
+            filtros: { ...defaultProps.filtros, tipo_unidade: 'EMEF' },
+            tipoUnidadeManual: false,
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        const opcoes = screen.getByTestId('unidade').querySelectorAll('option');
+        expect(opcoes.length).toBe(3); // default + Escola A + Escola B
+    });
+
+    it('não filtra as unidades por tipo quando tipoUnidadeManual é true mas nenhum tipo_unidade foi selecionado', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                unidades: [
+                    { uuid: 'u1', unidade_educacional: 'Escola A', tipo_unidade: 'EMEF' },
+                    { uuid: 'u2', unidade_educacional: 'Escola B', tipo_unidade: 'EMEI' },
+                ],
+            },
+            filtros: { ...defaultProps.filtros, tipo_unidade: '' },
+            tipoUnidadeManual: true,
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        const opcoes = screen.getByTestId('unidade').querySelectorAll('option');
+        expect(opcoes.length).toBe(3);
+    });
+
+    it('filtra as unidades pelo tipo_unidade selecionado quando tipoUnidadeManual é true', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                unidades: [
+                    { uuid: 'u1', unidade_educacional: 'Escola A', tipo_unidade: 'EMEF' },
+                    { uuid: 'u2', unidade_educacional: 'Escola B', tipo_unidade: 'EMEI' },
+                ],
+            },
+            filtros: { ...defaultProps.filtros, tipo_unidade: 'EMEF' },
+            tipoUnidadeManual: true,
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        expect(screen.getByText('Escola A')).toBeInTheDocument();
+        expect(screen.queryByText('Escola B')).not.toBeInTheDocument();
+    });
+
+    it('ordena as unidades filtradas por ordem alfabética', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                unidades: [
+                    { uuid: 'u1', unidade_educacional: 'Escola Z', tipo_unidade: 'EMEF' },
+                    { uuid: 'u2', unidade_educacional: 'Escola A', tipo_unidade: 'EMEF' },
+                ],
+            },
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        const opcoes = Array.from(screen.getByTestId('unidade').querySelectorAll('option')).map(
+            (o) => o.textContent,
+        );
+        expect(opcoes).toEqual(['default', 'Escola A', 'Escola Z']);
+    });
+
+    it('ordena os períodos do mais recente para o mais antigo, por ano e depois por semestre', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                periodos: [
+                    { uuid: 'p1', referencia: '2023.1' },
+                    { uuid: 'p2', referencia: '2024.2' },
+                    { uuid: 'p3', referencia: '2024.1' },
+                ],
+            },
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        const opcoes = Array.from(screen.getByTestId('periodo').querySelectorAll('option')).map(
+            (o) => o.textContent,
+        );
+        expect(opcoes).toEqual(['default', '2024.2', '2024.1', '2023.1']);
+    });
+
+    it('ordena os tipos de unidade e os status por ordem alfabética', () => {
+        const props = {
+            ...defaultProps,
+            tabelaPaa: {
+                ...defaultProps.tabelaPaa,
+                tipos_unidade: [
+                    { id: 'EMEI', nome: 'EMEI' },
+                    { id: 'CEI', nome: 'CEI' },
+                ],
+                status: [
+                    { id: 2, nome: 'Finalizado' },
+                    { id: 1, nome: 'Ativo' },
+                ],
+            },
+        };
+
+        render(<FiltrosPaa {...props} />);
+
+        const opcoesTipo = Array.from(screen.getByTestId('tipo_unidade').querySelectorAll('option')).map(
+            (o) => o.textContent,
+        );
+        expect(opcoesTipo).toEqual(['default', 'CEI', 'EMEI']);
+
+        const opcoesStatus = Array.from(screen.getByTestId('status').querySelectorAll('option')).map(
+            (o) => o.textContent,
+        );
+        expect(opcoesStatus).toEqual(['default', 'Ativo', 'Finalizado']);
     });
 });
