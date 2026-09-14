@@ -558,7 +558,11 @@ const ModalFormAdicionarPrioridade = (
             {exibeFlagAtivada && (
               <Col md={24}>
                 <Form.Item
-                  label="Descrição"
+                  label={
+                    <>
+                      Descrição {selectedTipoAplicacao !== 'CAPITAL' && <span className="ml-1"> *</span>}
+                    </>
+                  }
                   name="descricao"
                   labelCol={{ span: 24 }}
                   style={{ marginBottom: 4 }}
