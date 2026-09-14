@@ -101,7 +101,7 @@ import { AcompanhamentoDeRelatorioConsolidadoSMEResumoAcertos } from "../compone
 import { ExtracaoDadosPage } from "../paginas/ExtracaoDados";
 import { GestaoDeUsuariosFormPage } from "../componentes/Globais/GestaoDeUsuariosForm";
 import { GestaoDeUsuariosAdicionarUnidadePage } from "../componentes/Globais/GestaoDeUsuariosAdicionarUnidade";
-import { Mandatos } from "../componentes/sme/Mandatos";
+import { PainelMandatos } from "../componentes/sme/PainelMandatos";
 import { MotivosRejeicaoEncerramentoConta } from "../componentes/sme/Parametrizacoes/Estrutura/MotivosRejeicaoEncerramentoConta";
 import { PaginaMandatosAnteriores } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaMandatosAnteriores";
 import { ParametrizacoesRepasses } from "../componentes/sme/Parametrizacoes/Receitas/ParametrizacoesRepasses";
@@ -579,7 +579,7 @@ const routesConfig = [
   {
     exact: true,
     path: "/parametro-mandato",
-    component: Mandatos,
+    component: PainelMandatos,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
   },
   {
