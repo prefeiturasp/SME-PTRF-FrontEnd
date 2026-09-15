@@ -177,7 +177,7 @@ describe('ModalFormAdicionarPrioridade', () => {
   it('deve renderizar o campo descrição para todos os recursos com limite de 100 caracteres', () => {
     visoesService.featureFlagAtiva.mockReturnValue(true);
     renderComponent();
-    expect(screen.getByLabelText('Descrição')).toBeInTheDocument();
+    expect(screen.getByLabelText('Descrição *')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Digite a descrição')).toHaveAttribute('maxlength', '100');
   });
 
