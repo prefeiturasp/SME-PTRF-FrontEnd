@@ -40,8 +40,14 @@ export const getPeriodosNaoFuturos = async () => {
   return(await api.get('/api/periodos/lookup-until-now/', authHeader())).data
 };
 
-export const getPeriodosAteAgoraForaImplantacaoDaAssociacao = async (uuid_associacao) => {
-  return(await api.get(`/api/associacoes/${uuid_associacao}/periodos-ate-agora-fora-implantacao/`, authHeader())).data
+export const getPeriodosAteAgoraForaImplantacaoDaAssociacao = async (uuid_associacao, solicitacao_dre = false) => {
+  const params = new URLSearchParams();
+  if (solicitacao_dre) {
+    params.append('solicitacao_dre', solicitacao_dre);
+  }
+  const queryParams = params.toString() ? `?${params.toString()}` : '';
+  
+  return(await api.get(`/api/associacoes/${uuid_associacao}/periodos-ate-agora-fora-implantacao/${queryParams}`, authHeader())).data
 };
 
 
