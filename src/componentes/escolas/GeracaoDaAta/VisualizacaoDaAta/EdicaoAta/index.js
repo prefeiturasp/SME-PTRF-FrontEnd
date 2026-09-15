@@ -19,6 +19,7 @@ import {
 import { ASSOCIACAO_UUID } from "../../../../../services/auth.service";
 import moment from "moment";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { getErrorMessage } from "../../../../../utils/obtemMsgErroAxios";
 
 // Hooks Personalizados
 import { useCarregaRepassesPendentesPorPeriodoAteAgora } from "../../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
@@ -307,6 +308,11 @@ export const EdicaoAta = () => {
       );
     } catch (e) {
       console.log("Erro ao fazer edição da Ata ", e.response);
+      const mensagemErro = getErrorMessage(
+        e,
+        "Não foi possível salvar as alterações da ata."
+      );
+      toastCustom.ToastCustomError("Erro ao salvar ata", mensagemErro);
     }
   };
   return (
