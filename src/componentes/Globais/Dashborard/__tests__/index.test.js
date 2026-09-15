@@ -5,6 +5,11 @@ import { Dashboard } from "../index";
 jest.mock("../../../../services/visoes.service", () => ({
     visoesService: {
         getItemUsuarioLogado: jest.fn(),
+        getDadosDoUsuarioLogado: jest.fn(() => ({
+            unidade_selecionada: {
+                tipo_unidade: "UE",
+            },
+        })),
     },
 }));
 

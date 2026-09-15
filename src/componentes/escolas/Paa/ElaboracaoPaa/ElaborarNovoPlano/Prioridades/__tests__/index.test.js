@@ -242,7 +242,7 @@ describe('Prioridades', () => {
   it("abre modal de importar PAAs anteriores", () => {
     renderWithQueryClient(<Prioridades />);
 
-    const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
+    const botaoImportar = screen.getByRole("button", { name: /Importar PAA anterior/i })
     fireEvent.click(botaoImportar);
 
     const tituloModal = screen.getByText("Importação de prioridades de PAA anterior", {selector: ".modal-title"})
