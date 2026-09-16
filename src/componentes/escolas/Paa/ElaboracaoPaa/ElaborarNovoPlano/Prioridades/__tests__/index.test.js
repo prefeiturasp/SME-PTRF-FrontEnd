@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient as QueryClientClass } from '@tanstack/react-query';
 import { visoesService } from '../../../../../../../services/visoes.service';
 import Prioridades from '../index';
 import { useGetPrioridadeTabelas } from '../hooks/useGetPrioridadeTabelas';
@@ -73,11 +74,12 @@ jest.mock('../Resumo', () => ({
 
 jest.mock('../ModalConfirmarPararAtualizacaoSaldo', () => ({
   __esModule: true,
-  default: ({ open, onClose }) =>
+  default: ({ open, onClose, onSubmitParadaSaldo }) =>
     open ? (
       <div data-testid="modal-confirmar-saldo">
         <h3>Gostaria de Bloquear a atualização do Saldo?</h3>
         <button onClick={onClose}>Não</button>
+        <button onClick={onSubmitParadaSaldo}>Sim</button>
       </div>
     ) : null,
 }));
@@ -209,7 +211,7 @@ describe('Prioridades', () => {
         removeListener: jest.fn(),
       }));
     // Mock dos hooks
-    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' } });
+    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' }, refetch: jest.fn() });
     useGetPrioridadeTabelas.mockReturnValue(mockPrioridadeTabelas);
     useGetTiposDespesaCusteio.mockReturnValue({
       tipos_despesa_custeio: mockTiposDespesaCusteio
@@ -489,5 +491,33 @@ describe('Prioridades', () => {
     });
 
     expect(screen.queryByTestId('modal-confirmar-saldo')).not.toBeInTheDocument();
+  });
+
+  it('deve atualizar o resumo (prioridades-resumo) e o PAA ao confirmar a parada da atualização do saldo', async () => {
+    const mockRefetchPaa = jest.fn().mockResolvedValue();
+    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' }, refetch: mockRefetchPaa });
+    const invalidateQueriesSpy = jest.spyOn(QueryClientClass.prototype, 'invalidateQueries');
+
+    renderWithQueryClient(<Prioridades />);
+
+    fireEvent.click(screen.getByText('Adicionar prioridade'));
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Abrir confirmação saldo'));
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-confirmar-saldo')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Sim'));
+
+    await waitFor(() => {
+      expect(mockRefetchPaa).toHaveBeenCalled();
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['prioridades-resumo'] });
+      expect(screen.queryByTestId('modal-confirmar-saldo')).not.toBeInTheDocument();
+    });
+
+    invalidateQueriesSpy.mockRestore();
   });
 });
