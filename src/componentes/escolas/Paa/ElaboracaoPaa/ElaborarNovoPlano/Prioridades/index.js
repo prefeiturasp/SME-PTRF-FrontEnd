@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { useQueryClient } from "@tanstack/react-query";
 import { Flex, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
@@ -32,6 +33,7 @@ const filtroInicial = {
 
 const Prioridades = () => {
   const { paa, refetch: refetchPaa } = usePaaContext();
+  const queryClient = useQueryClient();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,9 +129,8 @@ const Prioridades = () => {
   };
 
   const onSubmitParadaSaldo = async () => {
-    await Promise.all([
-      refetchPaa(),
-    ]);
+    await refetchPaa()
+    await queryClient.invalidateQueries({ queryKey: ["prioridades-resumo"] });
     setShowModalPararAtualizacaoSaldo(false);
   };
 
