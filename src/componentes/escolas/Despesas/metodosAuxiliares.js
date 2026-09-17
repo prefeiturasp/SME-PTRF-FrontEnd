@@ -193,6 +193,16 @@ const limpaTipoDespesaCusteio = (setFieldValue, index) => {
     setFieldValue(`rateios[${index}].especificacao_material_servico`, "")
 }
 
+
+const limpaCamposExclusivosAplicacaoRecurso = (setFieldValue, index, aplicacaoRecurso) => {
+    if (aplicacaoRecurso !== 'CAPITAL'){
+        setFieldValue(`rateios[${index}].quantidade_itens_capital`, "")
+        setFieldValue(`rateios[${index}].valor_item_capital`, "")
+        setFieldValue(`rateios[${index}].nao_exibir_em_rel_bens`, false)
+        setFieldValue(`rateios[${index}].numero_processo_incorporacao_capital`, "")
+    }
+}
+
 const setaValoresCusteioCapital = (mais_de_um_tipo_de_despesa = null, values, setFieldValue) =>{
     if (mais_de_um_tipo_de_despesa && mais_de_um_tipo_de_despesa === 'nao'){
         setFieldValue('rateios[0].valor_rateio', calculaValorRecursoAcoes(values));
@@ -516,5 +526,6 @@ export const metodosAuxiliares = {
     validaConciliacao,
     conciliaRateios,
     documentoTransacaoObrigatorio,
-    limpaTipoDespesaCusteio
+    limpaTipoDespesaCusteio,
+    limpaCamposExclusivosAplicacaoRecurso
 };
