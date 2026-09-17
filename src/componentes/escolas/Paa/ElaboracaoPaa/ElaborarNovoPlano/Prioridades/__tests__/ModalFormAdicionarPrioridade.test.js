@@ -8,6 +8,8 @@ import { useGetEspecificacoes } from '../hooks/useGetEspecificacoes';
 import { usePostPrioridade } from '../hooks/usePostPrioridade';
 import { usePatchPrioridade } from '../hooks/usePatchPrioridade';
 import { createValidationSchema } from '../validationSchema';
+import { visoesService } from '../../../../../../../services/visoes.service';
+import { usePaaContext } from '../../../../componentes/PaaContext';
 
 jest.mock('../hooks/useGetAcoesPTRFPrioridades', () => ({
   useGetAcoesPTRFPrioridades: jest.fn(),
@@ -26,6 +28,14 @@ jest.mock('../hooks/usePatchPrioridade', () => ({
 }));
 jest.mock('../validationSchema', () => ({
   createValidationSchema: jest.fn(),
+}));
+jest.mock('../../../../../../../services/visoes.service', () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(),
+  },
+}));
+jest.mock('../../../../componentes/PaaContext', () => ({
+  usePaaContext: jest.fn(),
 }));
 
 const MOCK_TABELAS = {
@@ -82,6 +92,8 @@ const setupDefaultMocks = () => {
   usePostPrioridade.mockReturnValue({ mutationPost: { mutate: mockMutatePost, isPending: false } });
   usePatchPrioridade.mockReturnValue({ mutationPatch: { mutate: mockMutatePatch, isPending: false } });
   createValidationSchema.mockReturnValue({ validate: jest.fn().mockResolvedValue(undefined) });
+  visoesService.featureFlagAtiva.mockReturnValue(false);
+  usePaaContext.mockReturnValue({ paa: null });
 };
 
 const renderComponent = (props = {}) => {
@@ -160,6 +172,45 @@ describe('ModalFormAdicionarPrioridade', () => {
     expect(screen.getByLabelText('Tipo de aplicação *')).toBeInTheDocument();
     expect(screen.getByLabelText('Especificação do Bem, Material ou Serviço *')).toBeInTheDocument();
     expect(screen.getByLabelText('Valor total *')).toBeInTheDocument();
+  });
+
+  it('deve renderizar o campo descrição para todos os recursos com limite de 100 caracteres', () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    renderComponent();
+    expect(screen.getByLabelText('Descrição *')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Digite a descrição')).toHaveAttribute('maxlength', '100');
+  });
+
+  it('não deve exibir o alerta de bloqueio quando a flag não está ativa ou não há saldo congelado', () => {
+    renderComponent();
+
+    expect(screen.queryByText('Lembre-se que você pode realizar o bloqueio de saldo.')).not.toBeInTheDocument();
+  });
+
+  it('deve exibir o alerta de bloqueio quando a flag está ativa e não há saldo congelado', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: null } });
+
+    renderComponent();
+    await selectOption(getSelectTrigger('Recurso *'), 'PTRF');
+
+    await waitFor(() => {
+      expect(screen.getByText('Lembre-se que você pode realizar o bloqueio de saldo.')).toBeInTheDocument();
+    });
+  });
+
+  it('deve aplicar a exceção de CAPITAL no schema de validação do campo descrição', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    renderComponent();
+
+    await selectOption(getSelectTrigger('Recurso *'), 'Recursos Próprios');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => {
+      expect(createValidationSchema).toHaveBeenCalledWith('RECURSO_PROPRIO', 'CAPITAL', true);
+    });
   });
 
   it('chama onClose ao clicar em Cancelar', () => {
@@ -388,6 +439,29 @@ describe('ModalFormAdicionarPrioridade', () => {
     await waitFor(() => expect(screen.queryByLabelText('Tipo de despesa *')).not.toBeInTheDocument());
   });
 
+  it('limpa o erro de descrição ao mudar de CUSTEIO para CAPITAL', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    const validate = jest.fn().mockRejectedValue({
+      inner: [{ path: 'descricao', message: 'Descrição é obrigatória' }],
+    });
+    createValidationSchema.mockReturnValue({ validate });
+
+    renderComponent();
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Custeio');
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => {
+      expect(screen.getByText('Descrição é obrigatória')).toBeInTheDocument();
+    });
+
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+
+    await waitFor(() => {
+      expect(screen.queryByText('Descrição é obrigatória')).not.toBeInTheDocument();
+    });
+  });
+
   it('especificacoesOptions retorna [] quando especificacoes não é array', () => {
     useGetEspecificacoes.mockReturnValue({ especificacoes: null, isLoading: false });
     renderComponent();
@@ -416,6 +490,15 @@ describe('ModalFormAdicionarPrioridade', () => {
   it('usa outro_recurso como recurso quando formModal.recurso é OUTRO_RECURSO', () => {
     renderComponent({ formModal: { uuid: 'f1', recurso: 'OUTRO_RECURSO', outro_recurso: 'outro-uuid-1' } });
     expect(screen.getByText('Editar prioridade')).toBeInTheDocument();
+  });
+
+  it('deve popular o campo descrição com o valor de formModal.descricao ao editar', () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    renderComponent({
+      formModal: { uuid: 'f1', recurso: 'RECURSO_PROPRIO', descricao: 'Descrição já cadastrada' },
+    });
+
+    expect(screen.getByPlaceholderText('Digite a descrição')).toHaveValue('Descrição já cadastrada');
   });
 
   it('encontra tipo_despesa_custeio pelo uuid e usa seu id', async () => {
@@ -484,6 +567,7 @@ describe('ModalFormAdicionarPrioridade', () => {
   // ==================
 
   it('chama mutationPost (POST) ao salvar prioridade PTRF com custeio', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
     renderComponent();
 
     await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
@@ -498,13 +582,17 @@ describe('ModalFormAdicionarPrioridade', () => {
     const valorInput = document.getElementById('valor_total');
     if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
 
+    const descricaoInput = screen.getByPlaceholderText('Digite a descrição');
+    fireEvent.change(descricaoInput, { target: { value: 'Descrição da prioridade Custeio' } });
+
     fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(mockMutatePost).toHaveBeenCalledWith(
         expect.objectContaining({
           payload: expect.objectContaining({ tipo_despesa_custeio: 'tipo-uuid-1' }),
-        })
+        }),
+        expect.objectContaining({ onSuccess: expect.any(Function) })
       );
     });
   });
@@ -533,7 +621,8 @@ describe('ModalFormAdicionarPrioridade', () => {
             recurso: 'OUTRO_RECURSO',
             outro_recurso: 'outro-uuid-1',
           }),
-        })
+        }),
+        expect.objectContaining({ onSuccess: expect.any(Function) })
       );
     });
   });
@@ -556,7 +645,8 @@ describe('ModalFormAdicionarPrioridade', () => {
 
     await waitFor(() => {
       expect(mockMutatePatch).toHaveBeenCalledWith(
-        expect.objectContaining({ uuid: 'edit-uuid' })
+        expect.objectContaining({ uuid: 'edit-uuid' }),
+        expect.objectContaining({ onSuccess: expect.any(Function) })
       );
     });
   });
@@ -566,6 +656,7 @@ describe('ModalFormAdicionarPrioridade', () => {
   // ==================
 
   it('payload inclui tipo_despesa_custeio (uuid) quando formModal já tem tipo_despesa', async () => {
+    visoesService.featureFlagAtiva.mockReturnValue(true);
     renderComponent({
       formModal: {
         uuid: 'f1',
@@ -575,15 +666,159 @@ describe('ModalFormAdicionarPrioridade', () => {
       },
     });
 
+    const descricaoInput = screen.getByPlaceholderText('Digite a descrição');
+    fireEvent.change(descricaoInput, { target: { value: 'Descrição da prioridade Custeio' } });
+
     fireEvent.submit(screen.getByRole('form'));
 
     await waitFor(() => {
       expect(mockMutatePatch).toHaveBeenCalledWith(
         expect.objectContaining({
           payload: expect.objectContaining({ tipo_despesa_custeio: 'tipo-uuid-1' }),
-        })
+        }),
+        expect.objectContaining({ onSuccess: expect.any(Function) })
       );
     });
+  });
+
+  it('deve chamar setShowModalPararAtualizacaoSaldo(true) quando não há saldo congelado, nenhuma prioridade existente, recurso PTRF e flag ativa', async () => {
+    const setShowModalPararAtualizacaoSaldo = jest.fn();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: null } });
+
+    renderComponent({ quantidadesPrioridadeExistentes: 0, setShowModalPararAtualizacaoSaldo });
+
+    await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
+    await selectOption(getSelectTrigger('Recurso *'), 'PTRF');
+    expect(await screen.findByLabelText('Ação *')).toBeInTheDocument();    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+    await selectOption(getSelectTrigger('Especificação do Bem, Material ou Serviço *'), 'Especificação 1');
+
+    const valorInput = document.getElementById('valor_total');
+    if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
+
+    const descricaoInput = screen.getByPlaceholderText('Digite a descrição');
+    fireEvent.change(descricaoInput, { target: { value: 'Descrição da prioridade PTRF' } });
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockMutatePost).toHaveBeenCalled());
+
+    const onSuccessAposFechar = mockMutatePost.mock.calls[0][1].onSuccess;
+    onSuccessAposFechar();
+
+    expect(setShowModalPararAtualizacaoSaldo).toHaveBeenCalledWith(true);
+  });
+
+  it('não deve chamar setShowModalPararAtualizacaoSaldo quando já existe saldo congelado', async () => {
+    const setShowModalPararAtualizacaoSaldo = jest.fn();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: '2024-01-01T00:00:00' } });
+
+    renderComponent({ quantidadesPrioridadeExistentes: 0, setShowModalPararAtualizacaoSaldo });
+
+    await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
+    await selectOption(getSelectTrigger('Recurso *'), 'PTRF');
+    expect(await screen.findByLabelText('Ação *')).toBeInTheDocument();    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+    await selectOption(getSelectTrigger('Especificação do Bem, Material ou Serviço *'), 'Especificação 1');
+
+    const valorInput = document.getElementById('valor_total');
+    if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
+
+    const descricaoInput = screen.getByPlaceholderText('Digite a descrição');
+    fireEvent.change(descricaoInput, { target: { value: 'Descrição da prioridade PTRF' } });
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockMutatePost).toHaveBeenCalled());
+
+    const onSuccessAposFechar = mockMutatePost.mock.calls[0][1].onSuccess;
+    onSuccessAposFechar();
+
+    expect(setShowModalPararAtualizacaoSaldo).not.toHaveBeenCalled();
+  });
+
+  it('não deve chamar setShowModalPararAtualizacaoSaldo quando já existem prioridades cadastradas', async () => {
+    const setShowModalPararAtualizacaoSaldo = jest.fn();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: null } });
+
+    renderComponent({ quantidadesPrioridadeExistentes: 3, setShowModalPararAtualizacaoSaldo });
+
+    await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
+    await selectOption(getSelectTrigger('Recurso *'), 'PTRF');
+    expect(await screen.findByLabelText('Ação *')).toBeInTheDocument();    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+    await selectOption(getSelectTrigger('Especificação do Bem, Material ou Serviço *'), 'Especificação 1');
+
+    const valorInput = document.getElementById('valor_total');
+    if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
+
+    const descricaoInput = screen.getByPlaceholderText('Digite a descrição');
+    fireEvent.change(descricaoInput, { target: { value: 'Descrição da prioridade PTRF' } });
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockMutatePost).toHaveBeenCalled());
+
+    const onSuccessAposFechar = mockMutatePost.mock.calls[0][1].onSuccess;
+    onSuccessAposFechar();
+
+    expect(setShowModalPararAtualizacaoSaldo).not.toHaveBeenCalled();
+  });
+
+  it('não deve chamar setShowModalPararAtualizacaoSaldo quando o recurso não é PTRF', async () => {
+    const setShowModalPararAtualizacaoSaldo = jest.fn();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: null } });
+
+    renderComponent({ quantidadesPrioridadeExistentes: 0, setShowModalPararAtualizacaoSaldo });
+
+    await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
+    await selectOption(getSelectTrigger('Recurso *'), 'Prêmio de Excelência');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+    await selectOption(getSelectTrigger('Especificação do Bem, Material ou Serviço *'), 'Especificação 1');
+
+    const valorInput = document.getElementById('valor_total');
+    if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockMutatePost).toHaveBeenCalled());
+
+    const onSuccessAposFechar = mockMutatePost.mock.calls[0][1].onSuccess;
+    onSuccessAposFechar();
+
+    expect(setShowModalPararAtualizacaoSaldo).not.toHaveBeenCalled();
+  });
+
+  it('não deve chamar setShowModalPararAtualizacaoSaldo quando a flag paa-receitas-prevista está desativada', async () => {
+    const setShowModalPararAtualizacaoSaldo = jest.fn();
+    visoesService.featureFlagAtiva.mockReturnValue(false);
+    usePaaContext.mockReturnValue({ paa: { saldo_congelado_em: null } });
+
+    renderComponent({ quantidadesPrioridadeExistentes: 0, setShowModalPararAtualizacaoSaldo });
+
+    await selectOption(getSelectTrigger('Prioridade *'), 'Sim');
+    await selectOption(getSelectTrigger('Recurso *'), 'PTRF');
+    expect(await screen.findByLabelText('Ação *')).toBeInTheDocument();    await selectOption(getSelectTrigger('Ação *'), 'Ação PTRF 1');
+    await selectOption(getSelectTrigger('Tipo de aplicação *'), 'Capital');
+    await selectOption(getSelectTrigger('Especificação do Bem, Material ou Serviço *'), 'Especificação 1');
+
+    const valorInput = document.getElementById('valor_total');
+    if (valorInput) fireEvent.change(valorInput, { target: { value: '1000' } });
+
+    fireEvent.submit(screen.getByRole('form'));
+
+    await waitFor(() => expect(mockMutatePost).toHaveBeenCalled());
+
+    const onSuccessAposFechar = mockMutatePost.mock.calls[0][1].onSuccess;
+    onSuccessAposFechar();
+
+    expect(setShowModalPararAtualizacaoSaldo).not.toHaveBeenCalled();
   });
 
   // ==================

@@ -1,5 +1,5 @@
 import { memo, useState, useMemo, useEffect, useRef } from "react";
-import { Form, Row, Col, Flex, InputNumber, Spin, Select } from "antd";
+import { Form, Row, Col, Flex, InputNumber, Spin, Select, Input } from "antd";
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
 import{ useGetAcoesPTRFPrioridades } from "./hooks/useGetAcoesPTRFPrioridades";
 import { useGetEspecificacoes } from "./hooks/useGetEspecificacoes";
@@ -7,22 +7,36 @@ import { useGetAcoesPDDEPrioridades } from "./hooks/useGetAcoesPDDEPrioridades";
 import { usePostPrioridade } from "./hooks/usePostPrioridade";
 import { usePatchPrioridade } from "./hooks/usePatchPrioridade";
 import { createValidationSchema } from "./validationSchema";
+import { visoesService } from '../../../../../../services/visoes.service';
+import AlertaMensagem from "../../../../../Globais/AlertaMensagem/AlertaMensagem";
 import {
   formatMoneyByCentsBRL,
   parseMoneyBRL,
 } from "../../../../../../utils/money";
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
+import { usePaaContext } from "../../../componentes/PaaContext";
 
-
-const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focusFields=[], podeEditar = true }) => {
+const ModalFormAdicionarPrioridade = (
+    {
+        open,
+        onClose,
+        tabelas,
+        formModal,
+        focusFields=[],
+        podeEditar = true,
+        quantidadesPrioridadeExistentes,
+        setShowModalPararAtualizacaoSaldo
+    }) => {
   const [form] = Form.useForm();
   const [selectedRecurso, setSelectedRecurso] = useState('');
   const [selectedTipoAplicacao, setSelectedTipoAplicacao] = useState('');
   const [selectedTipoDespesaCusteio, setSelectedTipoDespesaCusteio] = useState('');
   const [selectedProgramaPdde, setSelectedProgramaPdde] = useState('');
 
+  const exibeFlagAtivada = visoesService.featureFlagAtiva('paa-receitas-prevista');
+  const paaContext = usePaaContext();
   const paa_uuid = useMemo(() =>localStorage.getItem("PAA"), [])
-  
+
   const { data: acoesAssociacao, isLoading: isLoadingAcoes } = useGetAcoesPTRFPrioridades(
     {
       paa_uuid,
@@ -148,7 +162,7 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
   const onSubmit = async (values) => {
     if (!podeEditar) return;
     try {
-      const validationSchema = createValidationSchema(selectedRecurso, selectedTipoAplicacao);
+      const validationSchema = createValidationSchema(selectedRecurso, selectedTipoAplicacao, exibeFlagAtivada);
       await validationSchema.validate(values, { abortEarly: false });
 
       const tiposDespesaCusteioUuid = tabelas?.tipos_despesa_custeio?.find(item => item.id === values.tipo_despesa_custeio);
@@ -164,13 +178,20 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
       if(getRecurso(values.recurso) === RECURSOS_PRIORIDADE.OUTRO_RECURSO ) {
         payload['outro_recurso'] = values.recurso
       }
-      
+
+      const onSuccessAposFechar = () => {
+        let exibirModalBloqueioSaldo = !paaContext?.paa?.saldo_congelado_em && quantidadesPrioridadeExistentes === 0 && selectedRecurso === 'PTRF';
+
+        if (exibirModalBloqueioSaldo && exibeFlagAtivada) {
+          setShowModalPararAtualizacaoSaldo(true);
+        }
+      };
+
       if(formModal?.uuid){
-        mutationPatch.mutate({ uuid: formModal.uuid, payload });
+        mutationPatch.mutate({ uuid: formModal.uuid, payload }, { onSuccess: onSuccessAposFechar });
       } else {
-        mutationPost.mutate({ payload });
+        mutationPost.mutate({ payload }, { onSuccess: onSuccessAposFechar });
       }
-      
     } catch (validationErrors) {
       if (validationErrors.inner) {
         const errors = {};
@@ -228,7 +249,8 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
     setSelectedTipoDespesaCusteio('');
     form.setFields([
       { name: 'tipo_despesa_custeio', errors: [] },
-      { name: 'tipo_aplicacao', errors: [] }
+      { name: 'tipo_aplicacao', errors: [] },
+      { name: 'descricao', errors: [] }
     ]);
   };
 
@@ -289,11 +311,12 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
         acao_pdde: formModal?.acao_pdde || undefined,
         programa_pdde: formModal?.programa_pdde || undefined,
         recurso: formModal?.recurso === RECURSOS_PRIORIDADE.OUTRO_RECURSO ? formModal?.outro_recurso : formModal?.recurso || undefined,
-        outro_recurso: formModal?.outro_recurso, 
+        outro_recurso: formModal?.outro_recurso,
         tipo_aplicacao: formModal?.tipo_aplicacao || undefined,
         tipo_despesa_custeio: tipo_despesa_custeio_id?.id || undefined,
         especificacao_material: formModal?.especificacao_material || undefined,
-        valor_total: formModal?.valor_total ? formModal?.valor_total * 100 : undefined
+        valor_total: formModal?.valor_total ? formModal?.valor_total * 100 : undefined,
+        descricao: formModal?.descricao || undefined
       }
       handleRecursoChange(initial.recurso);
       handleProgramaPddeChange(initial.programa_pdde);
@@ -383,25 +406,32 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
               </Col>
 
               {selectedRecurso === 'PTRF' && (
-                <Col md={12}>
-                  <Form.Item
-                    label="Ação *"
-                    name="acao_associacao"
-                    labelCol={{ span: 24 }}
-                    style={{ marginBottom: 4 }}
-                  >
-                    <Select
-                      ref={AcaoPTRFRef}
-                      placeholder="Selecione a ação"
-                      style={{ width: "100%" }}
-                      options={acoesAssociacaoOptions}
-                      loading={isLoadingAcoes}
-                      onChange={() => form.setFields([{ name: 'acao_associacao', errors: [] }])}
-                      allowClear
-                      disabled={!podeEditar}
-                    />
-                  </Form.Item>
-                </Col>
+                <>
+                    {exibeFlagAtivada && !paaContext?.paa?.saldo_congelado_em && (
+                        <Col md={24}>
+                          <AlertaMensagem mensagem="Lembre-se que você pode realizar o bloqueio de saldo." />
+                        </Col>
+                    )}
+                    <Col md={12}>
+                    <Form.Item
+                        label="Ação *"
+                        name="acao_associacao"
+                        labelCol={{ span: 24 }}
+                        style={{ marginBottom: 4 }}
+                    >
+                        <Select
+                        ref={AcaoPTRFRef}
+                        placeholder="Selecione a ação"
+                        style={{ width: "100%" }}
+                        options={acoesAssociacaoOptions}
+                        loading={isLoadingAcoes}
+                        onChange={() => form.setFields([{ name: 'acao_associacao', errors: [] }])}
+                        allowClear
+                        disabled={!podeEditar}
+                        />
+                    </Form.Item>
+                    </Col>
+                </>
               )}
 
               {selectedRecurso === 'PDDE' && (
@@ -525,6 +555,29 @@ const ModalFormAdicionarPrioridade = ({ open, onClose, tabelas, formModal, focus
                   />
                 </Form.Item>
               </Col>
+            {exibeFlagAtivada && (
+              <Col md={24}>
+                <Form.Item
+                  label={
+                    <>
+                      Descrição {selectedTipoAplicacao !== 'CAPITAL' && <span className="ml-1"> *</span>}
+                    </>
+                  }
+                  name="descricao"
+                  labelCol={{ span: 24 }}
+                  style={{ marginBottom: 4 }}
+                >
+                  <Input
+                    className="input-number-right"
+                    maxLength={100}
+                    placeholder="Digite a descrição"
+                    style={{ width: "100%" }}
+                    onChange={() => form.setFields([{ name: 'descricao', errors: [] }])}
+                    disabled={!podeEditar}
+                  />
+                </Form.Item>
+              </Col>
+            )}
             </Row>
 
             <Flex gap={16} justify="end" className="mt-3">

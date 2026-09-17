@@ -13,6 +13,18 @@ const useUnidadeSelecionada = (visoesService) => {
         return false;
     }, [visoesService])
 
+    const isDRE = useCallback(() => {
+        const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado()
+ 
+        if (dadosUsuarioLogado?.unidade_selecionada) {
+            if (dadosUsuarioLogado.unidade_selecionada.tipo_unidade && dadosUsuarioLogado.unidade_selecionada.tipo_unidade === "DRE") {
+                return true;
+            }
+        }
+ 
+        return false;
+    }, [visoesService])
+
     const getUUIDUnidadeSelecionadaTipoDRE = useCallback(() => {
         const dadosUsuarioLogado = visoesService.getDadosDoUsuarioLogado()
  
@@ -25,7 +37,7 @@ const useUnidadeSelecionada = (visoesService) => {
         return null
     }, [visoesService])
  
-    return { getUUIDUnidadeSelecionadaTipoDRE, isSME };
+    return { getUUIDUnidadeSelecionadaTipoDRE, isSME, isDRE };
 }
  
 export default useUnidadeSelecionada;

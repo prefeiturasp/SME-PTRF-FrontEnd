@@ -8,22 +8,64 @@ const authHeader = ()=>({
     }
 });
 
-const BASE_URL = '/api/cargos-composicao-vacancia';
+const BASE_COMPOSICAO_URL = '/api/cargos-composicao-vacancia';
+const BASE_MANDATOS_URL = '/api/mandatos-vacancia';
+const BASE_OCUPANTES_URL = '/api/ocupantes-cargos-vacancia';
+
+
+// Endpoints - Mandatos
+export const getMandatosVacancia = async (referencia, page) => {
+    return (await api.get(`${BASE_MANDATOS_URL}/`, {
+        ...authHeader(),
+        params: {
+            referencia: referencia,
+            page: page,
+        }
+    })).data
+}
+
+export const patchMandatoVacancia = async (uuidMandato, payload) => {
+    return (await api.patch(`${BASE_MANDATOS_URL}/${uuidMandato}/`, {
+            ...payload
+        },
+        authHeader(),
+    )).data
+}
+
+export const postMandatoVacancia = async (payload) => {
+    return (await api.post(`${BASE_MANDATOS_URL}/`, {
+            ...payload
+        },
+        authHeader(),
+    )).data
+}
+
+export const deleteMandatoVacancia = async (uuidMandato) => {
+    return (await api.delete(`${BASE_MANDATOS_URL}/${uuidMandato}/`, authHeader()))
+}
+
+export const getMandatoMaisRecenteVacancia = async () => {
+    return (await api.get(`${BASE_MANDATOS_URL}/mandato-mais-recente/`,{
+        ...authHeader(),
+    })).data
+}
 
 export const getMandatoVigente = async () => {
-    return (await api.get(`/api/mandatos-vacancia/mandato-vigente/`,{
+    return (await api.get(`${BASE_MANDATOS_URL}/mandato-vigente/`,{
         ...authHeader(),
     })).data
 }
 
 export const getMandatosAnterioresVacancia = async () => {
-    return (await api.get(`/api/mandatos-vacancia/mandatos-anteriores/`, {
+    return (await api.get(`${BASE_MANDATOS_URL}/mandatos-anteriores/`, {
         ...authHeader(),
     })).data
 }
 
+
+// Endpoints- Cargo Composição
 export const getComposicaoVigenteVacancia = async (associacao_uuid, mandato_uuid) => {
-    return (await api.get(`${BASE_URL}/composicao-vigente/`, {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/composicao-vigente/`, {
         ...authHeader(),
         params: {
             associacao_uuid: associacao_uuid,
@@ -33,7 +75,7 @@ export const getComposicaoVigenteVacancia = async (associacao_uuid, mandato_uuid
 }
 
 export const getCargosComposicaoVacanciaPorData = async (composicao_uuid, data) => {
-    return (await api.get(`${BASE_URL}/composicao-por-data/`,
+    return (await api.get(`${BASE_COMPOSICAO_URL}/composicao-por-data/`,
     {
         ...authHeader(),
         params: {
@@ -44,7 +86,7 @@ export const getCargosComposicaoVacanciaPorData = async (composicao_uuid, data) 
 }
 
 export const getTimelineCargoComposicaoVacancia = async (composicao_uuid, cargo_associacao) => {
-    return (await api.get(`${BASE_URL}/timeline/`, {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/timeline/`, {
         ...authHeader(),
         params: {
             composicao_uuid: composicao_uuid,
@@ -54,7 +96,7 @@ export const getTimelineCargoComposicaoVacancia = async (composicao_uuid, cargo_
 }
 
 export const postCargoComposicaoVacancia = async (payload) => {
-    return (await api.post(`${BASE_URL}/`, {
+    return (await api.post(`${BASE_COMPOSICAO_URL}/`, {
             ...payload
         },
         authHeader(),
@@ -62,7 +104,7 @@ export const postCargoComposicaoVacancia = async (payload) => {
 }
 
 export const postRegistrarSaidaCargoComposicaoVacancia = async (uuid, data_saida) => {
-    return (await api.post(`${BASE_URL}/${uuid}/registrar-saida/`, {
+    return (await api.post(`${BASE_COMPOSICAO_URL}/${uuid}/registrar-saida/`, {
             data_saida: data_saida
         },
         authHeader(),
@@ -70,11 +112,11 @@ export const postRegistrarSaidaCargoComposicaoVacancia = async (uuid, data_saida
 }
 
 export const patchCancelarSaidaCargoComposicaoVacancia = async (uuid) => {
-    return (await api.patch(`${BASE_URL}/${uuid}/cancelar-saida/`, {}, authHeader()))
+    return (await api.patch(`${BASE_COMPOSICAO_URL}/${uuid}/cancelar-saida/`, {}, authHeader()))
 }
 
 export const patchCorrigirSaidaCargoComposicaoVacancia = async (uuid, data_saida) => {
-    return (await api.patch(`${BASE_URL}/${uuid}/corrigir-saida/`, {
+    return (await api.patch(`${BASE_COMPOSICAO_URL}/${uuid}/corrigir-saida/`, {
             data_saida: data_saida
         },
         authHeader(),
@@ -82,7 +124,7 @@ export const patchCorrigirSaidaCargoComposicaoVacancia = async (uuid, data_saida
 }
 
 export const getCargosDaComposicaoVacancia = async (composicao_uuid, data) => {
-    return (await api.get(`${BASE_URL}/cargos-da-composicao/`, {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/cargos-da-composicao/`, {
         ...authHeader(),
         params: {
             composicao_uuid: composicao_uuid,
@@ -92,7 +134,7 @@ export const getCargosDaComposicaoVacancia = async (composicao_uuid, data) => {
 }
 
 export const getDatasDeAlteracaoDaComposicaoVacancia = async (composicao_uuid) => {
-    return (await api.get(`${BASE_URL}/datas-de-alteracao/`, {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/datas-de-alteracao/`, {
         ...authHeader(),
         params: {
             composicao_uuid: composicao_uuid
@@ -101,25 +143,27 @@ export const getDatasDeAlteracaoDaComposicaoVacancia = async (composicao_uuid) =
 }
 
 export const patchEditarOcupanteCargoComposicaoVacancia = async (uuid, payload) => {
-    return (await api.patch(`${BASE_URL}/${uuid}/`, {
+    return (await api.patch(`${BASE_COMPOSICAO_URL}/${uuid}/`, {
             ...payload
         },
         authHeader(),
     ))
 }
+export const patchCancelarEntradaCargoComposicaoVacancia = async (uuid) => {
+    return (await api.patch(`${BASE_COMPOSICAO_URL}/${uuid}/cancelar-entrada/`, {}, authHeader()))
+}
+
+
+// Endpoints - Ocupantes do Cargo
 
 export const consultarCodEolNoSmeIntegracao = async (cod_eol) => {
-    return (await api.get(`/api/ocupantes-cargos-vacancia/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader()))
+    return (await api.get(`${BASE_OCUPANTES_URL}/codigo-identificacao/?codigo-eol=${cod_eol}`, authHeader()))
 };
 
 export const consultarRFNoSmeIntegracao = async (rf) => {
-    return (await api.get(`/api/ocupantes-cargos-vacancia/codigo-identificacao/?rf=${rf}`, authHeader()))
+    return (await api.get(`${BASE_OCUPANTES_URL}/codigo-identificacao/?rf=${rf}`, authHeader()))
 };
 
 export const getCargosDoRFSmeIntegracao = async (rf) => {
-    return (await api.get(`/api/ocupantes-cargos-vacancia/cargos-do-rf/?rf=${rf}`, authHeader()))
+    return (await api.get(`${BASE_OCUPANTES_URL}/cargos-do-rf/?rf=${rf}`, authHeader()))
 };
-
-export const patchCancelarEntradaCargoComposicaoVacancia = async (uuid) => {
-    return (await api.patch(`${BASE_URL}/${uuid}/cancelar-entrada/`, {}, authHeader()))
-}

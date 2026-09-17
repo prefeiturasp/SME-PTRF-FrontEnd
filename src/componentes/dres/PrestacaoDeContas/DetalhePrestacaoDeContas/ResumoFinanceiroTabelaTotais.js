@@ -1,6 +1,10 @@
 import React from "react";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return (
         <>
             {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&
@@ -17,7 +21,11 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
                     </thead>
                     <tbody>
                     <tr>
-                        <td><strong>Saldo inicial (reprogramado do período anterior)</strong></td>
+                        <td>
+                            <strong>
+                                Saldo inicial { existeSaldoReprogramado ? "(reprogramado do período anterior)" : "(do período anterior)" }
+                            </strong>
+                        </td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_livre)}</td>
@@ -59,7 +67,11 @@ export const ResumoFinanceiroTabelaTotais = ({infoAta, valorTemplate}) => {
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas)}</td>
                     </tr>
                     <tr>
-                        <td><strong>Saldo reprogramado  (para o próximo período)</strong></td>
+                        <td>
+                            <strong>
+                                Saldo { existeSaldoReprogramado ? "reprogramado" : "" } (para o próximo período)
+                            </strong>
+                        </td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_livre)}</td>

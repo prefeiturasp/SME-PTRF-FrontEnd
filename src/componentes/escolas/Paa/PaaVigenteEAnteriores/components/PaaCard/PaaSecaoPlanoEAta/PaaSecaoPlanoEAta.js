@@ -29,7 +29,7 @@ export const PaaSecaoPlanoEAta = ({
         </h3>
       ) : null}
       <PaaLinhaDocumento
-        titulo="Plano anual"
+        titulo="Plano Anual"
         bloco={documento}
         testIdPrefix="plano"
         onVisualizar={() => onVisualizarDocumento(documento)}

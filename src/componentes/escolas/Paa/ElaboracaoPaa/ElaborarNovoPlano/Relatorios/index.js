@@ -32,6 +32,7 @@ const Relatorios = ({ initialExpandedSections }) => {
   const { paa, refetch } = usePaaContext();
   const { alteracoes: historicoAlteracoes } = paa;
   const podeEditar = useMemo(() => visoesService.getPermissoes(["custom_change_paa"]), []);
+  const exibeAtividadesPrevistas = visoesService.featureFlagAtiva?.("paa-receitas-prevista");
   const navigate = useNavigate();
   const defaultExpandedState = {
     planoAnual: false,
@@ -158,10 +159,19 @@ const Relatorios = ({ initialExpandedSections }) => {
       titulo: "III. Componentes",
       chave: "componentes",
     },
+    ...(exibeAtividadesPrevistas ? {
+      atividadesPrevistas: {
+        titulo: "IV. Atividades Previstas",
+        chave: "atividades-previstas",
+        tipo: "link",
+        acao: "Editar",
+        rota: "/relatorios-componentes/atividades-previstas",
+      },
+    } : {}),
     conclusao: {
       titulo: (
         <>
-          <span className="mr-2">IV. Conclusão</span>
+          <span className="mr-2">{exibeAtividadesPrevistas ? "V. Conclusão" : "IV. Conclusão"}</span>
           {!!historicoAlteracoes?.texto_conclusao && <TagRetificacao />}
         </>
       ),
@@ -175,6 +185,7 @@ const Relatorios = ({ initialExpandedSections }) => {
     historicoAlteracoes?.objetivos_paa,
     historicoAlteracoes?.objetivos_globais,
     historicoAlteracoes?.texto_conclusao,
+    exibeAtividadesPrevistas,
   ]);
 
   const renderSecao = (secaoKey, config) => {

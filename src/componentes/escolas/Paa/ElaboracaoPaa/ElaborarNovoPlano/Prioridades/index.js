@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
+import { useQueryClient } from "@tanstack/react-query";
 import { Flex, Spin, Alert, Typography } from 'antd';
 import { Paginator } from "primereact/paginator";
 import ModalFormAdicionarPrioridade from './ModalFormAdicionarPrioridade';
@@ -16,6 +17,7 @@ import Img404 from "../../../../../../assets/img/img-404.svg";
 import { Tabela } from './Tabela';
 import { Resumo } from './Resumo';
 import ModalImportarPrioridades from './ModalImportarPrioridades';
+import ModalConfirmaPararAtualizacaoSaldo from './ModalConfirmarPararAtualizacaoSaldo';
 import { visoesService } from "../../../../../../services/visoes.service";
 import { usePaaContext } from "../../../componentes/PaaContext";
 
@@ -30,13 +32,16 @@ const filtroInicial = {
 };
 
 const Prioridades = () => {
-  const { paa } = usePaaContext();
+  const { paa, refetch: refetchPaa } = usePaaContext();
+  const queryClient = useQueryClient();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const [filtros, setFiltros] = useState(filtroInicial);
   const [currentPage, setCurrentPage] = useState(1);
   const [firstPage, setFirstPage] = useState(0);
   const [modalForm, setModalForm] = useState({ open: false, tabelas: null, formModal: null });
   const [modalExclusao, setModalExclusao] = useState({ open: false, item: null, tipo: 'individual' });
+  const [showModalPararAtualizacaoSaldo, setShowModalPararAtualizacaoSaldo] = useState(false);
+  const flagAtividadesPrevistas = visoesService.featureFlagAtiva("paa-receitas-prevista");
   const tabelaRef = useRef(null);
 
   const paa_uuid = useMemo(() => localStorage.getItem("PAA"), []);
@@ -47,10 +52,15 @@ const Prioridades = () => {
   const { tipos_despesa_custeio } = useGetTiposDespesaCusteio();
   const { isFetching: isLoadingPrioridades, prioridades, quantidade, refetch } = useGetPrioridades(filtros, currentPage);
 
+  const quantidadePrioridadesPTRF = useMemo(() => {
+    if (!Array.isArray(prioridades)) return 0;
+    return prioridades.filter((prioridade) => prioridade?.recurso === 'PTRF').length;
+  }, [prioridades]);
+
   // PAA`s Anteriores
   const [modalImportarPrioridades, setModalImportarPrioridades] = useState({ open: false, paas: [] });
   const { paas_anteriores, isFetching: isLoadingPAAsAnteriores } = useGetPAAsAnteriores();
-  
+
   const { mutationDelete } = useDeletePrioridade(() => setModalExclusao({ open: false, item: null, tipo: 'individual' }));
   const { mutationDeleteEmLote } = useDeletePrioridadesEmLote(() => {
     setModalExclusao({ open: false, item: null, tipo: 'lote' });
@@ -58,6 +68,8 @@ const Prioridades = () => {
       tabelaRef.current.clearSelectedItems();
     }
   });
+
+  const exibeFlagAtivada = visoesService.featureFlagAtiva('paa-receitas-prevista');
 
   const dadosTabelas = {
     prioridades: prioridadesTabelas,
@@ -110,6 +122,16 @@ const Prioridades = () => {
   const onDuplicar = (rowData) => {
     if (!podeEditar) return;
     mutationPostDuplicar.mutate({uuid: rowData.uuid});
+  };
+
+  const onCancelConfirmaParadaSaldo = () => {
+    setShowModalPararAtualizacaoSaldo(false);
+  };
+
+  const onSubmitParadaSaldo = async () => {
+    await refetchPaa()
+    await queryClient.invalidateQueries({ queryKey: ["prioridades-resumo"] });
+    setShowModalPararAtualizacaoSaldo(false);
   };
 
   const onExcluir = (rowData) => {
@@ -166,7 +188,7 @@ const Prioridades = () => {
                   className="btn btn-outline-success btn-sm mx-2"
                   onClick={abrirModalImportarPAAsAnteriores}
                   type="button">
-                    Importar PAAs anteriores
+                    {flagAtividadesPrevistas ? 'Importar PAA anterior' : 'Importar PAAs anteriores'}
                 </button>
               </Spin>
             )}
@@ -245,7 +267,9 @@ const Prioridades = () => {
           tabelas={modalForm.tabelas}
           formModal={modalForm.formModal}
           focusFields={modalForm.focusFields}
+          quantidadesPrioridadeExistentes={quantidadePrioridadesPTRF}
           podeEditar={podeEditar}
+          setShowModalPararAtualizacaoSaldo={setShowModalPararAtualizacaoSaldo}
           onClose={() => setModalForm({
             open: false,
             tabelas: null,
@@ -253,6 +277,15 @@ const Prioridades = () => {
             focusValor: false,
             focusAcao: false
            })}
+        />
+      )}
+
+      {exibeFlagAtivada && (
+        <ModalConfirmaPararAtualizacaoSaldo
+          open={showModalPararAtualizacaoSaldo}
+          onClose={onCancelConfirmaParadaSaldo}
+          paa={paa}
+          onSubmitParadaSaldo={onSubmitParadaSaldo}
         />
       )}
 

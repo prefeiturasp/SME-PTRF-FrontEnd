@@ -11,10 +11,13 @@ import {BarraDeStatusPeriodoAssociacao} from "./BarraDeStatusPeriodoAssociacao";
 import "./dashboard.scss"
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
 import {visoesService} from "../../../services/visoes.service";
+import useUnidadeSelecionada from "../../../hooks/Globais/useUnidadeSelecionada";
 
 export const Dashboard = () => {
     let uuid_associacao;
     let visao_selecionada = visoesService.getItemUsuarioLogado('visao_selecionada.nome');
+
+    const { isDRE } = useUnidadeSelecionada(visoesService);
 
     if (visao_selecionada === "UE"){
         uuid_associacao = localStorage.getItem(ASSOCIACAO_UUID);
@@ -39,7 +42,7 @@ export const Dashboard = () => {
     }, [uuid_associacao]);
 
     const buscaPeriodos = useCallback(async () => {
-        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao);
+        let periodos = await getPeriodosAteAgoraForaImplantacaoDaAssociacao(uuid_associacao, isDRE());
         setSelectPeriodo(periodos[0].uuid)
         setPeriodosAssociacao(periodos);
     }, []);

@@ -1,8 +1,12 @@
 import React from "react";
 import {exibeValorFormatadoPT_BR} from "../../../utils/ValidacoesAdicionaisFormularios";
+import { useRecursoSelecionadoContext } from "../../../context/RecursoSelecionado";
 
 export const DashboardCardInfoConta = ({acoesAssociacao, getCorSaldo, getCssDestaque, statusPeriodoAssociacao}) =>{
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
     let info = acoesAssociacao.info_conta;
+
     return(
         <>
             {info &&
@@ -20,7 +24,7 @@ export const DashboardCardInfoConta = ({acoesAssociacao, getCorSaldo, getCssDest
                                     <div className="row ">
                                         <div className="col-12 col-md-5 mr-5 align-self-center container-lado-esquerdo">
                                             <p className="pt-1 mb-2">
-                                                Saldo reprogramado: <strong>{exibeValorFormatadoPT_BR(info.saldo_reprogramado)}</strong>
+                                                { existeSaldoReprogramado ? 'Saldo reprogramado: ' : 'Saldo: ' } <strong>{exibeValorFormatadoPT_BR(info.saldo_reprogramado)}</strong>
                                             </p>
                                             <p className="pt-1 mb-2">
                                                 Repasses no período: <strong>{exibeValorFormatadoPT_BR(info.repasses_no_periodo)}</strong>

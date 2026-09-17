@@ -160,7 +160,7 @@ describe('PaaSecaoPlanoEAta', () => {
         {...baseHandlers}
       />
     );
-    const planoHeading = screen.getByRole('heading', { name: 'Plano anual' });
+    const planoHeading = screen.getByRole('heading', { name: 'Plano Anual' });
     const [btnVisualizarPlano] = within(planoHeading.parentElement).getAllByRole('button');
     fireEvent.click(btnVisualizarPlano);
     expect(baseHandlers.onVisualizarDocumento).toHaveBeenCalled();
