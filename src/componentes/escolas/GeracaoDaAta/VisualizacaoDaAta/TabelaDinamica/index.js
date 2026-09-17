@@ -2,8 +2,12 @@ import React, {Fragment} from "react";
 import {TextoDespesas} from "../TextoDespesas";
 import {TabelaTotais} from "../TabelaTotais";
 import {TextoDinamicoInferiorPorAcao} from "../TextoDinamicoInferiorPorAcao";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
 export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAtaFormatado}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return (
         <>
             {infoAta && infoAta.contas && infoAta.contas.length > 0 && infoAta.contas.map((conta, index) =>
@@ -30,7 +34,9 @@ export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAt
                                 </thead>
                                 <tbody>
                                 <tr>
-                                    <td>Saldo reprogramado do período anterior</td>
+                                    <td>
+                                        { existeSaldoReprogramado ? 'Saldo reprogramado do período anterior' : 'Saldo do período anterior' }
+                                    </td>
                                     <td>{valorTemplate(info.saldo_reprogramado_custeio)}</td>
                                     <td>{valorTemplate(info.saldo_reprogramado_capital)}</td>
                                     <td>{valorTemplate(info.saldo_reprogramado_livre)}</td>
@@ -65,7 +71,9 @@ export const TabelaDinamica = ({infoAta, dadosAta, valorTemplate, retornaDadosAt
                                     <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
                                 </tr>
                                 <tr>
-                                    <td>Saldo reprogramado para o próximo período</td>
+                                    <td>
+                                        { existeSaldoReprogramado ? 'Saldo reprogramado para o próximo período' : 'Saldo para o próximo período' }
+                                    </td>
                                     <td>{valorTemplate(info.saldo_atual_custeio)}</td>
                                     <td>{valorTemplate(info.saldo_atual_capital)}</td>
                                     <td>{valorTemplate(info.saldo_atual_livre)}</td>

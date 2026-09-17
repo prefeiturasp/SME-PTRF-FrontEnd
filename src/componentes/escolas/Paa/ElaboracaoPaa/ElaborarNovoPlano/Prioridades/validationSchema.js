@@ -1,6 +1,6 @@
 import * as Yup from "yup";
 
-export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao) => {
+export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao, exibeFlagAtivada = false) => {
   let schema = Yup.object().shape({
     prioridade: Yup.string().required('Prioridade é obrigatório'),
     recurso: Yup.string().nullable().required('Recurso é obrigatório'),
@@ -37,6 +37,19 @@ export const createValidationSchema = (selectedRecurso, selectedTipoAplicacao) =
     });
   }
 
+  if (exibeFlagAtivada) {
+    schema = schema.shape({
+      ...schema.fields,
+      descricao: Yup.string()
+        .max(100, 'Descrição deve ter no máximo 100 caracteres')
+        .when([], {
+          is: () => selectedTipoAplicacao !== 'CAPITAL',
+          then: (descricaoSchema) => descricaoSchema.required('Descrição é obrigatória'),
+          otherwise: (descricaoSchema) => descricaoSchema.notRequired(),
+        })
+    });
+  }
+
   return schema;
 };
 
@@ -46,4 +59,4 @@ export const importaPrioridadesValidationSchema = () => {
   });
 
   return schema;
-}; 
+};

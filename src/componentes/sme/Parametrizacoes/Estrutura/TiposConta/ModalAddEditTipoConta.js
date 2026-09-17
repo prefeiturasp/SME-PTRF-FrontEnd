@@ -7,6 +7,8 @@ import { Switch } from 'antd';
 import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 import {faXmark} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { Tooltip as ReactTooltip } from 'react-tooltip';
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitModalFormTiposConta, setShowModalConfirmDeleteTipoConta}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
@@ -91,6 +93,46 @@ const ModalAddEditTipoConta = ({show, stateFormModal, handleClose, handleSubmitM
                                             />
                                             <label htmlFor="permite_inativacao" className="form-check-label marcar-como-lida"
                                                 style={{ color: "#42474A", marginLeft: "10px", marginTop: "5px", cursor: "default" }}>Conta permite encerramento</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='row'>
+                                    <div className='col ml-4'>
+                                        <div className="form-group" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                            <input
+                                                checked={props.values.permite_consulta_integracao_bb}
+                                                type="checkbox"
+                                                name="permite_consulta_integracao_bb"
+                                                id="permite_consulta_integracao_bb"
+                                                className="form-check-input"
+                                                onChange={props.handleChange}
+                                                disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}
+                                                style={{ accentColor: recursoSelecionado?.cor, width: "20px", height: "20px", cursor: "pointer" }}
+                                            />
+                                            <label 
+                                                htmlFor="permite_consulta_integracao_bb" 
+                                                className="form-check-label marcar-como-lida"
+                                                style={{ color: "#42474A", marginLeft: "10px", marginTop: "5px", cursor: "default" }}
+                                            >
+                                                Permite consultar saldo das contas vinculadas via integração do Banco do Brasil
+                                            </label>
+
+                                            <span
+                                                data-tooltip-id="tooltip-consulta-bb"
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faInfoCircle}
+                                                    style={{ fontSize: '12px', color: recursoSelecionado?.cor, cursor: 'pointer' }}
+                                                />
+                                            </span>
+
+                                            <ReactTooltip 
+                                                id="tooltip-consulta-bb" 
+                                                place="top" 
+                                                content="Ao marcar esta opção, as contas vinculadas a este tipo de conta serão consultadas via integração com Banco do Brasil para obtenção de saldo na extração de Dados de Contas."
+                                                className="p-tooltip-text-white"
+                                            />
                                         </div>
                                     </div>
                                 </div>

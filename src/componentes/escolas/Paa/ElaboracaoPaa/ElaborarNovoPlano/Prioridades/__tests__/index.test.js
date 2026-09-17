@@ -1,6 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useDispatch } from 'react-redux';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient as QueryClientClass } from '@tanstack/react-query';
+import { visoesService } from '../../../../../../../services/visoes.service';
 import Prioridades from '../index';
 import { useGetPrioridadeTabelas } from '../hooks/useGetPrioridadeTabelas';
 import { useGetPrioridades } from '../hooks/useGetPrioridades';
@@ -15,6 +17,7 @@ import { useDeletePrioridadesEmLote } from '../hooks/useDeletePrioridadesEmLote'
 jest.mock('../../../../../../../services/visoes.service', () => ({
   visoesService: {
     getPermissoes: () => true,
+    featureFlagAtiva: jest.fn(() => true),
   },
 }));
 
@@ -59,7 +62,7 @@ jest.mock('../ModalImportarPrioridades', () => ({
   default: ({ open, onClose }) =>
     open ? (
       <div>
-        <span className="modal-title">Importação de PAA anterior</span>
+        <span className="modal-title">Importação de prioridades de PAA anterior</span>
         <button onClick={onClose}>Fechar Importar</button>
       </div>
     ) : null,
@@ -69,6 +72,18 @@ jest.mock('../Resumo', () => ({
   Resumo: () => <div data-testid="resumo">Resumo de recursos</div>,
 }));
 
+jest.mock('../ModalConfirmarPararAtualizacaoSaldo', () => ({
+  __esModule: true,
+  default: ({ open, onClose, onSubmitParadaSaldo }) =>
+    open ? (
+      <div data-testid="modal-confirmar-saldo">
+        <h3>Gostaria de Bloquear a atualização do Saldo?</h3>
+        <button onClick={onClose}>Não</button>
+        <button onClick={onSubmitParadaSaldo}>Sim</button>
+      </div>
+    ) : null,
+}));
+
 jest.mock('../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao', () => ({
   ModalConfirmarExclusao: () => null,
 }));
@@ -76,9 +91,10 @@ jest.mock('../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclu
 // Mock do ModalFormAdicionarPrioridade
 jest.mock('../ModalFormAdicionarPrioridade', () => ({
   __esModule: true,
-  default: ({ open, onClose }) => 
+  default: ({ open, onClose, setShowModalPararAtualizacaoSaldo }) =>
     open ? (
       <div data-testid="modal-form">
+        <button onClick={() => setShowModalPararAtualizacaoSaldo(true)}>Abrir confirmação saldo</button>
         <button onClick={onClose}>Fechar Modal</button>
       </div>
     ) : null,
@@ -188,13 +204,14 @@ describe('Prioridades', () => {
 
   beforeEach(() => {
     useDispatch.mockReturnValue(mockDispatch);
+    visoesService.featureFlagAtiva.mockReturnValue(true);
     window.matchMedia = jest.fn().mockImplementation((query) => ({
         matches: false,
         addListener: jest.fn(),
         removeListener: jest.fn(),
       }));
     // Mock dos hooks
-    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' } });
+    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' }, refetch: jest.fn() });
     useGetPrioridadeTabelas.mockReturnValue(mockPrioridadeTabelas);
     useGetTiposDespesaCusteio.mockReturnValue({
       tipos_despesa_custeio: mockTiposDespesaCusteio
@@ -227,10 +244,10 @@ describe('Prioridades', () => {
   it("abre modal de importar PAAs anteriores", () => {
     renderWithQueryClient(<Prioridades />);
 
-    const botaoImportar = screen.getByRole("button", { name: /Importar PAAs anteriores/i })
+    const botaoImportar = screen.getByRole("button", { name: /Importar PAA anterior/i })
     fireEvent.click(botaoImportar);
 
-    const tituloModal = screen.getByText("Importação de PAA anterior", {selector: ".modal-title"})
+    const tituloModal = screen.getByText("Importação de prioridades de PAA anterior", {selector: ".modal-title"})
 
     expect(tituloModal).toBeInTheDocument();
   });
@@ -446,5 +463,61 @@ describe('Prioridades', () => {
     expect(screen.getByTestId("modal-form")).toBeInTheDocument();
 
     fireEvent.click(botaoDuplicar);
+  });
+
+  it('dever abrir o modal de confirmação quando o filho solicita', async () => {
+    renderWithQueryClient(<Prioridades />);
+
+    fireEvent.click(screen.getByText('Adicionar prioridade'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Abrir confirmação saldo'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-confirmar-saldo')).toBeInTheDocument();
+    });
+  });
+
+  it('dever manter fechado o modal de confirmação quando o filho não solicita abertura', async () => {
+    renderWithQueryClient(<Prioridades />);
+
+    fireEvent.click(screen.getByText('Adicionar prioridade'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-form')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId('modal-confirmar-saldo')).not.toBeInTheDocument();
+  });
+
+  it('deve atualizar o resumo (prioridades-resumo) e o PAA ao confirmar a parada da atualização do saldo', async () => {
+    const mockRefetchPaa = jest.fn().mockResolvedValue();
+    usePaaContext.mockReturnValue({ paa: { status: 'EM_ELABORACAO' }, refetch: mockRefetchPaa });
+    const invalidateQueriesSpy = jest.spyOn(QueryClientClass.prototype, 'invalidateQueries');
+
+    renderWithQueryClient(<Prioridades />);
+
+    fireEvent.click(screen.getByText('Adicionar prioridade'));
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-form')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Abrir confirmação saldo'));
+    await waitFor(() => {
+      expect(screen.getByTestId('modal-confirmar-saldo')).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText('Sim'));
+
+    await waitFor(() => {
+      expect(mockRefetchPaa).toHaveBeenCalled();
+      expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: ['prioridades-resumo'] });
+      expect(screen.queryByTestId('modal-confirmar-saldo')).not.toBeInTheDocument();
+    });
+
+    invalidateQueriesSpy.mockRestore();
   });
 });

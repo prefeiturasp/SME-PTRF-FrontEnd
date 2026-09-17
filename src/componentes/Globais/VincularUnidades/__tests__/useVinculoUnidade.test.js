@@ -4,6 +4,7 @@ import {
   useVincularUnidadeEmLote,
   useDesvincularUnidade,
   useDesvincularUnidadeEmLote,
+  useVincularTodasUnidades,
 } from '../hooks/useVinculoUnidade';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -54,7 +55,7 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
   });
 
   test('useVincularUnidade - sucesso', async () => {
-    const apiService = jest.fn().mockResolvedValue({ mensagem: 'ok' });
+    const apiService = jest.fn().mockResolvedValue({});
     const onSuccess = jest.fn();
 
     const { wrapper, queryClient } = createWrapper();
@@ -174,5 +175,180 @@ describe('Hooks de vínculo/desvínculo de unidade', () => {
     });
 
     expect(toastCustom.ToastCustomSuccess).not.toHaveBeenCalled();
+  });
+
+  test('useDesvincularUnidade - sucesso', async () => {
+    const apiService = jest.fn().mockResolvedValue({});
+    const onSuccess = jest.fn();
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useDesvincularUnidade(apiService, onSuccess),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123', unidade_uuid: 'u1' });
+    });
+
+    await waitFor(() => {
+      expect(apiService).toHaveBeenCalledWith('123', 'u1', undefined);
+    });
+
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['unidades-vinculadas', '123'] })
+    );
+
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalled();
+    expect(onSuccess).toHaveBeenCalled();
+  });
+
+  test('useDesvincularUnidade - erro genérico não invalida cache', async () => {
+    const apiService = jest.fn().mockRejectedValue({
+      response: { status: 400 },
+    });
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useDesvincularUnidade(apiService),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123', unidade_uuid: 'u1' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
+  });
+
+  test('useDesvincularUnidadeEmLote - sucesso', async () => {
+    const apiService = jest.fn().mockResolvedValue({});
+    const onSuccess = jest.fn();
+
+    const { wrapper } = createWrapper();
+
+    const { result } = renderHook(
+      () => useDesvincularUnidadeEmLote(apiService, onSuccess),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123', unidade_uuids: ['u1'] });
+    });
+
+    await waitFor(() => {
+      expect(apiService).toHaveBeenCalledWith('123', {
+        unidade_uuids: ['u1'],
+      });
+    });
+
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalled();
+    expect(onSuccess).toHaveBeenCalled();
+  });
+
+  test('useDesvincularUnidadeEmLote - erro 404 invalida cache', async () => {
+    const apiService = jest.fn().mockRejectedValue({
+      response: { status: 404 },
+    });
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useDesvincularUnidadeEmLote(apiService),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123', unidade_uuids: ['u1'] });
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['unidades-vinculadas', '123'] })
+    );
+  });
+
+  test('useVincularTodasUnidades - sucesso', async () => {
+    const apiService = jest.fn().mockResolvedValue({});
+    const onSuccess = jest.fn();
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useVincularTodasUnidades(apiService, onSuccess),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123' });
+    });
+
+    await waitFor(() => {
+      expect(apiService).toHaveBeenCalledWith('123');
+    });
+
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['unidades-vinculadas', '123'] })
+    );
+
+    expect(toastCustom.ToastCustomSuccess).toHaveBeenCalled();
+    expect(onSuccess).toHaveBeenCalled();
+  });
+
+  test('useVincularTodasUnidades - erro 404 invalida cache', async () => {
+    const apiService = jest.fn().mockRejectedValue({
+      response: { status: 404 },
+    });
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useVincularTodasUnidades(apiService),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith(
+      expect.objectContaining({ queryKey: ['unidades-vinculadas', '123'] })
+    );
+  });
+
+  test('useVincularTodasUnidades - erro genérico não invalida cache', async () => {
+    const apiService = jest.fn().mockRejectedValue({
+      response: { status: 400 },
+    });
+
+    const { wrapper, queryClient } = createWrapper();
+
+    const { result } = renderHook(
+      () => useVincularTodasUnidades(apiService),
+      { wrapper }
+    );
+
+    act(() => {
+      result.current.mutate({ uuid: '123' });
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+
+    expect(queryClient.invalidateQueries).not.toHaveBeenCalled();
   });
 });

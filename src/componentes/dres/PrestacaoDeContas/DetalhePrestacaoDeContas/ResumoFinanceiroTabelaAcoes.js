@@ -1,8 +1,12 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faChevronUp, faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import { useRecursoSelecionadoContext } from "../../../../context/RecursoSelecionado";
 
 export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTabelaAcoes, clickBtnTabelaAcoes, prestacaoDeContas}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return (
         <>
             {infoAta && infoAta.acoes && infoAta.acoes.length > 0 &&
@@ -66,7 +70,11 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                         </thead>
                                         <tbody>
                                         <tr>
-                                            <td><strong>Saldo inicial (reprogramado do período anterior)</strong></td>
+                                            <td>
+                                                <strong>
+                                                    Saldo inicial { existeSaldoReprogramado ? "(reprogramado do período anterior)" : "(do período anterior)" }
+                                                </strong>
+                                            </td>
                                             <td>{valorTemplate(info.saldo_reprogramado_custeio)}</td>
                                             <td>{valorTemplate(info.saldo_reprogramado_capital)}</td>
                                             <td>{valorTemplate(info.saldo_reprogramado_livre)}</td>
@@ -108,7 +116,11 @@ export const ResumoFinanceiroTabelaAcoes = ({infoAta, valorTemplate, toggleBtnTa
                                             <td>{valorTemplate(info.despesas_nao_conciliadas)}</td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Saldo reprogramado (para o próximo período)</strong></td>
+                                            <td>
+                                                <strong>
+                                                    Saldo { existeSaldoReprogramado ? "reprogramado" : "" } (para o próximo período)
+                                                </strong>
+                                            </td>
                                             <td>{valorTemplate(info.saldo_atual_custeio)}</td>
                                             <td>{valorTemplate(info.saldo_atual_capital)}</td>
                                             <td>{valorTemplate(info.saldo_atual_livre)}</td>

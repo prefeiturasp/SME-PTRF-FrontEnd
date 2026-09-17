@@ -778,6 +778,7 @@ export const CadastroFormFormik = ({
                                                                         aux.limpaTipoDespesaCusteio(setFieldValue, index)
                                                                         aux.handleAvisoCapital(e.target.value, setShowAvisoCapital);
                                                                         aux.setaValoresCusteioCapital(props.values.mais_de_um_tipo_despesa, values, setFieldValue);
+                                                                        aux.limpaCamposExclusivosAplicacaoRecurso(setFieldValue, index, e.target.value);
 
                                                                     }}
                                                                     name={`rateios[${index}].aplicacao_recurso`}

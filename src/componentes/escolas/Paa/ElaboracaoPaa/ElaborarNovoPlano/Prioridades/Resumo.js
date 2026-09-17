@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Table, Typography } from 'antd';
-import { UpOutlined, DownOutlined } from "@ant-design/icons";
+import { Table, Tooltip, Typography } from 'antd';
+import { UpOutlined, DownOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import { useGetResumoPrioridades } from './hooks/useGetResumoPrioridades';
 import { getTextosPaaUe } from '../../../../../../services/escolas/Paa.service';
 import { visoesService } from '../../../../../../services/visoes.service';
@@ -12,6 +12,7 @@ export const Resumo = () => {
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [informeBloqueioPrioridades, setInformeBloqueioPrioridades] = useState('');
     const exibeInformeBloqueioPrioridades = visoesService.featureFlagAtiva('informe-bloqueio-prioridades-paa');
+    const exibeSaldoCongelado = visoesService.featureFlagAtiva('paa-receitas-prevista');
 
     const { isFetching: isLoadingResumoPrioridades, resumoPrioridades } = useGetResumoPrioridades();
 
@@ -71,12 +72,27 @@ export const Resumo = () => {
                 // manter a quebra de linha identada à primeira linha (aplicação do padding acima)
                 // para casos com quebra de linha devido ao tamanho da string
                 display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
             }}>
                 {text}
+            {exibeSaldoCongelado && record.recurso === 'PTRF Total' && record.mensagem_saldo_congelado && (
+                <Tooltip
+                    title={record.mensagem_saldo_congelado}
+                >
+                    <ExclamationCircleFilled
+                        style={{
+                            color: '#FAB935',
+                            fontSize: '18px',
+                            cursor: 'pointer',
+                        }}
+                    />
+                </Tooltip>
+            )}
             </span>
         );
     }
-    
+
     const valoresStyle = (value, record) => {
         const consideraNegrito = (
             // Considera negrito os recursos do primeiro nível

@@ -8,6 +8,15 @@ jest.mock("../../../../utils/ValidacoesAdicionaisFormularios", () => ({
     exibeDateTimePT_BR: jest.fn((data) => `datetime(${data})`),
 }));
 
+jest.mock("../../../../context/RecursoSelecionado", () => ({
+    useRecursoSelecionadoContext: jest.fn(() => ({
+        recursoSelecionado: {
+            nome: 'PTRF',
+            existe_saldo_reprogramado: true,
+        },
+    })),
+}));
+
 jest.mock("../../../Globais/Mensagens/MsgImgLadoDireito", () => ({
     MsgImgLadoDireito: ({ texto }) => <div data-testid="msg-img">{texto}</div>,
 }));
@@ -50,6 +59,13 @@ const ACOES_ASSOCIACAO = {
 describe("DashboardCard", () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        const { useRecursoSelecionadoContext } = require("../../../../context/RecursoSelecionado");
+        useRecursoSelecionadoContext.mockReturnValue({
+            recursoSelecionado: {
+                nome: 'PTRF',
+                existe_saldo_reprogramado: true,
+            },
+        });
     });
 
     it("exibe MsgImgLadoDireito quando info_acoes está vazio", () => {
@@ -119,6 +135,31 @@ describe("DashboardCard", () => {
         );
 
         expect(screen.getByText(/Saldo reprogramado:/)).toBeInTheDocument();
+        expect(screen.getByText(/Repasses no período:/)).toBeInTheDocument();
+        expect(screen.getByText(/Outras receitas:/)).toBeInTheDocument();
+        expect(screen.getByText(/Despesa:/)).toBeInTheDocument();
+    });
+
+    it("renderiza apenas 'Saldo:' quando existe_saldo_reprogramado é false e recurso é diferente do legado", () => {
+        const { useRecursoSelecionadoContext } = require("../../../../context/RecursoSelecionado");
+        useRecursoSelecionadoContext.mockReturnValue({
+            recursoSelecionado: {
+                nome: 'Prêmio',
+                existe_saldo_reprogramado: false,
+            },
+        });
+
+        render(
+            <DashboardCard
+                acoesAssociacao={ACOES_ASSOCIACAO}
+                getCorSaldo={getCorSaldo}
+                getCssDestaque={getCssDestaque}
+                statusPeriodoAssociacao={false}
+            />
+        );
+
+        expect(screen.getByText(/Saldo:/)).toBeInTheDocument();
+        expect(screen.queryByText(/Saldo reprogramado:/)).toBeNull();
         expect(screen.getByText(/Repasses no período:/)).toBeInTheDocument();
         expect(screen.getByText(/Outras receitas:/)).toBeInTheDocument();
         expect(screen.getByText(/Despesa:/)).toBeInTheDocument();

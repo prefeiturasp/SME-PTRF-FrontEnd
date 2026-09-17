@@ -2,10 +2,9 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { CadastroFormFormik } from "../CadastroFormFormik";
+import * as visoesService from "../../../../../services/visoes.service";
 
 jest.mock("../../../../../services/visoes.service");
-
-import * as visoesService from "../../../../../services/visoes.service";
 
 jest.mock("../../../../Globais/DatePickerField", () => ({
   DatePickerField: ({ value, onChange, onCalendarClose, ...props }) => (
@@ -213,6 +212,7 @@ const createMockAux = (overrides = {}) => ({
   origemAnaliseLancamento: jest.fn(() => false),
   setaValoresCusteioCapital: jest.fn(),
   limpaTipoDespesaCusteio: jest.fn(),
+  limpaCamposExclusivosAplicacaoRecurso: jest.fn(),
   handleAvisoCapital: jest.fn(),
   onShowDeleteModal: jest.fn(),
   ...overrides,
@@ -793,6 +793,30 @@ describe("Componente CadastroFormFormik", () => {
 
     expect(mockAux.handleAvisoCapital).toHaveBeenCalled();
     expect(mockAux.limpaTipoDespesaCusteio).toHaveBeenCalled();
+  });
+
+  it("deve chamar limpaCamposExclusivosAplicacaoRecurso com o novo valor ao alterar tipo de aplicação do recurso", () => {
+    const mockAux = createMockAux();
+
+    renderComponent({
+      aux: mockAux,
+      despesasTabelas: {
+        ...mockDespesasTabelas,
+        tipos_aplicacao_recurso: [
+          { id: "CUSTEIO", nome: "Custeio" },
+          { id: "CAPITAL", nome: "Capital" },
+        ],
+      },
+    });
+
+    const tipoAplicacaoSelect = screen.getByLabelText("Tipo de aplicação do recurso");
+    fireEvent.change(tipoAplicacaoSelect, { target: { value: "CUSTEIO" } });
+
+    expect(mockAux.limpaCamposExclusivosAplicacaoRecurso).toHaveBeenCalledWith(
+      expect.any(Function),
+      0,
+      "CUSTEIO"
+    );
   });
 
   it("deve chamar onCalendarCloseDataPagamento ao fechar calendário de data de pagamento", async () => {

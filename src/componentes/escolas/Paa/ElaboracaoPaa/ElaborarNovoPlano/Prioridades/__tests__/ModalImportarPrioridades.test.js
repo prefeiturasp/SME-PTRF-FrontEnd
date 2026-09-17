@@ -7,6 +7,7 @@ import ModalImportarPrioridades from '../ModalImportarPrioridades';
 import { usePostImportarPrioridades } from '../hooks/usePostImportarPrioridades';
 import { toastCustom } from '../../../../../../Globais/ToastCustom';
 import { CustomModalConfirm } from "../../../../../../Globais/Modal/CustomModalConfirm";
+import { visoesService } from "../../../../../../../services/visoes.service";
 
 jest.mock("../../../../../../Globais/ToastCustom", () => ({
   toastCustom: { ToastCustomError: jest.fn() },
@@ -22,6 +23,12 @@ jest.mock("react-redux", () => ({
 
 jest.mock("../../../../../../Globais/Modal/CustomModalConfirm", () => ({
   CustomModalConfirm: jest.fn(),
+}));
+
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(),
+  },
 }));
 
 describe('ModalImportarPrioridades', () => {
@@ -65,6 +72,7 @@ describe('ModalImportarPrioridades', () => {
     });
 
     jest.clearAllMocks();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
 
   });
 
@@ -85,12 +93,12 @@ describe('ModalImportarPrioridades', () => {
 
   it('deve renderizar o modal quando open=true', () => {
     renderComponent();
-    expect(screen.getByText('Importação de PAA anterior')).toBeInTheDocument();
+    expect(screen.getByText('Importação de prioridades de PAA anterior')).toBeInTheDocument();
   });
 
   it('deve renderizar todos os campos obrigatórios', () => {
     renderComponent();
-    
+
     expect(screen.getByLabelText('Ano')).toBeInTheDocument();
   });
 
@@ -98,10 +106,25 @@ describe('ModalImportarPrioridades', () => {
   it("renderiza o título e o texto de instrução", () => {
     render(<ModalImportarPrioridades open={true} onClose={mockOnClose} paas={[]} />);
 
-    expect(screen.getByText("Importação de PAA anterior")).toBeInTheDocument();
+    expect(screen.getByText("Importação de prioridades de PAA anterior")).toBeInTheDocument();
     expect(
-      screen.getByText("Selecione o ano em que deseja importar os dados para o PAA atual.")
+      screen.getByText("Selecione o ano em que deseja importar as prioridades para o PAA atual.")
     ).toBeInTheDocument();
+  });
+
+  it("renderiza os textos legados quando a feature flag está desativada", () => {
+    visoesService.featureFlagAtiva.mockReturnValue(false);
+
+    renderComponent();
+
+    expect(screen.getByText('Importação de PAA anterior')).toBeInTheDocument();
+    expect(
+      screen.getByText('Selecione o ano em que deseja importar os dados para o PAA atual.')
+    ).toBeInTheDocument();
+    expect(screen.queryByText('Importação de prioridades de PAA anterior')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Selecione o ano em que deseja importar as prioridades para o PAA atual.')
+    ).not.toBeInTheDocument();
   });
 
   it("renderiza opções no Select com base nos paas", () => {

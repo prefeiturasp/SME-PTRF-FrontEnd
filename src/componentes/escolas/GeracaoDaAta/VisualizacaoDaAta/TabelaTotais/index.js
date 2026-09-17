@@ -1,6 +1,10 @@
 import React from "react";
+import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSelecionado";
 
 export const TabelaTotais = ({infoAta, valorTemplate}) => {
+    const { recursoSelecionado } = useRecursoSelecionadoContext();
+    const existeSaldoReprogramado = recursoSelecionado?.existe_saldo_reprogramado;
+
     return (
         <>
             {infoAta.totais && Object.entries(infoAta.totais).length > 0 &&
@@ -20,7 +24,9 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Saldo reprogramado do período anterior</td>
+                        <td>
+                            { existeSaldoReprogramado ? 'Saldo reprogramado do período anterior' : 'Saldo do período anterior' }
+                        </td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_reprogramado_livre)}</td>
@@ -55,7 +61,9 @@ export const TabelaTotais = ({infoAta, valorTemplate}) => {
                         <td>{valorTemplate(infoAta.totais.despesas_nao_conciliadas)}</td>
                     </tr>
                     <tr>
-                        <td>Saldo reprogramado para o próximo período</td>
+                        <td>
+                            { existeSaldoReprogramado ? 'Saldo reprogramado para o próximo período' : 'Saldo para o próximo período' }
+                        </td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_custeio)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_capital)}</td>
                         <td>{valorTemplate(infoAta.totais.saldo_atual_livre)}</td>

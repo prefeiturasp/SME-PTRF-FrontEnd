@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import './styles.css';
+import { visoesService } from '../../../../../../services/visoes.service';
 
 const COMPONENTES_SECOES = [
     {
@@ -16,13 +17,13 @@ const COMPONENTES_SECOES = [
         variante: 'secundaria',
         rota: '/relatorios-componentes/plano-orcamentario',
     },
-    {
+    ...(!visoesService.featureFlagAtiva?.('paa-receitas-prevista') ? [{
         key: 'atividades-previstas',
         titulo: 'Atividades Previstas',
         acao: 'Editar',
         variante: 'secundaria',
         rota: '/relatorios-componentes/atividades-previstas',
-    },
+    }] : []),
 ];
 
 export const RelSecaoComponentes = () => {
