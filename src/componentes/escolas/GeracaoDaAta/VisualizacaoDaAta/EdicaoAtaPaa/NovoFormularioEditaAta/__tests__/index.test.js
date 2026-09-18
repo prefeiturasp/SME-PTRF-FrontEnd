@@ -42,6 +42,23 @@ jest.mock("../../../../../../../services/visoes.service", () => ({
     },
 }));
 
+const mockDatePickerField = jest.fn();
+
+jest.mock("../../../../../../Globais/DatePickerField", () => ({
+    DatePickerField: (props) => {
+        mockDatePickerField(props);
+
+        return (
+            <input
+                aria-label="Data"
+                value={props.value || ""}
+                onChange={(e) => props.onChange(props.name, e.target.value)}
+                disabled={props.disabled}
+            />
+        );
+    },
+}));
+
 const propsBase = {
     stateFormEditarAta: {
         tipo_ata: "APRESENTACAO",
@@ -72,7 +89,11 @@ const propsBase = {
 };
 
 describe("NovoFormularioEditaAta - alterações do PR", () => {
+    const dataFixaAtual = new Date(2026, 5, 15, 10, 0, 0);
+
     beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(dataFixaAtual);
         jest.clearAllMocks();
 
         localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
@@ -88,6 +109,10 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         );
 
         utils.extraiProfessorDefaults.mockReturnValue(null);
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     describe("recarregamento quando precisaProfessorGremio mudar", () => {
@@ -195,5 +220,27 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
                 expect(textarea.value).toBe("");
             });
         });
+    });
+
+    it("não deve permitir selecionar uma data de reunião posterior à data atual", async () => {
+        render(
+            <NovoFormularioEditaAta
+                {...propsBase}
+                precisaProfessorGremio={false}
+            />,
+        );
+
+        await waitFor(() => {
+            expect(mockDatePickerField).toHaveBeenCalled();
+        });
+
+        const propsDoCampoData = mockDatePickerField.mock.calls
+            .map(([props]) => props)
+            .find(
+                (props) => props.name === "stateFormEditarAta.data_reuniao",
+            );
+
+        expect(propsDoCampoData).toBeDefined();
+        expect(propsDoCampoData.maxDate).toEqual(dataFixaAtual);
     });
 });

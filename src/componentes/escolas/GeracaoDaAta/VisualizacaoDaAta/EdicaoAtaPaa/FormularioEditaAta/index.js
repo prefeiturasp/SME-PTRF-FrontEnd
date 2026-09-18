@@ -533,6 +533,7 @@ export const FormularioEditaAta = ({
                                             <label htmlFor="stateFormEditarAta.data_reuniao">Data</label>
                                             <DatePickerField
                                                 name="stateFormEditarAta.data_reuniao"
+                                                maxDate={new Date()}
                                                 value={values.stateFormEditarAta.data_reuniao}
                                                 onChange={setFieldValue}
                                                 disabled={!podeEditarAta}

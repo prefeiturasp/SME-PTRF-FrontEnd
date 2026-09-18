@@ -1221,6 +1221,7 @@ export const NovoFormularioEditaAta = ({
                       <DatePickerField
                         id="stateFormEditarAta.data_reuniao"
                         name="stateFormEditarAta.data_reuniao"
+                        maxDate={new Date()}
                         value={values.stateFormEditarAta.data_reuniao}
                         onChange={(name, value) => {
                           handleChangeDate(value, name, setFieldValue);
