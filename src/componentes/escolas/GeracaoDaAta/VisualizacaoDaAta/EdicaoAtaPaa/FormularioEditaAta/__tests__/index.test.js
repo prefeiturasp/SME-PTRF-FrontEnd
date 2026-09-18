@@ -38,6 +38,23 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
 	},
 }));
 
+const mockDatePickerField = jest.fn();
+
+jest.mock("../../../../../../Globais/DatePickerField", () => ({
+	DatePickerField: (props) => {
+		mockDatePickerField(props);
+
+		return (
+			<input
+				aria-label="Data"
+				value={props.value || ""}
+				onChange={(e) => props.onChange(props.name, e.target.value)}
+				disabled={props.disabled}
+			/>
+		);
+	},
+}));
+
 const professor = {
 	id: "professor-gremio",
 	identificacao: "",
@@ -78,14 +95,22 @@ const propsBase = {
 };
 
 describe("FormularioEditaAta - professor orientador do grêmio", () => {
-	beforeEach(() => {
+	const dataFixaAtual = new Date(2026, 5, 15, 10, 0, 0);
+
+    beforeEach(() => {
 		jest.clearAllMocks();
+        jest.useFakeTimers();
+		jest.setSystemTime(dataFixaAtual);
 		visoesService.getPermissoes.mockReturnValue(true);
 		utils.extraiProfessorDefaults.mockReturnValue(null);
 		utils.adicionaProfessorGremioNaLista.mockImplementation(
 			(lista, ataUuid, professorDefaults, precisaProfessorGremio) =>
 				precisaProfessorGremio ? [...lista, professor] : lista,
 		);
+	});
+
+    afterEach(() => {
+		jest.useRealTimers();
 	});
 
 	it("deve renderizar o campo RF Professor Orientador do Grêmio quando habilitado", async () => {
@@ -244,5 +269,25 @@ describe("FormularioEditaAta - professor orientador do grêmio", () => {
 
 		const statusPresenca = await screen.findByRole("switch");
 		expect(statusPresenca).toHaveAttribute("aria-checked", "true");
+	});
+
+	it("não deve permitir selecionar uma data de reunião posterior à data atual", async () => {
+		render(
+			<FormularioEditaAta
+				{...propsBase}
+				precisaProfessorGremio={false}
+			/>,
+		);
+
+		await waitFor(() => {
+			expect(mockDatePickerField).toHaveBeenCalled();
+		});
+
+		const propsDoCampoData = mockDatePickerField.mock.calls
+			.map(([props]) => props)
+			.find((props) => props.name === "stateFormEditarAta.data_reuniao");
+
+		expect(propsDoCampoData).toBeDefined();
+		expect(propsDoCampoData.maxDate).toEqual(dataFixaAtual);
 	});
 });
