@@ -33,19 +33,27 @@ describe("Justificativa", () => {
 
   it("renderiza textarea e botão corretamente", () => {
     visoesService.visoesService.getPermissoes.mockReturnValue(true);
-    render(<Justificativa {...props} permissaoEditarConciliacao={true} permiteEditarCamposExtrato={true} />);
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} />);
 
     expect(screen.getByPlaceholderText("Escreva o comentário")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Salvar Justificativas/i })).toBeInTheDocument();
   });
 
-  it("desativa textarea se permissaoEditarConciliacao ou permiteEditarCamposExtrato for false", () => {
-    render(<Justificativa {...props} permissaoEditarConciliacao={false} permiteEditarCamposExtrato={true} />);
+  it("desativa textarea se permissaoEditarConciliacao for false", () => {
+    render(<Justificativa {...props} permissaoEditarConciliacao={false} />);
     expect(screen.getByPlaceholderText("Escreva o comentário")).toBeDisabled();
+    expect(screen.queryByRole("button", { name: /Salvar Justificativas/i })).not.toBeInTheDocument();
+  });
+
+  it("mantém textarea e botão habilitados mesmo sem permiteEditarCamposExtrato", () => {
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} permiteEditarCamposExtrato={false} />);
+
+    expect(screen.getByPlaceholderText("Escreva o comentário")).toBeEnabled();
+    expect(screen.getByRole("button", { name: /Salvar Justificativas/i })).toBeInTheDocument();
   });
 
   it("chama salvarJustificativa e atualizadores ao clicar no botão", () => {
-    render(<Justificativa {...props} permissaoEditarConciliacao={true} permiteEditarCamposExtrato={true} />);
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} />);
 
     const btn = screen.getByRole("button", { name: /Salvar Justificativas/i });
     fireEvent.click(btn);
@@ -56,13 +64,12 @@ describe("Justificativa", () => {
     expect(salvarJustificativaMock).toHaveBeenCalledWith(["lanc1"]);
   });
 
-  it('exibe o ícone de "Salvo" se permiteEditarCamposExtrato e checkSalvarJustificativa for true', () => {
+  it('exibe o ícone de "Salvo" se permissaoEditarConciliacao e checkSalvarJustificativa for true', () => {
     render(
       <Justificativa
         {...props}
         checkSalvarJustificativa={true}
         permissaoEditarConciliacao={true}
-        permiteEditarCamposExtrato={true}
       />
     );
 
@@ -70,11 +77,25 @@ describe("Justificativa", () => {
   });
 
   it("chama handleChangeTextareaJustificativa ao digitar no textarea", () => {
-    render(<Justificativa {...props} />);
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} />);
     const textarea = screen.getByPlaceholderText("Escreva o comentário");
 
     fireEvent.change(textarea, { target: { value: "Texto de teste" } });
 
     expect(handleChangeTextareaJustificativa).toHaveBeenCalled();
+  });
+
+  it("exibe justificativa obrigatória quando justificativaObrigatoria é true", () => {
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} justificativaObrigatoria={true} />);
+
+    expect(screen.getByText("* Preenchimento obrigatório")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Escreva o comentário")).toBeRequired();
+  });
+
+  it("exibe justificativa opcional quando justificativaObrigatoria é false", () => {
+    render(<Justificativa {...props} permissaoEditarConciliacao={true} justificativaObrigatoria={false} />);
+
+    expect(screen.getByText(/opcional/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Escreva o comentário")).not.toBeRequired();
   });
 });
