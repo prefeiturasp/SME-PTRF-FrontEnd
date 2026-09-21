@@ -846,7 +846,6 @@ export const DetalheDasPrestacoes = () => {
                   salvarJustificativa={salvarJustificativa}
                   classBtnSalvarJustificativa={classBtnSalvarJustificativa}
                   setClassBtnSalvarJustificativa={setClassBtnSalvarJustificativa}
-                  permiteEditarCamposExtrato={permiteEditarCamposExtrato}
                   permissaoEditarConciliacao={permissaoEditarConciliacao}
                 />
               </>
