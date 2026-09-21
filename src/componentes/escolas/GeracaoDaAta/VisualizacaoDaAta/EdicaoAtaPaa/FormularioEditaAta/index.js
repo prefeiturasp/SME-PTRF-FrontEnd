@@ -140,15 +140,28 @@ export const FormularioEditaAta = ({
 
         if(ehEdicaoPresente[index]){
             let presentes = values.listaPresentesPadrao
-            let nome = presentes[index].nome;
-            let identificacao = presentes[index].identificacao;
+            const nome = presentes[index].nome?.trim();
+            const identificacao = presentes[index].identificacao?.trim();
             let professorGremio = presentes[index].professor_gremio;
             let podeCadastrar = true;
 
             for (let i = 0; i <= presentes.length - 1; i++) {
                 if (i !== index) {
-                    let jaEstaPresente = nome === presentes[i].nome || identificacao === presentes[i].identificacao
-                    let ehProfessorDoGremio = presentes[i].professor_gremio || professorGremio
+                    const nomePresente = presentes[i].nome?.trim();
+                    const identificacaoPresente = presentes[i].identificacao?.trim();
+
+                    const mesmoNome =
+                        nome && nome === nomePresente;
+
+                    const mesmaIdentificacao =
+                        identificacao && identificacao === identificacaoPresente;
+
+                    const jaEstaPresente =
+                        mesmoNome || mesmaIdentificacao;
+
+                    const ehProfessorDoGremio =
+                        presentes[i].professor_gremio || professorGremio;
+
                     if (jaEstaPresente && !ehProfessorDoGremio) {
                         podeCadastrar = false;
                         break;
@@ -193,15 +206,28 @@ export const FormularioEditaAta = ({
         }
         else{
             let presentes = values.listaPresentesPadrao
-            let nome = presentes[index].nome
-            let identificacao = presentes[index].identificacao;
+            const nome = presentes[index].nome?.trim();
+            const identificacao = presentes[index].identificacao?.trim();
             let professorGremio = presentes[index].professor_gremio;
             let podeCadastrar = true;
 
             for (let i = 0; i <= presentes.length - 1; i++) {
                 if (i !== index) {
-                    let jaEstaPresente = nome === presentes[i].nome || identificacao === presentes[i].identificacao
-                    let ehProfessorDoGremio = presentes[i].professor_gremio || professorGremio
+                    const nomePresente = presentes[i].nome?.trim();
+                    const identificacaoPresente = presentes[i].identificacao?.trim();
+
+                    const mesmoNome =
+                        nome && nome === nomePresente;
+
+                    const mesmaIdentificacao =
+                        identificacao && identificacao === identificacaoPresente;
+
+                    const jaEstaPresente =
+                        mesmoNome || mesmaIdentificacao;
+
+                    const ehProfessorDoGremio =
+                        presentes[i].professor_gremio || professorGremio;
+
                     if (jaEstaPresente && !ehProfessorDoGremio) {
                         podeCadastrar = false;
                         break;
