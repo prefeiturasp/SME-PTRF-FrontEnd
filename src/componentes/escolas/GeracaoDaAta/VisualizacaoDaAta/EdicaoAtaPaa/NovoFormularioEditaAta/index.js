@@ -381,19 +381,31 @@ export const NovoFormularioEditaAta = ({
       : null;
     if (ehEdicaoPresente[index]) {
       let presentes = values.listaParticipantes;
-      let nome = presentes[index].nome;
-      let identificacao = presentes[index].identificacao;
+      const nome = presentes[index].nome?.trim();
+      const identificacao = presentes[index].identificacao?.trim();
       let podeCadastrar = true;
 
       for (let i = 0; i <= presentes.length - 1; i++) {
         if (i !== index) {
-          let ehProfessor = presentes[i].professor_gremio
-          let jaEstaNaLista = nome === presentes[i].nome || identificacao === presentes[i].identificacao;
+            const nomePresente = presentes[i].nome?.trim();
+            const identificacaoPresente = presentes[i].identificacao?.trim();
 
-          if (jaEstaNaLista  && !ehProfessor) {
-            podeCadastrar = false;
-            break;
-          }
+            const mesmoNome =
+                nome && nome === nomePresente;
+
+            const mesmaIdentificacao =
+                identificacao && identificacao === identificacaoPresente;
+
+            const jaEstaPresente =
+                mesmoNome || mesmaIdentificacao;
+
+            const ehProfessorDoGremio =
+                presentes[i].professor_gremio;
+
+            if (jaEstaPresente && !ehProfessorDoGremio) {
+                podeCadastrar = false;
+                break;
+            }
         }
       }
 
@@ -436,19 +448,31 @@ export const NovoFormularioEditaAta = ({
       }
     } else {
       let presentes = values.listaParticipantes;
-      let nome = presentes[index].nome;
-      let identificacao = presentes[index].identificacao;
+      const nome = presentes[index].nome?.trim();
+      const identificacao = presentes[index].identificacao?.trim();
       let podeCadastrar = true;
 
       for (let i = 0; i <= presentes.length - 1; i++) {
         if (i !== index) {
-          let ehProfessor = presentes[i].professor_gremio
-          let jaEstaNaLista = nome === presentes[i].nome || identificacao === presentes[i].identificacao;
+            const nomePresente = presentes[i].nome?.trim();
+            const identificacaoPresente = presentes[i].identificacao?.trim();
 
-          if (jaEstaNaLista  && !ehProfessor) {
-            podeCadastrar = false;
-            break;
-          }
+            const mesmoNome =
+                nome && nome === nomePresente;
+
+            const mesmaIdentificacao =
+                identificacao && identificacao === identificacaoPresente;
+
+            const jaEstaPresente =
+                mesmoNome || mesmaIdentificacao;
+
+            const ehProfessorDoGremio =
+                presentes[i].professor_gremio;
+
+            if (jaEstaPresente && !ehProfessorDoGremio) {
+                podeCadastrar = false;
+                break;
+            }
         }
       }
 
@@ -536,12 +560,15 @@ export const NovoFormularioEditaAta = ({
 
     if (editavel) {
       let presentes = values.listaParticipantes;
-      let nome = presentes[index].nome;
+      const nome = presentes[index].nome?.trim();
       let podeCadastrar = true;
 
       for (let i = 0; i <= presentes.length - 1; i++) {
         if (i !== index) {
-          if (nome === presentes[i].nome) {
+           const nomePresente = presentes[i].nome?.trim();
+           const mesmoNome = nome && nome === nomePresente;
+
+          if (mesmoNome) {
             podeCadastrar = false;
             break;
           }
