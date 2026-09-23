@@ -10,7 +10,9 @@ export const useCancelarEntradaCargoComposicaoVacancia = () => {
         mutationFn: ({uuid}) => patchCancelarEntradaCargoComposicaoVacancia(uuid),
         onSuccess: () => {
             queryClient.invalidateQueries(['cargos-da-composicao-vacancia']).then()
+            queryClient.invalidateQueries(['timeline-cargo-composicao-vacancia']).then()
             queryClient.invalidateQueries(['status-cadastro-associacao']).then()
+            queryClient.invalidateQueries(['timeline-consolidada-composicao-vacancia']).then()
             toastCustom.ToastCustomSuccess('Entrada cancelada com sucesso.', 'O ocupante do cargo foi removido.')
         },
         onError: (error) => {

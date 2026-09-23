@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Timeline, Divider, Tag, Space } from "antd";
-import { SwapOutlined, CaretUpFilled, CaretDownFilled } from "@ant-design/icons";
-import { Badge } from "react-bootstrap";
+import { CaretUpFilled, CaretDownFilled } from "@ant-design/icons";
 import useDataTemplate from "../../../../hooks/Globais/useDataTemplate";
 import { useGetTimelineCargoComposicaoVacancia } from "../hooks/useGetTimelineCargoComposicaoVacancia";
 
@@ -15,15 +14,13 @@ export const ModalTimelineCargoVacancia = ({ show, handleClose, composicaoUuid, 
     const registrosOrdenados = ordemCrescente ? registros : [...registros].reverse();
 
     const montaItens = () => registrosOrdenados.map((registro) => ({
-        color: registro.vago ? "red" : (registro.substituto || registro.substituido) ? "blue" : "green",
+        color: registro.cargo_vago ? "red" : (registro.tem_saida) ? "blue" : "green",
         children: (
             <div>
-                <strong>{registro.vago ? "Cargo Vago" : registro.ocupante_do_cargo?.nome}</strong>
+                <strong>{registro.cargo_vago ? "Cargo Vago" : registro.ocupante_do_cargo?.nome}</strong>
                 <div>
                     {dataTemplate("", "", registro.data_inicio_no_cargo)} até {dataTemplate("", "", registro.data_fim_no_cargo)}
                 </div>
-                {registro.substituto && <Badge className="badge-substituto">Substituição direta</Badge>}
-                {registro.substituido && <Badge className="badge-substituido">Substituído</Badge>}
             </div>
         ),
     }));
@@ -42,7 +39,7 @@ export const ModalTimelineCargoVacancia = ({ show, handleClose, composicaoUuid, 
                 <Space wrap size="small">
                     <Tag color="green">Cargo Ocupado</Tag>
                     <Tag color="red">Cargo Vago</Tag>
-                    <Tag color="blue">Cargo Substituído</Tag>
+                    <Tag color="blue">Cargo com Saída</Tag>
                 </Space>
                 <Space style={{ display: "flex", width: "100%", marginTop: "4px", marginBottom: "4px" }}>
                     <button
