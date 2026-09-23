@@ -59,6 +59,12 @@ describe("PaginaMandatoVigenteVacancia", () => {
         mockOnPageChangeCapturado.current = null;
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({ data: [] });
         mockUseLocation.mockReturnValue({ state: undefined });
+
+        window.matchMedia = jest.fn().mockImplementation(() => ({
+            matches: false,
+            addListener: jest.fn(),
+            removeListener: jest.fn(),
+        }));
     });
 
     it("deve exibir loading enquanto o mandato está carregando", () => {
@@ -143,7 +149,10 @@ describe("PaginaMandatoVigenteVacancia", () => {
             isLoading: false, data: { uuid: "composicao-1" },
         });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2026-01-01", "2026-03-15"],
+            data: [
+                { inicio: "2026-01-01", fim: "2026-03-14" },
+                { inicio: "2026-03-15", fim: "2026-12-31" },
+            ],
         });
 
         render(<PaginaMandatoVigenteVacancia />);
@@ -154,7 +163,7 @@ describe("PaginaMandatoVigenteVacancia", () => {
         expect(screen.getByTestId("cargos-da-composicao-vacancia")).toHaveTextContent("data:2026-03-15");
     });
 
-    it("deve mostrar marcos cada vez mais antigos ao avançar a paginação, sempre com o fim do mandato como período final", () => {
+    it("deve mostrar marcos cada vez mais antigos ao avançar a paginação, cada um com seu próprio início e fim", () => {
         mockUseGetMandatoVigente.mockReturnValue({
             isLoading: false, data: { uuid: "mandato-1", data_final: "2026-12-31" }, isError: false,
         });
@@ -162,7 +171,10 @@ describe("PaginaMandatoVigenteVacancia", () => {
             isLoading: false, data: { uuid: "composicao-1" },
         });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2026-01-01", "2026-03-15"],
+            data: [
+                { inicio: "2026-01-01", fim: "2026-03-14" },
+                { inicio: "2026-03-15", fim: "2026-12-31" },
+            ],
         });
 
         render(<PaginaMandatoVigenteVacancia />);
@@ -172,7 +184,7 @@ describe("PaginaMandatoVigenteVacancia", () => {
             mockOnPageChangeCapturado.current(2, 1);
         });
 
-        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2026-01-01 até 2026-12-31");
+        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2026-01-01 até 2026-03-14");
         expect(screen.getByTestId("cargos-da-composicao-vacancia")).toHaveTextContent("data:2026-01-01");
     });
 
@@ -185,12 +197,15 @@ describe("PaginaMandatoVigenteVacancia", () => {
             isLoading: false, data: { uuid: "composicao-1" },
         });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2026-01-01", "2026-03-15"],
+            data: [
+                { inicio: "2026-01-01", fim: "2026-03-14" },
+                { inicio: "2026-03-15", fim: "2026-12-31" },
+            ],
         });
 
         render(<PaginaMandatoVigenteVacancia />);
 
-        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2026-01-01 até 2026-12-31");
+        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2026-01-01 até 2026-03-14");
         expect(screen.getByTestId("cargos-da-composicao-vacancia")).toHaveTextContent("data:2026-01-01");
         expect(screen.getByTestId("paginacao-vacancia")).toHaveTextContent("firstPage:1");
     });
@@ -204,7 +219,10 @@ describe("PaginaMandatoVigenteVacancia", () => {
             isLoading: false, data: { uuid: "composicao-1" },
         });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2026-01-01", "2026-03-15"],
+            data: [
+                { inicio: "2026-01-01", fim: "2026-03-14" },
+                { inicio: "2026-03-15", fim: "2026-12-31" },
+            ],
         });
 
         render(<PaginaMandatoVigenteVacancia />);
