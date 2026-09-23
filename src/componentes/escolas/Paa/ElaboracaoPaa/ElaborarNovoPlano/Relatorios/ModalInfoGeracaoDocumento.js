@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Flex, Typography } from 'antd';
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
+import { visoesService } from "../../../../../../services/visoes.service";
 
 const TEXTO_PADRAO = (
     'O documento está sendo gerado, enquanto isso você pode ' +
@@ -47,7 +48,8 @@ export const ModalInfoGeracaoDocumentoFinal = memo(({ open, onClose }) => {
     );
 });
 
-export const ModalConfirmaGeracaoFinal = memo(({ open, onClose, onConfirm }) => {
+export const ModalConfirmaGeracaoFinal = memo(({ open, onClose, onConfirm, atividadesPrevistasPreenchidas }) => {
+    const flagReceitasPrevistasPAA = visoesService.featureFlagAtiva('paa-receitas-prevista');
 
     return (
         <ModalFormBodyText
@@ -58,6 +60,13 @@ export const ModalConfirmaGeracaoFinal = memo(({ open, onClose, onConfirm }) => 
             <>
                 Após a conclusão do PAA, não será possível realizar edições. Se houver necessidade de ajustes, será preciso efetuar uma retificação.
 
+                {!atividadesPrevistasPreenchidas && flagReceitasPrevistasPAA && (
+                    <div className="mt-4">
+                        <strong>Importante!</strong>
+                        <p>Lembre-se de realizar o preenchimento das datas das Atividades Previstas.</p>
+                    </div>
+                )}
+
                 <Flex gap={16} justify="end" className="mt-3">
                     <button
                         type="button"
@@ -78,7 +87,8 @@ export const ModalConfirmaGeracaoFinal = memo(({ open, onClose, onConfirm }) => 
     );
 });
 
-export const ModalConfirmaGeracaoFinalRetificacao = memo(({ open, onClose, onConfirm }) => {
+export const ModalConfirmaGeracaoFinalRetificacao = memo(({ open, onClose, onConfirm, atividadesPrevistasPreenchidas }) => {
+    const flagReceitasPrevistasPAA = visoesService.featureFlagAtiva('paa-receitas-prevista');
 
     return (
         <ModalFormBodyText
@@ -89,6 +99,12 @@ export const ModalConfirmaGeracaoFinalRetificacao = memo(({ open, onClose, onCon
             <>
                 Após a conclusão do PAA, não será possível realizar edições. Se houver necessidade de ajustes, será preciso efetuar uma retificação.
 
+                {!atividadesPrevistasPreenchidas && flagReceitasPrevistasPAA && (
+                    <div className="mt-4">
+                        <strong>Importante!</strong>
+                        <p>Lembre-se de realizar o preenchimento das datas das Atividades Previstas.</p>
+                    </div>
+                )}
                 <Flex gap={16} justify="end" className="mt-3">
                     <button
                         type="button"
@@ -110,7 +126,9 @@ export const ModalConfirmaGeracaoFinalRetificacao = memo(({ open, onClose, onCon
 });
 
 
-export const ModalInfoPendenciasGeracaoFinal = memo(({ open, onClose, pendencias }) => {
+export const ModalInfoPendenciasGeracaoFinal = memo(({ open, onClose, pendencias, atividadesPrevistasPreenchidas }) => {
+    const flagReceitasPrevistasPAA = visoesService.featureFlagAtiva('paa-receitas-prevista');
+
     return (
         <ModalFormBodyText
         show={open}
@@ -128,9 +146,17 @@ export const ModalInfoPendenciasGeracaoFinal = memo(({ open, onClose, pendencias
                             {pendencia.includes('objetivo') ? 'Objetivos' : ''}
                             {pendencia.includes('conclusão') ? 'Conclusão' : ''}
                         </li>
-                        
+
                     ))}
                 </ul>
+
+                {!atividadesPrevistasPreenchidas && flagReceitasPrevistasPAA && (
+                    <div className="mt-4">
+                        <strong>Importante!</strong>
+                        <p>Lembre-se de realizar o preenchimento das datas das Atividades Previstas.</p>
+                    </div>
+                )}
+
                 <Flex gap={16} justify="end" className="mt-3">
                     <button
                         type="button"
@@ -145,7 +171,8 @@ export const ModalInfoPendenciasGeracaoFinal = memo(({ open, onClose, pendencias
     );
 });
 
-export const ModalInfoPendenciasGeracaoFinalRetificacao = memo(({ open, onClose, pendencias }) => {
+export const ModalInfoPendenciasGeracaoFinalRetificacao = memo(({ open, onClose, pendencias, atividadesPrevistasPreenchidas }) => {
+    const flagReceitasPrevistasPAA = visoesService.featureFlagAtiva('paa-receitas-prevista');
     const pends = (pendencias||'').split('\n')
 
     return (
@@ -169,6 +196,14 @@ export const ModalInfoPendenciasGeracaoFinalRetificacao = memo(({ open, onClose,
                         </li>
                     ))}
                 </ul>
+
+                {!atividadesPrevistasPreenchidas && flagReceitasPrevistasPAA && (
+                    <div className="mt-4">
+                        <strong>Importante!</strong>
+                        <p>Lembre-se de realizar o preenchimento das datas das Atividades Previstas.</p>
+                    </div>
+                )}
+
                 <Flex gap={16} justify="end" className="mt-3">
                     <button
                         type="button"

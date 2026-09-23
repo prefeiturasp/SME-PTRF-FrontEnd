@@ -12,10 +12,10 @@ import { IGerarDocumentoProps } from "./types";
 import { BotaoGerarComponent } from "./BotaoGerarComponent";
 
 const ModalConfirmaFinalRetificacao = ModalConfirmaGeracaoFinalRetificacao as ComponentType<{
-    open: boolean; onClose: () => void, onConfirm: () => void
+    open: boolean; onClose: () => void, onConfirm: () => void, atividadesPrevistasPreenchidas: boolean
 }>;
 const ModalInfoPendenciasFinalRetificacao = ModalInfoPendenciasGeracaoFinalRetificacao as ComponentType<{
-    open: boolean; onClose: () => void, pendencias: string
+    open: boolean; onClose: () => void, pendencias: string, atividadesPrevistasPreenchidas: boolean
 }>;
 
 export const BtnGerarFinalRetificacao = ({ paa }: IGerarDocumentoProps) => {
@@ -88,7 +88,7 @@ export const BtnGerarFinalRetificacao = ({ paa }: IGerarDocumentoProps) => {
             mutateGerar.isPending,
             gerandoDocFinal,
         ];
-    
+
         return validacoes.includes(true);
     }, [
         statusDocumento?.status,
@@ -120,8 +120,9 @@ export const BtnGerarFinalRetificacao = ({ paa }: IGerarDocumentoProps) => {
                     setOpenModalConfirmarGeracao(false);
                 }}
                 onConfirm={() => handleGerar(1)}
+                atividadesPrevistasPreenchidas={paa.atividades_previstas_preenchidas}
             />
-    
+
             <ModalInfoPendenciasFinalRetificacao
                 open={openModalValidacoes}
                 onClose={() => {
@@ -129,6 +130,7 @@ export const BtnGerarFinalRetificacao = ({ paa }: IGerarDocumentoProps) => {
                     setOpenModalValidacoes(false)
                 }}
                 pendencias={pendenciasGeracao}
+                atividadesPrevistasPreenchidas={paa.atividades_previstas_preenchidas}
             />
         </span>
     );
