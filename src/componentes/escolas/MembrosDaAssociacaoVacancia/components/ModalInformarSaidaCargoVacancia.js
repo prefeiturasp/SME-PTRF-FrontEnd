@@ -3,6 +3,9 @@ import {Modal} from "react-bootstrap";
 import {DatePickerField} from "../../../Globais/DatePickerField";
 import moment from "moment";
 
+// Regra definida para constante de D-1 para registro de saída de Membro
+const D_N = 1
+
 export const ModalInformarSaidaCargoVacancia = ({
     show = false,
     dataInicioNoCargo,
@@ -29,6 +32,7 @@ export const ModalInformarSaidaCargoVacancia = ({
                             id="data_saida"
                             name="data_saida"
                             value={dataSaida}
+                            autoComplete="off"
                             onChange={handleChange}
                             placeholderText={"DD/MM/AAAA"}
                             minDate={dataInicioNoCargo ? moment(dataInicioNoCargo).add(1, 'days').toDate() : ""}
@@ -36,6 +40,11 @@ export const ModalInformarSaidaCargoVacancia = ({
                         />
                     </div>
                 </div>
+                {dataSaida && <div className="mt-3">
+                    <strong>Atenção: </strong>
+                    A data que será utilizada para fins de atribuição
+                    do cargo será até dia {moment(dataSaida).subtract(D_N, 'days').format("DD/MM/YYYY")}
+                </div>}
             </Modal.Body>
             <Modal.Footer>
                 <button onClick={handleClose} className="btn btn-outline-success">

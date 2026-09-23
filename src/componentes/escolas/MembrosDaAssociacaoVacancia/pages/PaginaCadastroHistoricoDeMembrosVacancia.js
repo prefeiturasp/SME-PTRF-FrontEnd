@@ -4,12 +4,14 @@ import {useLocation, useParams, useNavigate} from "react-router-dom";
 import moment from "moment";
 import {FormCadastroVacancia} from "../components/FormCadastroVacancia";
 import {ModalInformarSaidaCargoVacancia} from "../components/ModalInformarSaidaCargoVacancia";
+import {ModalIncluirNovoMembroVacancia} from "../components/ModalIncluirNovoMembroVacancia";
 import {usePostCargoComposicaoVacancia} from "../hooks/usePostCargoComposicaoVacancia";
 import {useEditarOcupanteCargoComposicaoVacancia} from "../hooks/useEditarOcupanteCargoComposicaoVacancia";
 import {useRegistrarSaidaCargoComposicaoVacancia} from "../hooks/useRegistrarSaidaCargoComposicaoVacancia";
 import {useCancelarSaidaCargoComposicaoVacancia} from "../hooks/useCancelarSaidaCargoComposicaoVacancia";
 import {useCancelarEntradaCargoComposicaoVacancia} from "../hooks/useCancelarEntradaCargoComposicaoVacancia";
 import {useGetMandatoVigente} from "../hooks/useGetMandatoVigente";
+import {useNavegarParaIncluirNovoMembroVacancia} from "../hooks/useNavegarParaIncluirNovoMembroVacancia";
 
 
 export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
@@ -26,14 +28,8 @@ export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
     // para o padrão (marco mais recente)
     const voltarParaListagemPadrao = () => navigate(`/membros-da-associacao`);
 
-    const ehCargoOcupado = cargo?.cargo_vago === false;
-    
     // considera como edição apenas cargos ocupados
-    const ehEdicao = ehCargoOcupado;
-    const ocupanteVigente = cargo?.ocupante_vigente === true;
-    // só pode cancelar um ocupante que já saiu (não vigente) e ainda não tem sucessor
-    const podeCancelarSaida = ehCargoOcupado && !ocupanteVigente && cargo?.substituido === false;
-    const podeCancelarEntrada = ehCargoOcupado && ocupanteVigente;
+    const ehEdicao = cargo?.cargo_vago === false;
 
     const {data: mandato} = useGetMandatoVigente();
     const {mutationPostCargoComposicaoVacancia} = usePostCargoComposicaoVacancia();
@@ -41,8 +37,10 @@ export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
     const {mutationRegistrarSaidaCargoComposicaoVacancia} = useRegistrarSaidaCargoComposicaoVacancia();
     const {mutationCancelarSaidaCargoComposicaoVacancia} = useCancelarSaidaCargoComposicaoVacancia();
     const {mutationCancelarEntradaCargoComposicaoVacancia} = useCancelarEntradaCargoComposicaoVacancia();
+    const {navegarParaIncluirNovoMembro} = useNavegarParaIncluirNovoMembroVacancia(composicaoUuid);
 
     const [showModalInformarSaida, setShowModalInformarSaida] = useState(false);
+    const [showModalIncluirNovoMembro, setShowModalIncluirNovoMembro] = useState(false);
 
     const formatPayloadOcupante = (values) => ({
         nome: values.nome,
@@ -99,9 +97,24 @@ export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
             {uuid: cargo.uuid, data_saida: moment(dataSaida).format('YYYY-MM-DD')},
             {onSuccess: () => {
                 setShowModalInformarSaida(false);
-                voltarParaListagemPadrao();
+                setShowModalIncluirNovoMembro(true);
             }}
         );
+    };
+
+    const onNaoIncluirNovoMembro = () => {
+        // "Não incluir": volta pra listagem.
+        setShowModalIncluirNovoMembro(false);
+        voltarParaListagemPadrao();
+    };
+
+    const onIncluirNovoMembro = async () => {
+        // "Incluir novo membro": reabre este mesmo formulário em branco, para o mesmo cargo (agora vago)
+        setShowModalIncluirNovoMembro(false);
+        const sucesso = await navegarParaIncluirNovoMembro(cargo.cargo_associacao);
+        if (!sucesso) {
+            voltarParaListagemPadrao();
+        }
     };
 
     return (
@@ -114,11 +127,7 @@ export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
                         mandato={mandato}
                         onSubmitForm={onSubmitForm}
                         onInformarSaida={onInformarSaida}
-                        ehEdicao={ehEdicao}
-                        ocupanteVigente={ocupanteVigente}
-                        podeCancelarSaida={podeCancelarSaida}
                         onCancelarSaida={onCancelarSaida}
-                        podeCancelarEntrada={podeCancelarEntrada}
                         onCancelarEntrada={onCancelarEntrada}
                         marcoSelecionado={marcoSelecionado}
                     />
@@ -130,6 +139,12 @@ export const PaginaCadastroHistoricoDeMembrosVacancia = () => {
                     dataFinalMandato={mandato?.data_final}
                     handleClose={() => setShowModalInformarSaida(false)}
                     handleConfirm={onConfirmarInformarSaida}
+                />
+
+                <ModalIncluirNovoMembroVacancia
+                    show={showModalIncluirNovoMembro}
+                    handleClose={onNaoIncluirNovoMembro}
+                    handleConfirm={onIncluirNovoMembro}
                 />
             </span>
         </PaginasContainer>

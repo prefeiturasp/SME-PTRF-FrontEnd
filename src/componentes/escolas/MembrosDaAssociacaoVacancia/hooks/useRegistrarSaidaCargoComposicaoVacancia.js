@@ -13,7 +13,9 @@ export const useRegistrarSaidaCargoComposicaoVacancia = () => {
         onSuccess: (data) => {
             console.log("Saída registrada com sucesso ", data)
             queryClient.invalidateQueries(['cargos-da-composicao-vacancia']).then()
+            queryClient.invalidateQueries(['timeline-cargo-composicao-vacancia']).then()
             queryClient.invalidateQueries(['status-cadastro-associacao']).then()
+            queryClient.invalidateQueries(['timeline-consolidada-composicao-vacancia']).then()
             toastCustom.ToastCustomSuccess('Saída registrada com sucesso.', `A saída do membro foi registrada com sucesso.`)
         },
         onError: (error) => {

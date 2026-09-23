@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import moment from "moment";
 import { useGetMandatosAnterioresVacancia } from "../hooks/useGetMandatosAnterioresVacancia";
 import { useGetComposicaoVigenteVacancia } from "../hooks/useGetComposicaoVigenteVacancia";
 import { useGetDatasDeAlteracaoDaComposicaoVacancia } from "../hooks/useGetDatasDeAlteracaoDaComposicaoVacancia";
@@ -6,6 +7,7 @@ import { MarcoInfoVacancia } from "../components/MarcoInfoVacancia";
 import { SelectMandatoAnteriorVacancia } from "../components/SelectMandatoAnteriorVacancia";
 import { CargosDaComposicaoListVacancia } from "../components/CargosDaComposicaoListVacancia";
 import { PaginacaoVacancia } from "../components/PaginacaoVacancia";
+import { LinhaDoTempoComposicaoVacancia } from "../components/LinhaDoTempoComposicaoVacancia";
 import Loading from "../../../../utils/Loading";
 
 
@@ -27,6 +29,8 @@ export const PaginaMandatoAnteriorVacancia = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [firstPage, setFirstPage] = useState(0);
+    const [mostrarLinhaDoTempo, setMostrarLinhaDoTempo] = useState(false);
+    const [dataSelecionadaTimeline, setDataSelecionadaTimeline] = useState(moment().format('YYYY-MM-DD'));
 
     const onChangeMandato = (uuid) => {
         setMandatoUuidSelecionado(uuid);
@@ -53,29 +57,47 @@ export const PaginaMandatoAnteriorVacancia = () => {
 
     return (
         <span className="PaginaMandatoAnteriorVacancia">
-            <div className="d-flex bd-highlight align-items-end mt-2">
-                <SelectMandatoAnteriorVacancia
-                    mandatos={mandatos}
-                    mandatoUuid={mandatoUuidSelecionado}
-                    onChangeMandato={onChangeMandato}
-                />
-                {dataMarcoSelecionado && mandatoSelecionado &&
-                    <MarcoInfoVacancia
-                        dataInicio={dataMarcoSelecionado}
-                        dataFim={mandatoSelecionado.data_final} />
-                }
+            <div className="d-flex bd-highlight align-items-end justify-content-between mt-2">
+                <div className="d-flex bd-highlight align-items-end">
+                    <SelectMandatoAnteriorVacancia
+                        mandatos={mandatos}
+                        mandatoUuid={mandatoUuidSelecionado}
+                        onChangeMandato={onChangeMandato}
+                    />
+                    {!mostrarLinhaDoTempo && dataMarcoSelecionado && mandatoSelecionado &&
+                        <MarcoInfoVacancia
+                            dataInicio={dataMarcoSelecionado?.inicio}
+                            dataFim={dataMarcoSelecionado?.fim} />
+                    }
+                </div>
+                <button
+                    type="button"
+                    className="btn btn-outline-success btn-sm mb-2"
+                    data-qa="alternar-linha-do-tempo"
+                    onClick={() => setMostrarLinhaDoTempo((valorAtual) => !valorAtual)}
+                >
+                    {mostrarLinhaDoTempo ? "Modo Tabela" : "Modo timeline"}
+                </button>
             </div>
-            {!isLoadingComposicao && marcosDoMaisRecenteAoMaisAntigo.length > 0 &&
+            {!mostrarLinhaDoTempo && !isLoadingComposicao && marcosDoMaisRecenteAoMaisAntigo.length > 0 &&
                 <PaginacaoVacancia
                     count={marcosDoMaisRecenteAoMaisAntigo.length}
                     firstPage={firstPage}
                     onPageChange={onPageChange}
                 />
             }
-            {composicao?.uuid &&
+            {!mostrarLinhaDoTempo && composicao?.uuid &&
                 <CargosDaComposicaoListVacancia
                     composicaoUuid={composicao.uuid}
-                    data={dataMarcoSelecionado}
+                    data={dataMarcoSelecionado?.inicio}
+                />
+            }
+            {mostrarLinhaDoTempo && composicao?.uuid && mandatoSelecionado &&
+                <LinhaDoTempoComposicaoVacancia
+                    composicaoUuid={composicao.uuid}
+                    mandato={mandatoSelecionado}
+                    dataSelecionada={dataSelecionadaTimeline}
+                    onSelecionarData={setDataSelecionadaTimeline}
                 />
             }
         </span>

@@ -550,6 +550,22 @@ body {
   margin-bottom: 5px;
 }
 
+.badge-vacancia {
+  background-color: $corTagVacancia;
+  color: $corBranco;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.badge-novo-membro {
+  background-color: $corTagVacancia;
+  color: $corBranco;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .badge-cargo-vago {
   background-color: $corTagCargoVago !important;
   color: $corBranco;

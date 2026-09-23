@@ -78,11 +78,13 @@ describe("useRegistrarSaidaCargoComposicaoVacancia", () => {
         });
 
         await waitFor(() => {
-            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(2);
+            expect(invalidateQueriesSpy).toHaveBeenCalledTimes(4);
         });
 
         expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(1, ["cargos-da-composicao-vacancia"]);
-        expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, ["status-cadastro-associacao"]);
+        expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(2, ["timeline-cargo-composicao-vacancia"]);
+        expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(3, ["status-cadastro-associacao"]);
+        expect(invalidateQueriesSpy).toHaveBeenNthCalledWith(4, ["timeline-consolidada-composicao-vacancia"]);
 
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Saída registrada com sucesso.",

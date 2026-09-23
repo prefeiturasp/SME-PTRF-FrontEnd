@@ -101,6 +101,32 @@ describe('ModalInformarSaidaCargoVacancia', () => {
         });
     });
 
+    describe('mensagem de atenção sobre a data de atribuição', () => {
+        it('não deve exibir a mensagem quando não houver data selecionada', () => {
+            setup();
+
+            expect(screen.queryByText(/atenção/i)).not.toBeInTheDocument();
+        });
+
+        it('deve exibir a mensagem com a data de atribuição calculada (D-1) após selecionar uma data', () => {
+            setup();
+
+            const dataSelecionada = '10/06/2026';
+
+            fireEvent.change(
+                screen.getByLabelText(/data da saída/i),
+                { target: {value: dataSelecionada} }
+            );
+
+            const dataAtribuicaoEsperada = moment(dataSelecionada).subtract(1, 'days').format('DD/MM/YYYY');
+
+            expect(screen.getByText(/atenção/i)).toBeInTheDocument();
+            expect(
+                screen.getByText(new RegExp(dataAtribuicaoEsperada.replace(/\//g, '\\/')))
+            ).toBeInTheDocument();
+        });
+    });
+
     describe('DatePickerField', () => {
         it('deve enviar minDate um dia depois de dataInicioNoCargo (não permite data igual à de entrada)', () => {
             setup();
