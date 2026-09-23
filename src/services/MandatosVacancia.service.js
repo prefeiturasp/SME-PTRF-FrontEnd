@@ -95,6 +95,15 @@ export const getTimelineCargoComposicaoVacancia = async (composicao_uuid, cargo_
     })).data
 }
 
+export const getTimelineConsolidadaComposicaoVacancia = async (composicao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/timeline-consolidada/`, {
+        ...authHeader(),
+        params: {
+            composicao_uuid: composicao_uuid,
+        }
+    })).data
+}
+
 export const postCargoComposicaoVacancia = async (payload) => {
     return (await api.post(`${BASE_COMPOSICAO_URL}/`, {
             ...payload
