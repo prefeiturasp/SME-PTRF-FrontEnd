@@ -20,15 +20,19 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
     const mockOnCancelarOcupante = jest.fn();
     const mockOnCancelarEntrada = jest.fn();
 
+    const createDefaultCargo = () => ({
+        cargo_vago: true,
+        ocupante_vigente: false,
+        pode_cancelar_saida: false,
+        pode_cancelar_entrada: false,
+    });
+
     const createDefaultProps = () => ({
+        cargo: createDefaultCargo(),
         mandato: { data_inicial: "2024-01-01", data_final: "2024-12-31" },
         isValid: true,
         onInformarSaida: mockOnInformarSaida,
-        ehEdicao: false,
-        ocupanteVigente: false,
-        podeCancelarSaida: false,
         onCancelarSaida: mockOnCancelarOcupante,
-        podeCancelarEntrada: false,
         onCancelarEntrada: mockOnCancelarEntrada,
     });
 
@@ -38,27 +42,28 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         RetornaSeTemPermissaoEdicaoHistoricoDeMembros.mockReturnValue(true);
     });
 
-    const renderComponent = (props = {}) =>
+    const renderComponent = ({ cargo = {}, ...props } = {}) =>
         render(
             <MemoryRouter>
                 <TopoComBotoesFormCadastroHistoricoDeMembrosVacancia
                     {...createDefaultProps()}
                     {...props}
+                    cargo={{ ...createDefaultCargo(), ...cargo }}
                 />
             </MemoryRouter>
         );
 
     describe("renderização", () => {
-        it("deve renderizar título de adicionar membro quando ehEdicao for false", () => {
-            renderComponent({ ehEdicao: false });
+        it("deve renderizar título de adicionar membro quando cargo_vago for true", () => {
+            renderComponent({ cargo: { cargo_vago: true } });
 
             expect(
                 screen.getByRole("heading", { name: /adicionar membro/i })
             ).toBeInTheDocument();
         });
 
-        it("deve renderizar título de editar membro quando ehEdicao for true", () => {
-            renderComponent({ ehEdicao: true });
+        it("deve renderizar título de editar membro quando cargo_vago for false", () => {
+            renderComponent({ cargo: { cargo_vago: false } });
 
             expect(
                 screen.getByRole("heading", { name: /editar membro/i })
@@ -89,16 +94,16 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
     });
 
     describe("botão informar saída", () => {
-        it("deve exibir botão informar saída quando ehEdicao for true", () => {
-            renderComponent({ ehEdicao: true, ocupanteVigente: true });
+        it("deve exibir botão informar saída quando cargo_vago for false", () => {
+            renderComponent({ cargo: { cargo_vago: false, ocupante_vigente: true } });
 
             expect(
                 screen.getByRole("button", { name: /informar saída/i })
             ).toBeInTheDocument();
         });
 
-        it("não deve exibir botão informar saída quando ehEdicao for false", () => {
-            renderComponent({ ehEdicao: false });
+        it("não deve exibir botão informar saída quando cargo_vago for true", () => {
+            renderComponent({ cargo: { cargo_vago: true } });
 
             expect(
                 screen.queryByRole("button", { name: /informar saída/i })
@@ -106,7 +111,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         });
 
         it("deve desabilitar informar saída quando o ocupante não for vigente", () => {
-            renderComponent({ ehEdicao: true, ocupanteVigente: false });
+            renderComponent({ cargo: { cargo_vago: false, ocupante_vigente: false } });
 
             const botao = screen.getByRole("button", { name: /informar saída/i });
             expect(botao).toBeDisabled();
@@ -114,7 +119,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         });
 
         it("deve habilitar informar saída quando ocupante for vigente e usuário tiver permissão", () => {
-            renderComponent({ ehEdicao: true, ocupanteVigente: true });
+            renderComponent({ cargo: { cargo_vago: false, ocupante_vigente: true } });
 
             const botao = screen.getByRole("button", { name: /informar saída/i });
             expect(botao).toBeEnabled();
@@ -122,7 +127,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         });
 
         it("deve executar callback ao clicar em informar saída", () => {
-            renderComponent({ ehEdicao: true, ocupanteVigente: true });
+            renderComponent({ cargo: { cargo_vago: false, ocupante_vigente: true } });
 
             fireEvent.click(screen.getByRole("button", { name: /informar saída/i }));
 
@@ -132,7 +137,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         it("deve desabilitar informar saída quando usuário não possuir permissão", () => {
             RetornaSeTemPermissaoEdicaoHistoricoDeMembros.mockReturnValue(false);
 
-            renderComponent({ ehEdicao: true, ocupanteVigente: true });
+            renderComponent({ cargo: { cargo_vago: false, ocupante_vigente: true } });
 
             expect(
                 screen.getByRole("button", { name: /informar saída/i })
@@ -141,16 +146,16 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
     });
 
     describe("botão cancelar entrada", () => {
-        it("deve exibir botão cancelar entrada quando podeCancelarEntrada for true", () => {
-            renderComponent({ podeCancelarEntrada: true });
+        it("deve exibir botão cancelar entrada quando pode_cancelar_entrada for true", () => {
+            renderComponent({ cargo: { pode_cancelar_entrada: true } });
 
             expect(
                 screen.getByRole("button", { name: /cancelar entrada/i })
             ).toBeInTheDocument();
         });
 
-        it("não deve exibir botão cancelar entrada quando podeCancelarEntrada for false", () => {
-            renderComponent({ podeCancelarEntrada: false });
+        it("não deve exibir botão cancelar entrada quando pode_cancelar_entrada for false", () => {
+            renderComponent({ cargo: { pode_cancelar_entrada: false } });
 
             expect(
                 screen.queryByRole("button", { name: /cancelar entrada/i })
@@ -158,7 +163,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         });
 
         it("deve executar callback ao clicar em cancelar entrada", () => {
-            renderComponent({ podeCancelarEntrada: true });
+            renderComponent({ cargo: { pode_cancelar_entrada: true } });
 
             fireEvent.click(screen.getByRole("button", { name: /cancelar entrada/i }));
 
@@ -168,7 +173,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         it("deve desabilitar cancelar entrada quando usuário não possuir permissão", () => {
             RetornaSeTemPermissaoEdicaoHistoricoDeMembros.mockReturnValue(false);
 
-            renderComponent({ podeCancelarEntrada: true });
+            renderComponent({ cargo: { pode_cancelar_entrada: true } });
 
             expect(
                 screen.getByRole("button", { name: /cancelar entrada/i })
@@ -177,16 +182,16 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
     });
 
     describe("botão cancelar saída (cancelar ocupante)", () => {
-        it("deve exibir botão cancelar saída quando podeCancelarSaida for true", () => {
-            renderComponent({ podeCancelarSaida: true });
+        it("deve exibir botão cancelar saída quando pode_cancelar_saida for true", () => {
+            renderComponent({ cargo: { pode_cancelar_saida: true } });
 
             expect(
                 screen.getByRole("button", { name: /cancelar saída/i })
             ).toBeInTheDocument();
         });
 
-        it("não deve exibir botão cancelar saída quando podeCancelarSaida for false", () => {
-            renderComponent({ podeCancelarSaida: false });
+        it("não deve exibir botão cancelar saída quando pode_cancelar_saida for false", () => {
+            renderComponent({ cargo: { pode_cancelar_saida: false } });
 
             expect(
                 screen.queryByRole("button", { name: /cancelar saída/i })
@@ -194,7 +199,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         });
 
         it("deve executar callback ao clicar em cancelar saída", () => {
-            renderComponent({ podeCancelarSaida: true });
+            renderComponent({ cargo: { pode_cancelar_saida: true } });
 
             fireEvent.click(screen.getByRole("button", { name: /cancelar saída/i }));
 
@@ -204,7 +209,7 @@ describe("TopoComBotoesFormCadastroHistoricoDeMembrosVacancia", () => {
         it("deve desabilitar cancelar saída quando usuário não possuir permissão", () => {
             RetornaSeTemPermissaoEdicaoHistoricoDeMembros.mockReturnValue(false);
 
-            renderComponent({ podeCancelarSaida: true });
+            renderComponent({ cargo: { pode_cancelar_saida: true } });
 
             expect(
                 screen.getByRole("button", { name: /cancelar saída/i })

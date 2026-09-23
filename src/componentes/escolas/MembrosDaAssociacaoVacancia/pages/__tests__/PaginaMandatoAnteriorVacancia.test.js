@@ -115,7 +115,10 @@ describe("PaginaMandatoAnteriorVacancia", () => {
         mockUseGetMandatosAnterioresVacancia.mockReturnValue({ isLoading: false, data: [mandatoAnterior1] });
         mockUseGetComposicaoVigenteVacancia.mockReturnValue({ isLoading: false, data: { uuid: "composicao-1" } });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2024-01-01", "2024-06-15"],
+            data: [
+                { inicio: "2024-01-01", fim: "2024-06-14" },
+                { inicio: "2024-06-15", fim: "2024-12-31" },
+            ],
         });
 
         render(<PaginaMandatoAnteriorVacancia />);
@@ -130,7 +133,10 @@ describe("PaginaMandatoAnteriorVacancia", () => {
         mockUseGetMandatosAnterioresVacancia.mockReturnValue({ isLoading: false, data: [mandatoAnterior1] });
         mockUseGetComposicaoVigenteVacancia.mockReturnValue({ isLoading: false, data: { uuid: "composicao-1" } });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2024-01-01", "2024-06-15"],
+            data: [
+                { inicio: "2024-01-01", fim: "2024-06-14" },
+                { inicio: "2024-06-15", fim: "2024-12-31" },
+            ],
         });
 
         render(<PaginaMandatoAnteriorVacancia />);
@@ -139,7 +145,7 @@ describe("PaginaMandatoAnteriorVacancia", () => {
             mockOnPageChangeCapturado.current(2, 1);
         });
 
-        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2024-01-01 até 2024-12-31");
+        expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2024-01-01 até 2024-06-14");
         expect(screen.getByTestId("cargos-da-composicao-vacancia")).toHaveTextContent("data:2024-01-01");
     });
 
@@ -149,7 +155,10 @@ describe("PaginaMandatoAnteriorVacancia", () => {
         });
         mockUseGetComposicaoVigenteVacancia.mockReturnValue({ isLoading: false, data: { uuid: "composicao-1" } });
         mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
-            data: ["2024-01-01", "2024-06-15"],
+            data: [
+                { inicio: "2024-01-01", fim: "2024-06-14" },
+                { inicio: "2024-06-15", fim: "2024-12-31" },
+            ],
         });
 
         render(<PaginaMandatoAnteriorVacancia />);

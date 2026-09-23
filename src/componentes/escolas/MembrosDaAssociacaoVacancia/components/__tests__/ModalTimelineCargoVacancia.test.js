@@ -53,12 +53,11 @@ describe("ModalTimelineCargoVacancia", () => {
             data: [
                 {
                     uuid: "registro-1",
-                    vago: false,
+                    cargo_vago: false,
                     ocupante_do_cargo: { nome: "Maria Silva" },
                     data_inicio_no_cargo: "2026-01-01",
                     data_fim_no_cargo: "2026-06-30",
-                    substituto: false,
-                    substituido: false,
+                    tem_saida: false,
                 },
             ],
         });
@@ -83,12 +82,11 @@ describe("ModalTimelineCargoVacancia", () => {
             data: [
                 {
                     uuid: "registro-2",
-                    vago: true,
+                    cargo_vago: true,
                     ocupante_do_cargo: null,
                     data_inicio_no_cargo: "2026-07-01",
                     data_fim_no_cargo: "2026-12-31",
-                    substituto: false,
-                    substituido: false,
+                    tem_saida: false,
                 },
             ],
         });
@@ -106,18 +104,17 @@ describe("ModalTimelineCargoVacancia", () => {
         expect(screen.getAllByText("Cargo Vago")).toHaveLength(2);
     });
 
-    it("deve exibir a badge de substituição direta quando o registro for substituto", () => {
+    it("deve destacar em azul o registro que já tem saída registrada", () => {
         useGetTimelineCargoComposicaoVacancia.mockReturnValue({
             isLoading: false,
             data: [
                 {
                     uuid: "registro-3",
-                    vago: false,
-                    ocupante_do_cargo: { nome: "Luis" },
-                    data_inicio_no_cargo: "2026-02-01",
-                    data_fim_no_cargo: "2026-12-31",
-                    substituto: true,
-                    substituido: false,
+                    cargo_vago: false,
+                    ocupante_do_cargo: { nome: "Pedro" },
+                    data_inicio_no_cargo: "2026-01-01",
+                    data_fim_no_cargo: "2026-01-31",
+                    tem_saida: true,
                 },
             ],
         });
@@ -131,21 +128,20 @@ describe("ModalTimelineCargoVacancia", () => {
             />
         );
 
-        expect(screen.getByText("Substituição direta")).toBeInTheDocument();
+        expect(document.querySelector(".ant-timeline-item-head-blue")).toBeInTheDocument();
     });
 
-    it("deve exibir a badge de substituído quando o registro tiver sido substituído", () => {
+    it("deve destacar em verde o registro ocupado que ainda não teve saída registrada", () => {
         useGetTimelineCargoComposicaoVacancia.mockReturnValue({
             isLoading: false,
             data: [
                 {
                     uuid: "registro-4",
-                    vago: false,
+                    cargo_vago: false,
                     ocupante_do_cargo: { nome: "Pedro" },
                     data_inicio_no_cargo: "2026-01-01",
-                    data_fim_no_cargo: "2026-01-31",
-                    substituto: false,
-                    substituido: true,
+                    data_fim_no_cargo: "2026-12-31",
+                    tem_saida: false,
                 },
             ],
         });
@@ -159,7 +155,7 @@ describe("ModalTimelineCargoVacancia", () => {
             />
         );
 
-        expect(screen.getByText("Substituído")).toBeInTheDocument();
+        expect(document.querySelector(".ant-timeline-item-head-green")).toBeInTheDocument();
     });
 
     it("deve exibir o cargo no título quando cargoLabel for informado", () => {
@@ -192,15 +188,15 @@ describe("ModalTimelineCargoVacancia", () => {
 
         expect(screen.getByText("Cargo Ocupado")).toBeInTheDocument();
         expect(screen.getByText("Cargo Vago")).toBeInTheDocument();
-        expect(screen.getByText("Cargo Substituído")).toBeInTheDocument();
+        expect(screen.getByText("Cargo com Saída")).toBeInTheDocument();
     });
 
     it("deve exibir os registros do mais antigo para o mais recente por padrão", () => {
         useGetTimelineCargoComposicaoVacancia.mockReturnValue({
             isLoading: false,
             data: [
-                { uuid: "registro-1", vago: false, ocupante_do_cargo: { nome: "Pedro" }, data_inicio_no_cargo: "2026-01-01", data_fim_no_cargo: "2026-01-31", substituto: false, substituido: false },
-                { uuid: "registro-2", vago: false, ocupante_do_cargo: { nome: "Luis" }, data_inicio_no_cargo: "2026-02-01", data_fim_no_cargo: "2026-12-31", substituto: false, substituido: false },
+                { uuid: "registro-1", cargo_vago: false, ocupante_do_cargo: { nome: "Pedro" }, data_inicio_no_cargo: "2026-01-01", data_fim_no_cargo: "2026-01-31", tem_saida: true },
+                { uuid: "registro-2", cargo_vago: false, ocupante_do_cargo: { nome: "Luis" }, data_inicio_no_cargo: "2026-02-01", data_fim_no_cargo: "2026-12-31", tem_saida: false },
             ],
         });
 
@@ -223,8 +219,8 @@ describe("ModalTimelineCargoVacancia", () => {
         useGetTimelineCargoComposicaoVacancia.mockReturnValue({
             isLoading: false,
             data: [
-                { uuid: "registro-1", vago: false, ocupante_do_cargo: { nome: "Pedro" }, data_inicio_no_cargo: "2026-01-01", data_fim_no_cargo: "2026-01-31", substituto: false, substituido: false },
-                { uuid: "registro-2", vago: false, ocupante_do_cargo: { nome: "Luis" }, data_inicio_no_cargo: "2026-02-01", data_fim_no_cargo: "2026-12-31", substituto: false, substituido: false },
+                { uuid: "registro-1", cargo_vago: false, ocupante_do_cargo: { nome: "Pedro" }, data_inicio_no_cargo: "2026-01-01", data_fim_no_cargo: "2026-01-31", tem_saida: true },
+                { uuid: "registro-2", cargo_vago: false, ocupante_do_cargo: { nome: "Luis" }, data_inicio_no_cargo: "2026-02-01", data_fim_no_cargo: "2026-12-31", tem_saida: false },
             ],
         });
 
