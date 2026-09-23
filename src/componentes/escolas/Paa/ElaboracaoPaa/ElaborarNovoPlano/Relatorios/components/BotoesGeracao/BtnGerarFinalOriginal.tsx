@@ -9,10 +9,10 @@ import { IGerarDocumentoProps } from "./types";
 import { BotaoGerarComponent } from "./BotaoGerarComponent";
 
 const ModalConfirmaFinal = ModalConfirmaGeracaoFinal as ComponentType<{
-    open: boolean; onClose: () => void, onConfirm: () => void
+    open: boolean; onClose: () => void, onConfirm: () => void, atividadesPrevistasPreenchidas: boolean
 }>;
 const ModalInfoPendenciasFinal = ModalInfoPendenciasGeracaoFinal as ComponentType<{
-    open: boolean; onClose: () => void, pendencias: string
+    open: boolean; onClose: () => void, pendencias: string, atividadesPrevistasPreenchidas: boolean
 }>;
 
 export const BtnGerarFinalOriginal = ({ paa }: IGerarDocumentoProps) => {
@@ -89,7 +89,7 @@ export const BtnGerarFinalOriginal = ({ paa }: IGerarDocumentoProps) => {
             mutateGerar.isPending,
             gerandoDocFinal,
         ];
-    
+
         return validacoes.includes(true);
     }, [
         statusDocumento?.status,
@@ -121,8 +121,9 @@ export const BtnGerarFinalOriginal = ({ paa }: IGerarDocumentoProps) => {
                     setOpenModalConfirmarGeracao(false);
                 }}
                 onConfirm={() => handleGerar(1)}
+                atividadesPrevistasPreenchidas={paa.atividades_previstas_preenchidas}
             />
-    
+
             <ModalInfoPendenciasFinal
                 open={openModalValidacoes}
                 onClose={() => {
@@ -130,6 +131,7 @@ export const BtnGerarFinalOriginal = ({ paa }: IGerarDocumentoProps) => {
                     setOpenModalValidacoes(false)
                 }}
                 pendencias={pendenciasGeracao}
+                atividadesPrevistasPreenchidas={paa.atividades_previstas_preenchidas}
             />
         </span>
     );
