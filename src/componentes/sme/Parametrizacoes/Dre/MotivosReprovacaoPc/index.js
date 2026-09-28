@@ -11,7 +11,7 @@ export const ParametrizacoesMotivosReprovacaoPc = () => {
     return (
         <MotivosReprovacaoPcProvider>
             <PaginasContainer>
-                <h1 className="titulo-itens-painel mt-5">Motivos de reprovação de PC</h1>
+                <h1 className="titulo-itens-painel mt-5">Motivos de rejeição de PC</h1>
 
                 <div className="page-content-inner">
                     <AbasPorRecurso />

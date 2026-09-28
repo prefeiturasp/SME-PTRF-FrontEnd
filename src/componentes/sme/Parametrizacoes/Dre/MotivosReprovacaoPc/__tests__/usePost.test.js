@@ -49,8 +49,8 @@ describe("usePostMotivoReprovacaoPc", () => {
         expect(postMotivoReprovacaoPc).toHaveBeenCalledWith({ nome: "Novo Motivo" });
         expect(handleCloseModalForm).toHaveBeenCalled();
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            "Motivo de reprovação adicionado",
-            "O motivo de reprovação de PC foi adicionado com sucesso."
+            "Motivo de rejeição adicionado",
+            "O motivo de rejeição de PC foi adicionado com sucesso."
         );
     });
 
@@ -69,7 +69,7 @@ describe("usePostMotivoReprovacaoPc", () => {
 
         expect(postMotivoReprovacaoPc).toHaveBeenCalledWith({ nome: "Motivo Existente" });
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            "Erro ao adicionar o motivo de reprovação de PC",
+            "Erro ao adicionar o motivo de rejeição de PC",
             "Já existe um motivo com esse nome"
         );
     });
@@ -89,8 +89,8 @@ describe("usePostMotivoReprovacaoPc", () => {
     
         expect(postMotivoReprovacaoPc).toHaveBeenCalledWith({ nome: "Novo Motivo" });
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            "Erro ao adicionar o motivo de reprovação de PC",
-            "Não foi possível adicionar o motivo de PC reprovada"
+            "Erro ao adicionar o motivo de rejeição de PC",
+            "Não foi possível adicionar o motivo de rejeição de PC"
         );
     });
 });

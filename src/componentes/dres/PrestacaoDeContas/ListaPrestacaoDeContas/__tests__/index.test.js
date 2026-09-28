@@ -379,7 +379,7 @@ describe('ListaPrestacaoDeContas', () => {
             ['EM_ANALISE', 'Em análise'],
             ['APROVADA', 'Aprovada'],
             ['APROVADA_RESSALVA', 'Aprovada com ressalva'],
-            ['REPROVADA', 'Reprovada'],
+            ['REPROVADA', 'Rejeitada'],
             ['TODOS', 'Todos'],
             ['STATUS_INEXISTENTE', 'SEM STATUS'],
         ])('statusTemplate mapeia o status %s para "%s"', async (status, textoEsperado) => {

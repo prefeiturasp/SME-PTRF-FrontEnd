@@ -72,7 +72,7 @@ export const ResumoPorUnidadeEducacional = ({unidadesEducacionais, loadingDataTa
         } else if (rowData === 'APROVADA_RESSALVA') {
             return 'Aprovada com ressalva'
         } else if (rowData === 'REPROVADA') {
-            return 'Reprovada'
+            return 'Rejeitada'
         } else if (rowData === 'NAO_APRESENTADA') {
             return 'Não apresentada'
         } else if (rowData === 'DEVOLVIDA_RETORNADA') {

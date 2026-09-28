@@ -14,13 +14,13 @@ export const TopoComBotoes = () => {
         <div className="d-flex justify-content-between align-items-end mb-3">
             <div>
                 <h5 className="font-weight-bold">{selectedRecurso?.nome}</h5>
-                <p className="m-0">Confira abaixo os motivos de reprovação do {selectedRecurso?.nome_exibicao}.</p>
+                <p className="m-0">Confira abaixo os motivos de rejeição do {selectedRecurso?.nome_exibicao}.</p>
             </div>
 
             <IconButton
                 icon="faPlus"
                 iconProps={{ style: {fontSize: '15px', marginRight: "5", color:"#fff"} }}
-                label="Adicionar motivo de reprovação"
+                label="Adicionar motivo de rejeição"
                 onClick={() => handleOpenCreateModal(selectedRecurso)}
                 variant="success"
                 disabled={!TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES}

@@ -95,7 +95,7 @@ export const mockCategorias = [
     },
     {
         "id": "REPROVACAO_PC",
-        "nome": "Reprovação de PC"
+        "nome": "Rejeição de PC"
     },
     {
         "id": "ERRO_AO_CONCLUIR_PC",

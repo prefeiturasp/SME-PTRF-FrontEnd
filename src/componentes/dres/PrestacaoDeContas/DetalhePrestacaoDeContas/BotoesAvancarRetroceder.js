@@ -60,7 +60,7 @@ export const BotoesAvancarRetroceder = ({
                       }
                       className="btn btn-outline-success ml-2"
                     >
-                      Concluir como reprovada
+                      Concluir como rejeitada
                     </button>
                   </div>
                 )}
