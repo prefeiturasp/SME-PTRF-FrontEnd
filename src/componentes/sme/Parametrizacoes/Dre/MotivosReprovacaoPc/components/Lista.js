@@ -64,7 +64,7 @@ export const Lista = () => {
 
   const handleExcluirMotivo = async (uuid) => {
     if (!uuid) {
-        toastCustom.ToastCustomError('Erro ao apagar o motivo de reprovação de PC', "Informe os campos corretamente e tente novamente.")
+        toastCustom.ToastCustomError('Erro ao apagar o motivo de rejeição de PC', "Informe os campos corretamente e tente novamente.")
     }
     
     mutationDelete.mutate(uuid)
@@ -85,7 +85,7 @@ export const Lista = () => {
         {results && results.length > 0 ? (
             <>
                 <TotalRegistros
-                    titulo="Motivo(s) de reprovação de PC"
+                    titulo="Motivo(s) de rejeição de PC"
                     total_registros={total}
                 />
                 <DataTable
@@ -95,7 +95,7 @@ export const Lista = () => {
                 >
                     <Column
                         field="motivo"
-                        header="Motivos de reprovação de PC"
+                        header="Motivos de rejeição de PC"
                     />
                     <Column
                         field="acao"
@@ -132,7 +132,7 @@ export const Lista = () => {
             onCancel={() => handleCloseModalConfirmacaoExclusao()}
             cancelText="Cancelar"
             titulo="Excluir Motivo"
-            bodyText="Deseja realmente excluir este motivo de reprovação de PC?"
+            bodyText="Deseja realmente excluir este motivo de rejeição de PC?"
         />
     </>
   )

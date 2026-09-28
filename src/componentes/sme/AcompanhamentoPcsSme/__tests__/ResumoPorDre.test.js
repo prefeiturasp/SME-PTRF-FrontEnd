@@ -59,7 +59,7 @@ describe('ResumoPorDre', () => {
         expect(screen.getAllByText('Aguardando análise').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Aprovadas').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Aprovadas com ressalvas').length).toBeGreaterThan(0);
-        expect(screen.getAllByText('Reprovadas').length).toBeGreaterThan(0);
+        expect(screen.getAllByText('Rejeitadas').length).toBeGreaterThan(0);
         expect(screen.getAllByText('Ações').length).toBeGreaterThan(0);
 
         // Valores

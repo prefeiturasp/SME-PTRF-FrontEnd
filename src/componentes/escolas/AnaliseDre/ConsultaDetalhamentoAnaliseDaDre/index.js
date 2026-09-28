@@ -131,7 +131,7 @@ const ConsultaDetalhamentoAnaliseDaDre = () => {
                 <span className={`texto-legenda-cor-APROVADA_RESSALVA`}><strong>aprovada com ressalva</strong></span>)
 
         } else if (status === 'REPROVADA') {
-            return (<span className={`texto-legenda-cor-REPROVADA`}><strong>reprovada</strong></span>)
+            return (<span className={`texto-legenda-cor-REPROVADA`}><strong>rejeitada</strong></span>)
         }
     };
 
