@@ -254,6 +254,11 @@ export const getAcoesPTRFPrioridades = async (paa_uuid) => {
   ).data;
 };
 
+export const getResumoAcoesPddePorPrograma = async () => {
+  const url = `/api/acoes-pdde/resumo-por-programa/?paa_uuid=${localStorage.getItem("PAA")}`;
+  return (await api.get(url, authHeader())).data;
+};
+
 export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
   return (
     await api.get(
