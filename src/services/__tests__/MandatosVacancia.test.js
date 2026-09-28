@@ -9,6 +9,7 @@ import {
     getMandatoMaisRecenteVacancia,
     getComposicaoVigenteVacancia,
     getCargosComposicaoVacanciaPorData,
+    getCargosComposicaoVacanciaPorDataEAssociacao,
     getCargosDaComposicaoVacancia,
     getTimelineCargoComposicaoVacancia,
     postCargoComposicaoVacancia,
@@ -167,6 +168,20 @@ describe('MandatosVacancia.service', () => {
         expect(api.get).toHaveBeenCalledWith(
             '/api/cargos-composicao-vacancia/composicao-por-data/',
             { ...authHeader(), params: { composicao_uuid, data } }
+        );
+        expect(result).toEqual(mockData);
+    });
+
+    test('getCargosComposicaoVacanciaPorDataEAssociacao deve chamar a API corretamente', async () => {
+        api.get.mockResolvedValue({ data: mockData });
+        const data = '2026-06-01';
+        const associacao_uuid = 'associacao-1';
+
+        const result = await getCargosComposicaoVacanciaPorDataEAssociacao(data, associacao_uuid);
+
+        expect(api.get).toHaveBeenCalledWith(
+            '/api/cargos-composicao-vacancia/composicao-por-data/',
+            { ...authHeader(), params: { data, associacao_uuid } }
         );
         expect(result).toEqual(mockData);
     });

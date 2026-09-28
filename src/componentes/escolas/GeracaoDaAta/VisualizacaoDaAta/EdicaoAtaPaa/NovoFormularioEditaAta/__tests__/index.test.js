@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { NovoFormularioEditaAta } from "../index";
 
 import {
@@ -8,6 +8,10 @@ import {
 } from "../../../../../../../services/escolas/PresentesAtaPaa.service";
 
 import { getCargosComposicaoData } from "../../../../../../../services/Mandatos.service";
+import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../../services/MandatosVacancia.service";
+
+import { visoesService } from "../../../../../../../services/visoes.service";
+import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
 
 import * as utils from "../../utils";
 
@@ -25,6 +29,10 @@ jest.mock("../../../../../../../services/Mandatos.service", () => ({
     getCargosComposicaoData: jest.fn(),
 }));
 
+jest.mock("../../../../../../../services/MandatosVacancia.service", () => ({
+    getCargosComposicaoVacanciaPorDataEAssociacao: jest.fn(),
+}));
+
 jest.mock("../../utils", () => ({
     ...jest.requireActual("../../utils"),
     adicionaProfessorGremioNaLista: jest.fn(),
@@ -39,6 +47,7 @@ jest.mock("../../utils", () => ({
 jest.mock("../../../../../../../services/visoes.service", () => ({
     visoesService: {
         getPermissoes: jest.fn(() => true),
+        featureFlagAtiva: jest.fn(() => false),
     },
 }));
 
@@ -96,11 +105,13 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         jest.setSystemTime(dataFixaAtual);
         jest.clearAllMocks();
 
-        localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
+        localStorage.setItem(ASSOCIACAO_UUID, "assoc-1");
 
         getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([]);
         getListaPresentesPadraoPaa.mockResolvedValue([]);
         getCargosComposicaoData.mockResolvedValue([]);
+        getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({});
+        visoesService.featureFlagAtiva.mockReturnValue(false);
 
         utils.listaPossuiParticipantesAssociacao.mockReturnValue(true);
 
@@ -109,6 +120,14 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         );
 
         utils.extraiProfessorDefaults.mockReturnValue(null);
+
+        utils.marcaParticipantesComoMembrosDaAssociacao.mockImplementation(
+            (lista) => lista,
+        );
+
+        utils.formatarListaCargoComposicaoParaFormatoDaListaParticipantes.mockImplementation(
+            (lista) => lista,
+        );
     });
 
     afterEach(() => {
@@ -242,5 +261,165 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
 
         expect(propsDoCampoData).toBeDefined();
         expect(propsDoCampoData.maxDate).toEqual(dataFixaAtual);
+    });
+
+    describe("composição por data com vacância de cargos", () => {
+        const obtemPropsDoCampoData = () =>
+            mockDatePickerField.mock.calls
+                .map(([props]) => props)
+                .reverse()
+                .find(
+                    (props) =>
+                        props.name === "stateFormEditarAta.data_reuniao",
+                );
+
+        const alteraDataDaReuniao = async (novaData) => {
+            await waitFor(() => {
+                expect(obtemPropsDoCampoData()).toBeDefined();
+            });
+
+            await act(async () => {
+                obtemPropsDoCampoData().onChange(
+                    "stateFormEditarAta.data_reuniao",
+                    novaData,
+                );
+            });
+        };
+
+        it("deve buscar a composição com vacância quando a flag historico-de-membros-v2 estiver ativa", async () => {
+            visoesService.featureFlagAtiva.mockReturnValue(true);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 25));
+
+            await waitFor(() => {
+                expect(getCargosComposicaoVacanciaPorDataEAssociacao).toHaveBeenCalledWith(
+                    "2026-09-25",
+                    "assoc-1",
+                );
+            });
+            expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith(
+                "historico-de-membros-v2",
+            );
+            expect(getCargosComposicaoData).not.toHaveBeenCalled();
+        });
+
+        it("deve buscar a composição padrão quando a flag historico-de-membros-v2 estiver inativa", async () => {
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 25));
+
+            await waitFor(() => {
+                expect(getCargosComposicaoData).toHaveBeenCalledWith(
+                    "2026-09-25",
+                    "assoc-1",
+                );
+            });
+            expect(getCargosComposicaoVacanciaPorDataEAssociacao).not.toHaveBeenCalled();
+        });
+
+        it("deve exibir cargo vago como ausente, sem nome e com a data de vacância formatada", async () => {
+            visoesService.featureFlagAtiva.mockReturnValue(true);
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
+                vice_presidente: {
+                    id: 2,
+                    cargo_associacao_label: "Vice-presidente",
+                    data_inicio_no_cargo: "2026-09-25",
+                    vago: true,
+                    ocupante_do_cargo: null,
+                },
+            });
+
+            const { container } = render(
+                <NovoFormularioEditaAta {...propsBase} />,
+            );
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            expect(
+                await screen.findByText("Cargo vago desde 25/09/2026"),
+            ).toBeInTheDocument();
+
+            const inputNome = container.querySelector(
+                'input[name="listaParticipantes[0].nome"]',
+            );
+            expect(inputNome.value).toBe("");
+
+            const switchPresenca = screen
+                .getByText("Ausente")
+                .closest('[role="switch"]');
+            expect(switchPresenca).toHaveAttribute("aria-checked", "false");
+        });
+
+        it("deve limpar o nome anterior quando a nova composição vier com cargo vago", async () => {
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    identificacao: "1234567",
+                    nome: "Nome Anterior",
+                    membro: true,
+                    presente: true,
+                },
+            ]);
+
+            const { container } = render(
+                <NovoFormularioEditaAta {...propsBase} />,
+            );
+
+            await waitFor(() => {
+                expect(
+                    container.querySelector(
+                        'input[name="listaParticipantes[0].nome"]',
+                    ).value,
+                ).toBe("Nome Anterior");
+            });
+
+            visoesService.featureFlagAtiva.mockReturnValue(true);
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
+                vice_presidente: {
+                    id: 2,
+                    cargo_associacao_label: "Vice-presidente",
+                    data_inicio_no_cargo: "2026-09-25",
+                    vago: true,
+                    ocupante_do_cargo: null,
+                },
+            });
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(
+                    container.querySelector(
+                        'input[name="listaParticipantes[0].nome"]',
+                    ).value,
+                ).toBe("");
+            });
+            expect(
+                container.querySelector(
+                    'input[name="listaParticipantes[0].identificacao"]',
+                ).value,
+            ).toBe("");
+        });
+
+        it("deve manter a data de vacância quando ela já vier formatada", async () => {
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    membro: true,
+                    presente: false,
+                    vago: true,
+                    data_inicio_no_cargo: "25/09/2026",
+                },
+            ]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            expect(
+                await screen.findByText("Cargo vago desde 25/09/2026"),
+            ).toBeInTheDocument();
+        });
     });
 });
