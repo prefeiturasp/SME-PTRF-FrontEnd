@@ -55,7 +55,7 @@ describe('ParametrizacoesMotivosReprovacaoPc', () => {
 
     test('Deve renderizar o título corretamente', () => {
         renderComponent();
-        expect(screen.getByText('Motivos de reprovação de PC')).toBeInTheDocument();
+        expect(screen.getByText('Motivos de rejeição de PC')).toBeInTheDocument();
     });
 
     test('Deve renderizar os componentes filhos corretamente', () => {
@@ -71,7 +71,7 @@ describe('ParametrizacoesMotivosReprovacaoPc', () => {
     test('Deve renderizar a estrutura correta da página', () => {
         renderComponent();
 
-        const pageContent = screen.getByText('Motivos de reprovação de PC');
+        const pageContent = screen.getByText('Motivos de rejeição de PC');
         const pageInnerContent = screen.getByTestId('topo-com-botoes');
         const pageContainer = screen.getByTestId('paginas-container')
 

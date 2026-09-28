@@ -28,7 +28,7 @@ export const TrilhaDeStatusReprovadaNaoApresentacao = () => {
                                         icon={faCheck}
                                     />
                                 </span>
-                                <p data-qa="status-trilha-nao-recebido" className='mt-2'><strong>Reprovada</strong></p>
+                                <p data-qa="status-trilha-nao-recebido" className='mt-2'><strong>Rejeitada</strong></p>
                             </div>
                         </div>
                     </div>

@@ -52,8 +52,8 @@ describe("useDeleteMotivoReprovacaoPc", () => {
         expect(deleteMotivoReprovacaoPc).toHaveBeenCalledWith("uuid-fake");
         expect(handleCloseModalForm).toHaveBeenCalled();
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            'Motivo de reprovação de PC excluído',
-            'O motivo de reprovação de PC foi excluído com sucesso.'
+            'Motivo de rejeição de PC excluído',
+            'O motivo de rejeição de PC foi excluído com sucesso.'
         );
     });
 
@@ -69,7 +69,7 @@ describe("useDeleteMotivoReprovacaoPc", () => {
 
         expect(deleteMotivoReprovacaoPc).toHaveBeenCalledWith("uuid-fake");
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            'Erro ao apagar o motivo de reprovação de PC',
+            'Erro ao apagar o motivo de rejeição de PC',
             'Erro ao deletar');
     });
 });

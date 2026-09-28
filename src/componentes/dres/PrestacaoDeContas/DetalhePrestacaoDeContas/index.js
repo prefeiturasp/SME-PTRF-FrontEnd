@@ -1035,7 +1035,7 @@ export const DetalhePrestacaoDeContas = () =>{
             return "Aprovada com ressalvas"
         }
         else if(status === "REPROVADA"){
-            return "Reprovada"
+            return "Rejeitada"
         }
 
         return ""
