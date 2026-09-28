@@ -7,6 +7,13 @@ import { useRecursoSelecionadoContext } from "../../../../../context/RecursoSele
 import { useAbasPorRecursoContext } from "./hooks/useAbasPorRecursoContext";
 import { useNavigate, useLocation } from "react-router-dom";
 
+// Rotas vinculadas ao contexto do recurso selecionado.
+// A navegação para essas telas deve preservar o selectedRecurso.
+const ROTAS_RELACIONADAS_AO_RECURSO = [
+  "cadastro-tipo-de-credito",
+  "parametro-tipos-receita",
+];
+
 export const AbasPorRecurso = ({
     extra_abas = [], 
     extra_handle_click_tab_recurso = () => {},
@@ -135,6 +142,22 @@ export const AbasPorRecurso = ({
         });
     };
 
+    const isRotaRelacionadaAoRecurso = (path) => {
+        const normalizedPath = path.toLowerCase();
+
+        const isExtraTab = extra_abas.some(
+            (tab) =>
+            tab.url &&
+            normalizedPath.includes(tab.url.toLowerCase())
+        );
+
+        const isRecursoRoute = ROTAS_RELACIONADAS_AO_RECURSO.some(
+            (route) => normalizedPath.includes(route.toLowerCase())
+        );
+
+        return isExtraTab || isRecursoRoute;
+    };
+
     // Limpeza de estado ao sair da tela (ex: Dashboard/Menu) - preserva estado se voltando para uma aba de recurso
     useEffect(() => {
         const currentPath = location.pathname;
@@ -143,20 +166,19 @@ export const AbasPorRecurso = ({
         return () => {
             const nextPath = window.location.pathname;
 
-            if (nextPath !== currentPath) {
-                const indoParaAbaExtra = extra_abas.some(tab => 
-                    tab.url && nextPath.toLowerCase().includes(tab.url.toLowerCase())
-                );
+                if (nextPath !== currentPath) {                    
+                    const indoParaTelaRelacionadaAoRecurso = isRotaRelacionadaAoRecurso(nextPath);
 
-                // Só limpa se formos para OUTRA tela (ex: painel-parametrizacoes)
-                // Se estávamos em uma aba extra e voltamos para uma aba de recurso, PRESERVA o recurso clicado
-                if (!estavaEmAbaExtra && !indoParaAbaExtra) {
-                    setSelectedRecurso(null);
-                    setClickBtnEscolheOpcao({});
+                    // Só limpa se formos para OUTRA tela (ex: painel-parametrizacoes)
+                    // Se estávamos em uma aba extra e voltamos para uma aba de recurso, PRESERVA o recurso clicado
+                    if (!estavaEmAbaExtra && !indoParaTelaRelacionadaAoRecurso) {
+                        setSelectedRecurso(null);
+                        setClickBtnEscolheOpcao({});
+                    }
                 }
-            }
+            
         };
-    }, [location.pathname, activeExtraTab, extra_abas, setSelectedRecurso, setClickBtnEscolheOpcao]);
+    }, [location.pathname, activeExtraTab, setSelectedRecurso, setClickBtnEscolheOpcao]);
 
     // Sincronização de estado do contexto (Usando apenas primitivos nas dependências para evitar loops)
     useEffect(() => {
