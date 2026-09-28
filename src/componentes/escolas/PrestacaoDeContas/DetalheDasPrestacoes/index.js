@@ -53,7 +53,13 @@ export const DetalheDasPrestacoes = () => {
   const [permiteEditarCamposExtrato, setPermiteEditarCamposExtrato] = useState(false);
   const [contasAssociacao, setContasAssociacao] = useState(false);
   const [periodosAssociacao, setPeriodosAssociacao] = useState(false);
-  const [contaConciliacao, setContaConciliacao] = useState("");
+  const contaConciliacao = useMemo(() => {
+    if (!periodoConta?.conta || !Array.isArray(contasAssociacao)) {
+      return "";
+    }
+    const conta = contasAssociacao.find((item) => item.uuid === periodoConta.conta);
+    return conta?.tipo_conta?.nome || "";
+  }, [periodoConta, contasAssociacao]);
   const [acaoLancamento, setAcaoLancamento] = useState("");
   const [acoesAssociacao, setAcoesAssociacao] = useState(false);
 
@@ -191,7 +197,6 @@ export const DetalheDasPrestacoes = () => {
         if (stored && stored.conta) {
           const conta = response.find((c) => c.uuid === stored.conta);
           if (conta) {
-            setContaConciliacao(conta.tipo_conta.nome);
             setPeriodoConta((prev) => {
               const updated = { ...prev, conta: conta.uuid };
               conciliacaoStorageService.setPeriodoConta(updated);
