@@ -1,5 +1,5 @@
 import React from "react";
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NovoFormularioEditaAta } from "../index";
 
 import {
@@ -420,6 +420,73 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
             expect(
                 await screen.findByText("Cargo vago desde 25/09/2026"),
             ).toBeInTheDocument();
+        });
+
+        it("deve bloquear presença, presidente e secretário para cargo vago mesmo após clicar em Membro estava", async () => {
+            visoesService.getPermissoes.mockReturnValue(true);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 1,
+                    cargo: "Presidente",
+                    identificacao: "1234567",
+                    nome: "Maria Silva",
+                    membro: true,
+                    presente: true,
+                    vago: false,
+                },
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    membro: true,
+                    presente: false,
+                    vago: true,
+                    data_inicio_no_cargo: "25/09/2026",
+                },
+            ]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByText("Cargo vago desde 25/09/2026");
+
+            const obtemSwitches = () => {
+                const [
+                    presencaOcupado,
+                    presidenteOcupado,
+                    secretarioOcupado,
+                    presencaVago,
+                    presidenteVago,
+                    secretarioVago,
+                ] = screen.getAllByRole("switch");
+
+                return {
+                    presencaOcupado,
+                    presidenteOcupado,
+                    secretarioOcupado,
+                    presencaVago,
+                    presidenteVago,
+                    secretarioVago,
+                };
+            };
+
+            const antesDoClique = obtemSwitches();
+
+            expect(antesDoClique.presencaOcupado).toBeEnabled();
+            expect(antesDoClique.presidenteOcupado).toBeEnabled();
+            expect(antesDoClique.secretarioOcupado).toBeEnabled();
+
+            expect(antesDoClique.presencaVago).toBeDisabled();
+
+            fireEvent.click(antesDoClique.presencaVago);
+
+            const depoisDoClique = obtemSwitches();
+
+            expect(depoisDoClique.presencaVago).toBeDisabled();
+            expect(depoisDoClique.presencaVago).toHaveAttribute(
+                "aria-checked",
+                "false",
+            );
+            expect(depoisDoClique.presidenteVago).toBeDisabled();
+            expect(depoisDoClique.secretarioVago).toBeDisabled();
         });
     });
 });

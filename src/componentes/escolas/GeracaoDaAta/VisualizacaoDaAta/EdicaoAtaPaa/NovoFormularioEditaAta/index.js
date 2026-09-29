@@ -1151,7 +1151,9 @@ export const NovoFormularioEditaAta = ({
     if (participanteSelecionado) {
       participanteSelecionado.presidente_da_reuniao = false;
       participanteSelecionado.secretario_da_reuniao = false;
-      participanteSelecionado.presente = !participanteSelecionado.presente;
+      participanteSelecionado.presente = participanteSelecionado.vago
+        ? false
+        : !participanteSelecionado.presente;
       if (participanteSelecionado.professor_gremio) {
         setProfessorDefaults((prev) => ({
           ...prev,
@@ -1719,10 +1721,9 @@ export const NovoFormularioEditaAta = ({
                                                         : ""
                                                   }`}
                                                   disabled={
-                                                    !membro.vago ?
-                                                    (ehAdicaoPresente ||
-                                                    !podeEditarAta) :
-                                                    false
+                                                    membro.vago ||
+                                                    ehAdicaoPresente ||
+                                                    !podeEditarAta
                                                   }
                                                 />
                                               </div>
@@ -1767,6 +1768,7 @@ export const NovoFormularioEditaAta = ({
                                                       ehAdicaoPresente ||
                                                       membro.secretario_da_reuniao ||
                                                       !podeEditarAta ||
+                                                      membro.vago ||
                                                       !membro.presente
                                                     }
                                                   />
@@ -1813,6 +1815,7 @@ export const NovoFormularioEditaAta = ({
                                                       ehAdicaoPresente ||
                                                       membro.presidente_da_reuniao ||
                                                       !podeEditarAta ||
+                                                      membro.vago ||
                                                       !membro.presente
                                                     }
                                                   />
