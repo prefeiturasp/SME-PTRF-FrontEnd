@@ -26,6 +26,7 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { getCargosComposicaoData } from "../../../../../../services/Mandatos.service";
+import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../services/MandatosVacancia.service";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 import { ModalNotificarRegeracaoAta } from "./ModalNotificarRegeracaoAta";
 import {
@@ -36,6 +37,7 @@ import {
   listaPossuiParticipantesAssociacao,
   marcaParticipantesComoMembrosDaAssociacao,
   formatarListaCargoComposicaoParaFormatoDaListaParticipantes,
+  formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
   normalizaParaData,
 } from "../utils";
 
@@ -111,16 +113,32 @@ export const NovoFormularioEditaAta = ({
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
   const montarListaPorData = async (dataFormatada) => {
-    const lista_cargos_composicao = await getCargosComposicaoData(
-      dataFormatada || stateFormEditarAta.data_reuniao,
-      associacaoUuid,
-    );
+    const flaghistoricoDeMembrosV2 = visoesService.featureFlagAtiva("historico-de-membros-v2");
 
-    const composicao_formatada =
-      formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
-        lista_cargos_composicao,
+    let composicao_formatada;
+
+    if(flaghistoricoDeMembrosV2) {
+      const lista_cargos_composicao = await getCargosComposicaoVacanciaPorDataEAssociacao(
+        dataFormatada || stateFormEditarAta.data_reuniao,
+        associacaoUuid
       );
 
+      composicao_formatada =
+        formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes(
+            lista_cargos_composicao
+        );
+
+    } else {
+      const lista_cargos_composicao = await getCargosComposicaoData(
+        dataFormatada || stateFormEditarAta.data_reuniao,
+        associacaoUuid,
+      );
+
+      composicao_formatada =
+        formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
+          lista_cargos_composicao,
+        );
+    }
     const professorDefaultValues =
       professorDefaults &&
       (professorDefaults.nome || professorDefaults.cargo || professorDefaults.identificacao)
@@ -744,9 +762,8 @@ export const NovoFormularioEditaAta = ({
 
     let identificador = e.target.value;
     let identificadorAnterior = identificadoresAnteriores.current[index];
-    console.log(identificadorAnterior)
+
     if (identificador === identificadorAnterior) {
-        console.log('aqui2');
         return;
     }
 
@@ -1117,6 +1134,13 @@ export const NovoFormularioEditaAta = ({
     });
   };
 
+  const formataDataInicioNoCargo = (data) => {
+    if (typeof data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data)) {
+      return data.split("-").reverse().join("/");
+    }
+    return data;
+  };
+
   const editaStatusDePresencaParticipante = (index, listaAtual) => {
     let copiaListaParticipantes = listaAtual.map((participante) => ({
       ...participante,
@@ -1163,7 +1187,6 @@ export const NovoFormularioEditaAta = ({
 
     sincronizaListaParticipantes(copiaListaParticipantes);
   };
-
   return (
     <div>
       {initialValues && initialValues.stateFormEditarAta ? (
@@ -1436,7 +1459,7 @@ export const NovoFormularioEditaAta = ({
                                         name={`listaParticipantes[${index}].identificacao`}
                                         id={`listaParticipantes.identificacao_[${index}]`}
                                         className="form-control"
-                                        value={membro.identificacao}
+                                        value={membro.identificacao ?? ""}
                                         onChange={(e) => {
                                           props.handleChange(e);
                                           handleChangeIdentificador(
@@ -1469,7 +1492,7 @@ export const NovoFormularioEditaAta = ({
                                         name={`listaParticipantes[${index}].nome`}
                                         id={`listaParticipantes.nome_[${index}]`}
                                         className="form-control"
-                                        value={membro.nome}
+                                        value={membro.nome ?? ""}
                                         onChange={(e) => {
                                           props.handleChange(e);
                                         }}
@@ -1479,22 +1502,17 @@ export const NovoFormularioEditaAta = ({
                                             : !membro.editavel
                                         }
                                       />
+
                                       <p className="mt-1 mb-0">
                                         <span className="text-danger">
-                                          {errors &&
-                                          errors.listaParticipantes &&
-                                          errors.listaParticipantes[index] &&
-                                          errors.listaParticipantes[index].nome
-                                            ? errors.listaParticipantes[index]
-                                                .nome
-                                            : ""}
+                                            {!membro.vago ? errors?.listaParticipantes?.[index]?.nome || "" : ""}
                                         </span>
                                       </p>
+
                                       <p className="mt-1 mb-0">
                                         <span className="text-danger">
-                                          {formErrors && formErrors[index]
-                                            ? formErrors[index]
-                                            : null}
+                                          {!membro.vago ? formErrors?.[index] : ''}
+                                          {membro.vago && `Cargo vago desde ${formataDataInicioNoCargo(membro.data_inicio_no_cargo)}`}
                                         </span>
                                       </p>
                                     </div>
@@ -1572,7 +1590,6 @@ export const NovoFormularioEditaAta = ({
                                       )}
 
                                       {deveMostrarAcoesEdicao && (
-                                        <>
                                           <div className="row">
                                             <div className="col-6 mt-5 d-flex justify-content-end">
                                               <button
@@ -1658,11 +1675,9 @@ export const NovoFormularioEditaAta = ({
                                               </button>
                                             </div>
                                           </div>
-                                        </>
                                       )}
 
                                       {deveMostrarControlesPresenca && (
-                                        <>
                                           <div className="row">
                                             <div
                                               className="col-3 mt-4 ml-4"
@@ -1694,18 +1709,20 @@ export const NovoFormularioEditaAta = ({
                                                       values.listaParticipantes,
                                                     )
                                                   }
-                                                  checked={membro.presente}
+                                                  checked={!membro.vago ? membro.presente : false}
                                                   name="statusPresencaSwitch"
                                                   checkedChildren="Presente"
                                                   unCheckedChildren="Ausente"
                                                   className={`mt-2 switch-status-presidente ${
-                                                    membro.presente
-                                                      ? "switch-status-presidente-checked"
-                                                      : ""
+                                                    !membro.vago && membro.presente
+                                                        ? "switch-status-presidente-checked"
+                                                        : ""
                                                   }`}
                                                   disabled={
-                                                    ehAdicaoPresente ||
-                                                    !podeEditarAta
+                                                    !membro.vago ?
+                                                    (ehAdicaoPresente ||
+                                                    !podeEditarAta) :
+                                                    false
                                                   }
                                                 />
                                               </div>
@@ -1803,7 +1820,6 @@ export const NovoFormularioEditaAta = ({
                                               </div>
                                             )}
                                           </div>
-                                        </>
                                       )}
 
                                       {ehEdicaoPresente[index] && (
@@ -1945,7 +1961,6 @@ export const NovoFormularioEditaAta = ({
                   {/*So exibe o campo retificações em atas de retificação*/}
                   {stateFormEditarAta &&
                     stateFormEditarAta.tipo_ata === "RETIFICACAO" && (
-                      <>
                         <div>
                           <p className="titulo mt-4">
                             <strong>Justificativa da retificação <span style={{color: '#b40c02'}}>*</span></strong>
@@ -1965,8 +1980,6 @@ export const NovoFormularioEditaAta = ({
                             </div>
                           </div>
                         </div>
-                      </>
-
                     )}
 
                   <p className="titulo mt-4">

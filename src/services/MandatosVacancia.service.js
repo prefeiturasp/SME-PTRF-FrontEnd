@@ -81,7 +81,17 @@ export const getCargosComposicaoVacanciaPorData = async (composicao_uuid, data) 
         params: {
             composicao_uuid: composicao_uuid,
             data: data,
-        }        
+        }
+    })).data
+}
+
+export const getCargosComposicaoVacanciaPorDataEAssociacao = async (data, associacao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/composicao-por-data/`, {
+        ...authHeader(),
+        params: {
+            data: data,
+            associacao_uuid: associacao_uuid,
+        }
     })).data
 }
 
