@@ -48,7 +48,6 @@ const Tabela = ({
 
     return(
         <>
-        <h4 className="mb-4">Ações PDDE</h4>
         <DataTable
             value={data.results}
             id={'tabela-acoes-pdde'}
