@@ -598,6 +598,13 @@ body {
   padding: 0.75rem;
 }
 
+// Reforçar o cinza de célula desativada, inclusive no hover da linha
+.tabela-acoes-pdde-por-programa .ant-table-tbody > tr > td:has(.cell-desativada-pdde),
+.tabela-acoes-pdde-por-programa .ant-table-tbody > tr.ant-table-row:hover > td:has(.cell-desativada-pdde) {
+  background-color: #dadada !important;
+}
+
+
 table {
   tr {
     td:has(.cell-desativada), td.cell-desativada{
