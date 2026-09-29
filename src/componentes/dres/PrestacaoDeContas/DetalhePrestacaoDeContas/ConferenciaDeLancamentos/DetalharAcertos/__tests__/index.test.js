@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DetalharAcertos } from '../index';
 import { useSelector } from 'react-redux';
@@ -63,13 +63,19 @@ jest.mock('../TopoComBotoes', () => ({
     ),
 }));
 
+let capturedTabelaProps = {};
 jest.mock('../TabelaDetalharAcertos', () => ({
-    TabelaDetalharAcertos: () => <div data-testid='tabela-acertos'>Tabela</div>,
+    TabelaDetalharAcertos: (props) => {
+        capturedTabelaProps = props;
+        return <div data-testid='tabela-acertos'>Tabela</div>;
+    },
 }));
 
+let capturedFormularioProps = {};
 jest.mock('../FormularioAcertos', () => ({
-    FormularioAcertos: ({ formRef }) => {
-        formRef.current = {
+    FormularioAcertos: (props) => {
+        capturedFormularioProps = props;
+        props.formRef.current = {
             errors: {},
             values: {
                 solicitacoes_acerto: [
@@ -92,6 +98,21 @@ jest.mock('../FormularioAcertos', () => ({
         return <div data-testid='formulario-acertos'>Formulario</div>;
     },
 }));
+
+const makeFakeSelectEvent = (dataCategoria, dataObjeto) => ({
+    target: {
+        selectedIndex: 0,
+        options: [
+            {
+                getAttribute: (attr) => {
+                    if (attr === 'data-categoria') return dataCategoria;
+                    if (attr === 'data-objeto') return JSON.stringify(dataObjeto);
+                    return null;
+                },
+            },
+        ],
+    },
+});
 
 const lancamentoBase = {
     tipo_transacao: 'Gasto',
@@ -337,5 +358,346 @@ describe('DetalharAcertos', () => {
         });
 
         expect(mockNavigate).toHaveBeenCalled();
+    });
+
+    it('deve navegar para a tela de resumo de acertos quando origem for resumo-acertos', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [],
+            origem: 'dre-detalhe-prestacao-de-contas-resumo-acertos',
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(mockNavigate).toHaveBeenCalledWith(
+                expect.stringContaining('dre-detalhe-prestacao-de-contas-resumo-acertos/UUID-PC'),
+            );
+        });
+    });
+
+    it('deve filtrar categorias que só aceitam lançamentos não conferidos quando não há gasto não conferido', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [
+                {
+                    ...lancamentoBase,
+                    documento_mestre: { ...lancamentoBase.documento_mestre, conferido: true },
+                },
+            ],
+            origem: null,
+        });
+
+        getTiposDeAcertoLancamentosAgrupadoCategoria.mockResolvedValue({
+            agrupado_por_categorias: [
+                { id: 'CONCILIACAO_LANCAMENTO', tipos_acerto_lancamento: [] },
+                { id: 'OUTRA', tipos_acerto_lancamento: [] },
+            ],
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(getTiposDeAcertoLancamentosAgrupadoCategoria).toHaveBeenCalled();
+    });
+
+    it('deve setar texto e cor da categoria quando a categoria do acerto já cadastrado é encontrada', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [
+                {
+                    ...lancamentoBase,
+                    analise_lancamento: { uuid: 'ANALISE-LANC-UUID' },
+                },
+            ],
+            origem: null,
+        });
+
+        getTiposDeAcertoLancamentosAgrupadoCategoria.mockResolvedValue({
+            agrupado_por_categorias: [
+                {
+                    id: 'DEVOLUCAO',
+                    texto: 'Texto da categoria',
+                    cor: 1,
+                    tipos_acerto_lancamento: [{ uuid: 'TA-1' }],
+                },
+            ],
+        });
+
+        getListaDeSolicitacaoDeAcertos.mockResolvedValue({
+            solicitacoes_de_ajuste_da_analise: [
+                {
+                    uuid: 'ACERTO-1',
+                    copiado: false,
+                    tipo_acerto: { uuid: 'TA-1', categoria: 'DEVOLUCAO' },
+                    detalhamento: '',
+                    devolucao_ao_tesouro: null,
+                },
+            ],
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(getListaDeSolicitacaoDeAcertos).toHaveBeenCalled();
+    });
+
+    it('deve expor callbacks para bloqueio/texto de categoria e adicionar item vazio via FormularioAcertos', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.removeBloqueiaSelectTipoDeAcertoJaCadastrado(0);
+            }),
+        ).not.toThrow();
+
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.removeTextoECorCategoriaTipoDeAcertoJaCadastrado(0);
+            }),
+        ).not.toThrow();
+
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.adicionaTextoECorCategoriaVazio();
+            }),
+        ).not.toThrow();
+    });
+
+    it('deve identificar corretamente solicitações copiadas via ehSolicitacaoCopiada', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(capturedFormularioProps.ehSolicitacaoCopiada({ copiado: true })).toBe(true);
+        expect(capturedFormularioProps.ehSolicitacaoCopiada({ copiado: false })).toBe(false);
+    });
+
+    it('deve calcular rowClassName da tabela conforme o resultado da análise do lançamento', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('tabela-acertos')).toBeInTheDocument();
+        });
+
+        expect(
+            capturedTabelaProps.rowClassName({ analise_lancamento: { resultado: true } }),
+        ).toEqual({ 'linha-conferencia-de-lancamentos-correto': true });
+
+        expect(capturedTabelaProps.rowClassName({ analise_lancamento: { resultado: false } })).toBeUndefined();
+        expect(capturedTabelaProps.rowClassName(null)).toBeUndefined();
+    });
+
+    it('deve atualizar texto/cor de categoria e exibir campos de devolução ao trocar o tipo de acerto (categoria encontrada e DEVOLUCAO)', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        getTiposDeAcertoLancamentosAgrupadoCategoria.mockResolvedValue({
+            agrupado_por_categorias: [
+                {
+                    id: 'DEVOLUCAO',
+                    nome: 'Devolução',
+                    texto: 'Texto devolução',
+                    cor: 1,
+                    tipos_acerto_lancamento: [{ uuid: 'TA-1' }],
+                },
+            ],
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.handleChangeTipoDeAcertoLancamento(
+                    makeFakeSelectEvent('DEVOLUCAO', { uuid: 'TA-1', categoria: 'DEVOLUCAO' }),
+                    0,
+                );
+            }),
+        ).not.toThrow();
+
+        // segunda chamada no mesmo índice cobre o ramo de atualização (não push) do texto/cor já existente
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.handleChangeTipoDeAcertoLancamento(
+                    makeFakeSelectEvent('DEVOLUCAO', { uuid: 'TA-1', categoria: 'DEVOLUCAO' }),
+                    0,
+                );
+            }),
+        ).not.toThrow();
+    });
+
+    it('deve atualizar texto/cor de categoria e ocultar campos de devolução quando categoria não é DEVOLUCAO e não é encontrada', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        getTiposDeAcertoLancamentosAgrupadoCategoria.mockResolvedValue({
+            agrupado_por_categorias: [
+                {
+                    id: 'OUTRA_CATEGORIA',
+                    nome: 'Outra',
+                    texto: 'Texto outro',
+                    cor: 0,
+                    tipos_acerto_lancamento: [{ uuid: 'TA-2' }],
+                },
+            ],
+        });
+
+        render(<DetalharAcertos />);
+
+        await waitFor(() => {
+            expect(screen.getByTestId('formulario-acertos')).toBeInTheDocument();
+        });
+
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.handleChangeTipoDeAcertoLancamento(
+                    makeFakeSelectEvent('CATEGORIA_INEXISTENTE', { uuid: 'TA-2', categoria: 'OUTRA_CATEGORIA' }),
+                    0,
+                );
+            }),
+        ).not.toThrow();
+
+        // segunda chamada no mesmo índice cobre o ramo de atualização do texto/cor vazio já existente
+        expect(() =>
+            act(() => {
+                capturedFormularioProps.handleChangeTipoDeAcertoLancamento(
+                    makeFakeSelectEvent('CATEGORIA_INEXISTENTE', { uuid: 'TA-2', categoria: 'OUTRA_CATEGORIA' }),
+                    0,
+                );
+            }),
+        ).not.toThrow();
+    });
+
+    it('deve prosseguir com o envio diretamente quando a conta associada não é encontrada entre as contas com movimento', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [{ ...lancamentoBase, conta: 'CONTA-NAO-ENCONTRADA' }],
+            origem: null,
+        });
+
+        getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'CONTA-1', status: 'ATIVA' }]);
+        postSolicitacoesParaAcertos.mockResolvedValue({});
+
+        render(<DetalharAcertos />);
+
+        await userEvent.click(screen.getByText('Salvar'));
+
+        await waitFor(() => {
+            expect(postSolicitacoesParaAcertos).toHaveBeenCalled();
+        });
+
+        expect(
+            screen.queryByText('A conta onde foram solicitados acertos foi encerrada'),
+        ).not.toBeInTheDocument();
+    });
+
+    it('deve tratar erro ao criar solicitações de acerto sem navegar', async () => {
+        const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        postSolicitacoesParaAcertos.mockRejectedValue({ response: { data: 'erro' } });
+
+        render(<DetalharAcertos />);
+
+        await userEvent.click(screen.getByText('Salvar'));
+
+        await waitFor(() => {
+            expect(postSolicitacoesParaAcertos).toHaveBeenCalled();
+        });
+
+        await waitFor(() => {
+            expect(consoleLogSpy).toHaveBeenCalledWith(
+                'Erro ao criar solicitações para acertos! ',
+                { data: 'erro' },
+            );
+        });
+
+        expect(mockNavigate).not.toHaveBeenCalled();
+
+        consoleLogSpy.mockRestore();
+    });
+
+    it('deve confirmar e cancelar o modal de conta encerrada', async () => {
+        useSelector.mockReturnValue({
+            lancamentos_para_acertos: [lancamentoBase],
+            origem: null,
+        });
+
+        getTiposDeAcertoLancamentosAgrupadoCategoria.mockResolvedValue({
+            agrupado_por_categorias: [
+                {
+                    id: 'DEVOLUCAO',
+                    texto: 'Devolução',
+                    cor: 1,
+                    tipos_acerto_lancamento: [{ uuid: 'TA-1' }],
+                },
+            ],
+        });
+
+        getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'CONTA-1', status: 'INATIVA' }]);
+        postSolicitacoesParaAcertos.mockResolvedValue({});
+
+        render(<DetalharAcertos />);
+
+        await userEvent.click(screen.getByText('Salvar'));
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('A conta onde foram solicitados acertos foi encerrada'),
+            ).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+
+        expect(postSolicitacoesParaAcertos).not.toHaveBeenCalled();
+
+        await userEvent.click(screen.getByText('Salvar'));
+
+        await waitFor(() => {
+            expect(
+                screen.getByText('A conta onde foram solicitados acertos foi encerrada'),
+            ).toBeInTheDocument();
+        });
+
+        await userEvent.click(screen.getByRole('button', { name: 'Confirmar' }));
+
+        await waitFor(() => {
+            expect(postSolicitacoesParaAcertos).toHaveBeenCalled();
+        });
     });
 });

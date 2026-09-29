@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormularioAcertosDevolucaoAoTesouro } from '../FormularioAcertosDevolucaoAoTesouro';
 import { ValidarParcialTesouro } from '../../../../../../../context/DetalharAcertos';
@@ -28,7 +28,7 @@ jest.mock('../../../../../../../services/visoes.service', () => ({
     },
 }));
 
-const renderComponent = ({ valorDocumento = 1000, devolucao_total = 'false' } = {}) => {
+const renderComponent = ({ valorDocumento = 1000, devolucao_total = 'false', handleChange = jest.fn() } = {}) => {
     const setIsValorParcialValido = jest.fn();
 
     const acerto = {
@@ -44,7 +44,7 @@ const renderComponent = ({ valorDocumento = 1000, devolucao_total = 'false' } = 
         <ValidarParcialTesouro.Provider value={{ setIsValorParcialValido }}>
             <FormularioAcertosDevolucaoAoTesouro
                 formikProps={{
-                    handleChange: jest.fn(),
+                    handleChange,
                     setFieldValue: jest.fn(),
                     errors: {},
                 }}
@@ -56,7 +56,7 @@ const renderComponent = ({ valorDocumento = 1000, devolucao_total = 'false' } = 
         </ValidarParcialTesouro.Provider>,
     );
 
-    return { setIsValorParcialValido };
+    return { setIsValorParcialValido, handleChange };
 };
 
 describe('FormularioAcertosDevolucaoAoTesouro', () => {
@@ -106,5 +106,36 @@ describe('FormularioAcertosDevolucaoAoTesouro', () => {
 
         expect(setIsValorParcialValido).not.toHaveBeenCalledWith(true);
         expect(setIsValorParcialValido).toHaveBeenLastCalledWith(false);
+    });
+
+    it('deve invalidar e exibir erro quando o valor parcial informado de uma vez é maior que o documento', () => {
+        const { setIsValorParcialValido } = renderComponent({ valorDocumento: 1000 });
+
+        fireEvent.change(screen.getByLabelText('Valor'), { target: { value: 'R$1.500,00' } });
+
+        expect(setIsValorParcialValido).toHaveBeenCalledWith(true);
+        expect(
+            screen.getByText('O valor parcial não pode ser maior que o valor do documento'),
+        ).toBeInTheDocument();
+    });
+
+    it('deve invalidar e exibir erro quando o valor parcial informado de uma vez é igual ao documento', () => {
+        const { setIsValorParcialValido } = renderComponent({ valorDocumento: 1000 });
+
+        fireEvent.change(screen.getByLabelText('Valor'), { target: { value: 'R$1.000,00' } });
+
+        expect(setIsValorParcialValido).toHaveBeenCalledWith(true);
+        expect(
+            screen.getByText('O valor parcial não pode ser igual ao valor do documento'),
+        ).toBeInTheDocument();
+    });
+
+    it('deve chamar handleChange do formik ao selecionar o tipo de devolução', async () => {
+        const user = userEvent.setup();
+        const { handleChange } = renderComponent();
+
+        await user.selectOptions(screen.getByLabelText('Tipo de devolução'), 'DEV1');
+
+        expect(handleChange).toHaveBeenCalled();
     });
 });
