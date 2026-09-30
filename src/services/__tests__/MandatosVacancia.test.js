@@ -186,6 +186,15 @@ describe('MandatosVacancia.service', () => {
         expect(result).toEqual(mockData);
     });
 
+    test('getCargosComposicaoVacanciaPorDataEAssociacao deve propagar o erro da API', async () => {
+        const erro = { response: { status: 400, data: { erro: 'Data inválida' } } };
+        api.get.mockRejectedValue(erro);
+
+        await expect(
+            getCargosComposicaoVacanciaPorDataEAssociacao('2026-06-01', 'associacao-1')
+        ).rejects.toEqual(erro);
+    });
+
     test('getCargosDaComposicaoVacancia deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData });
         const composicao_uuid = 'composicao-1';
