@@ -4,7 +4,6 @@ import {Column} from 'primereact/column';
 
 const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, nomeTemplate, motivoTemplate, acoesTemplate}) => {
     return (
-        <>
             <div className='row'>
                 <div className='col-12 mt-3 mb-3 pt-4 border-top'>
                     <h5 className='mb-3'>Associações não regularizadas</h5>
@@ -39,9 +38,6 @@ const AssociacoesNaoRegularizadas = ({listaAssociacoesNaoRegularizadas, nomeTemp
 
                 </div>
             </div>
-
-
-        </>
     )
 };
 

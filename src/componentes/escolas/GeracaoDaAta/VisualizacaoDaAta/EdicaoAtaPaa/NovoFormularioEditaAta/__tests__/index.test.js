@@ -13,6 +13,7 @@ import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../..
 
 import { visoesService } from "../../../../../../../services/visoes.service";
 import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 import * as utils from "../../utils";
 
@@ -488,6 +489,127 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
             );
             expect(depoisDoClique.presidenteVago).toBeDisabled();
             expect(depoisDoClique.secretarioVago).toBeDisabled();
+        });
+
+        it("deve exibir o carregamento enquanto busca a composição da nova data", async () => {
+            visoesService.featureFlagAtiva.mockReturnValue(true);
+
+            let resolverComposicao;
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockReturnValue(
+                new Promise((resolve) => {
+                    resolverComposicao = resolve;
+                }),
+            );
+
+            const { container } = render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            // O Spin do antd ativa o estado "spinning" via debounce (setTimeout);
+            // o waitFor avança os fake timers até ele aparecer.
+            await waitFor(() => {
+                expect(container.querySelector(".ant-spin-spinning")).toBeInTheDocument();
+            });
+
+            await act(async () => {
+                resolverComposicao({});
+            });
+
+            await waitFor(() => {
+                expect(container.querySelector(".ant-spin-spinning")).not.toBeInTheDocument();
+            });
+        });
+
+        it("deve notificar o erro retornado pela API quando a busca da composição falhar", async () => {
+            visoesService.featureFlagAtiva.mockReturnValue(true);
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockRejectedValue({
+                response: { data: { erro: "Data fora do mandato" } },
+            });
+            const toastErroSpy = jest
+                .spyOn(toastCustom, "ToastCustomError")
+                .mockImplementation(() => {});
+
+            const { container } = render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(toastErroSpy).toHaveBeenCalledWith(
+                    "Erro ao carregar participantes",
+                    "Data fora do mandato",
+                );
+            });
+            expect(
+                container.querySelector('input[name="listaParticipantes[0].nome"]'),
+            ).not.toBeInTheDocument();
+            expect(container.querySelector(".ant-spin-spinning")).not.toBeInTheDocument();
+
+            toastErroSpy.mockRestore();
+        });
+
+        it("deve notificar mensagem padrão quando o erro da composição não tiver mensagem da API", async () => {
+            getCargosComposicaoData.mockRejectedValue(new Error("Falha de rede"));
+            const toastErroSpy = jest
+                .spyOn(toastCustom, "ToastCustomError")
+                .mockImplementation(() => {});
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(toastErroSpy).toHaveBeenCalledWith(
+                    "Erro ao carregar participantes",
+                    "Não foi possível carregar a composição por data.",
+                );
+            });
+
+            toastErroSpy.mockRestore();
+        });
+    });
+
+    describe("permissões de edição da ata", () => {
+        const membroOcupado = {
+            id: 1,
+            cargo: "Presidente",
+            identificacao: "1234567",
+            nome: "Maria Silva",
+            membro: true,
+            presente: true,
+            vago: false,
+        };
+
+        it("deve bloquear presença, presidente, secretário e data sem permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(false);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeDisabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeDisabled();
+            expect(visoesService.getPermissoes).toHaveBeenCalledWith(
+                ["change_ata_prestacao_contas"],
+                0,
+                [["change_ata_prestacao_contas"]],
+            );
+        });
+
+        it("deve liberar presença, presidente, secretário e data com permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(true);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeEnabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeEnabled();
         });
     });
 });
