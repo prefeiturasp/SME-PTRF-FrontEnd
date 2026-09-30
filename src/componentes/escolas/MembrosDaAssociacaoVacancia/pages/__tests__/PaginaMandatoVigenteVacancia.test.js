@@ -1,6 +1,6 @@
 import React from "react";
 import { render, screen, act } from "@testing-library/react";
-import { PaginaMandatoVigenteVacancia } from "../PaginaMandatoVigenteVacancia";
+import { PaginaMandatoVigenteVacancia, exibeExportacaoNaComposicaoAtual } from "../PaginaMandatoVigenteVacancia";
 
 const mockUseGetMandatoVigente = jest.fn();
 const mockUseGetComposicaoVigenteVacancia = jest.fn();
@@ -230,5 +230,56 @@ describe("PaginaMandatoVigenteVacancia", () => {
         expect(screen.getByTestId("marco-info-vacancia")).toHaveTextContent("2026-03-15 até 2026-12-31");
         expect(screen.getByTestId("cargos-da-composicao-vacancia")).toHaveTextContent("data:2026-03-15");
         expect(screen.getByTestId("paginacao-vacancia")).toHaveTextContent("firstPage:0");
+    });
+
+    it("deve informar composição atual só na primeira página do mandato vigente", () => {
+        const onComposicaoAtualChange = jest.fn();
+        mockUseGetMandatoVigente.mockReturnValue({
+            isLoading: false, data: { uuid: "mandato-1", data_final: "2026-12-31" }, isError: false,
+        });
+        mockUseGetComposicaoVigenteVacancia.mockReturnValue({
+            isLoading: false, data: { uuid: "composicao-1" },
+        });
+        mockUseGetDatasDeAlteracaoDaComposicaoVacancia.mockReturnValue({
+            data: [
+                { inicio: "2026-01-01", fim: "2026-03-14" },
+                { inicio: "2026-03-15", fim: "2026-12-31" },
+            ],
+        });
+
+        render(<PaginaMandatoVigenteVacancia onComposicaoAtualChange={onComposicaoAtualChange} />);
+
+        expect(onComposicaoAtualChange).toHaveBeenLastCalledWith(true);
+
+        act(() => {
+            mockOnPageChangeCapturado.current(2, 1);
+        });
+
+        expect(onComposicaoAtualChange).toHaveBeenLastCalledWith(false);
+    });
+});
+
+describe("exibeExportacaoNaComposicaoAtual", () => {
+    const marcos = [
+        { inicio: "2026-01-01", fim: "2026-03-14" },
+        { inicio: "2026-03-15", fim: "2026-12-31" },
+    ];
+
+    it("não exibe na timeline quando a data está fora do marco mais recente", () => {
+        expect(exibeExportacaoNaComposicaoAtual({
+            mostrarLinhaDoTempo: true,
+            currentPage: 1,
+            dataSelecionada: "2026-02-01",
+            marcos,
+        })).toBe(false);
+    });
+
+    it("exibe na timeline quando a data está no marco mais recente", () => {
+        expect(exibeExportacaoNaComposicaoAtual({
+            mostrarLinhaDoTempo: true,
+            currentPage: 2,
+            dataSelecionada: "2026-04-01",
+            marcos,
+        })).toBe(true);
     });
 });

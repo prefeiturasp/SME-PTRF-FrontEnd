@@ -21,6 +21,7 @@ export const MembrosDaAssociacaoVacancia = () => {
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
     const [isActiveMandatoVigente, setIsActiveMandatoVigente] = useState(true)
     const [isActiveMandatosAnteriores, setIsActiveMandatosAnteriores] = useState(false)
+    const [exibeExportacao, setExibeExportacao] = useState(false)
     const isActive = useCallback(()=>{
             setIsActiveMandatoVigente(prevState => !prevState)
             setIsActiveMandatosAnteriores(prevState => !prevState)
@@ -41,7 +42,9 @@ export const MembrosDaAssociacaoVacancia = () => {
             <MenuInterno
                 caminhos_menu_interno={menuUrls}
             />
-            <ExportaDadosDaAsssociacao/>
+            {isActiveMandatoVigente && exibeExportacao &&
+                <ExportaDadosDaAsssociacao/>
+            }
 
             <nav>
                 <div className="nav nav-tabs nav-mandatos" id="nav-tab" role="tablist">
@@ -81,7 +84,7 @@ export const MembrosDaAssociacaoVacancia = () => {
                 <div className="tab-pane fade show active" id="nav-mandato-vigente" role="tabpanel"
                         aria-labelledby="nav-mandato-vigente-tab">
                     {isActiveMandatoVigente &&
-                        <PaginaMandatoVigenteVacancia/>
+                        <PaginaMandatoVigenteVacancia onComposicaoAtualChange={setExibeExportacao}/>
                     }
                 </div>
                 <div className="tab-pane fade" id="nav-mandatos-anteriores" role="tabpanel"

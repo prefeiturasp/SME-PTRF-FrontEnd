@@ -13,7 +13,23 @@ import { MarcoInfoVacancia } from "../components/MarcoInfoVacancia";
 import { LinhaDoTempoComposicaoVacancia } from "../components/LinhaDoTempoComposicaoVacancia";
 
 
-export const PaginaMandatoVigenteVacancia = () => {
+export const exibeExportacaoNaComposicaoAtual = ({
+    mostrarLinhaDoTempo,
+    currentPage,
+    dataSelecionada,
+    marcos,
+}) => {
+    if (!mostrarLinhaDoTempo) {
+        return currentPage === 1
+    }
+    if (!marcos?.length) {
+        return true
+    }
+    const marcoAtual = marcos[marcos.length - 1]
+    return dataSelecionada >= marcoAtual.inicio && dataSelecionada <= marcoAtual.fim
+}
+
+export const PaginaMandatoVigenteVacancia = ({onComposicaoAtualChange}) => {
     const {state} = useLocation();
     const marcoParaRestaurar = state?.marcoSelecionado;
 
@@ -37,6 +53,30 @@ export const PaginaMandatoVigenteVacancia = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [marcos?.length]);
+
+    useEffect(() => {
+        if (!onComposicaoAtualChange) return
+        if (isLoadingMandato || !mandato?.uuid || isErrorMandato || (marcoParaRestaurar && !marcos?.length)) {
+            onComposicaoAtualChange(false)
+            return
+        }
+        onComposicaoAtualChange(exibeExportacaoNaComposicaoAtual({
+            mostrarLinhaDoTempo,
+            currentPage,
+            dataSelecionada: dataSelecionadaTimeline,
+            marcos,
+        }))
+    }, [
+        onComposicaoAtualChange,
+        isLoadingMandato,
+        mandato?.uuid,
+        isErrorMandato,
+        marcoParaRestaurar,
+        marcos,
+        mostrarLinhaDoTempo,
+        currentPage,
+        dataSelecionadaTimeline,
+    ])
 
     if (isLoadingMandato || (mandato?.uuid && isLoadingComposicao)) {
         return (

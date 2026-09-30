@@ -34,10 +34,26 @@ const mockUseGetStatusCadastroAssociacao = jest.fn();
 
 jest.mock("../hooks/useGetMandatosAnterioresVacancia");
 
-jest.mock("../pages/PaginaMandatoVigenteVacancia", () => ({
-    PaginaMandatoVigenteVacancia: () => (
-        <div data-testid="pagina-mandato-vigente-vacancia" />
+jest.mock("../../Associacao/ExportaDadosAssociacao", () => ({
+    ExportaDadosDaAsssociacao: () => (
+        <div>Exportar dados da associação</div>
     ),
+}));
+
+jest.mock("../pages/PaginaMandatoVigenteVacancia", () => ({
+    PaginaMandatoVigenteVacancia: ({ onComposicaoAtualChange }) => {
+        const React = require("react");
+        React.useEffect(() => {
+            onComposicaoAtualChange?.(true);
+        }, [onComposicaoAtualChange]);
+        return (
+            <div data-testid="pagina-mandato-vigente-vacancia">
+                <button type="button" onClick={() => onComposicaoAtualChange?.(false)}>
+                    ver composicao anterior
+                </button>
+            </div>
+        );
+    },
 }));
 
 jest.mock("../pages/PaginaMandatoAnteriorVacancia", () => ({
@@ -124,5 +140,29 @@ describe("MembrosDaAssociacaoVacancia", () => {
 
         expect(screen.getByTestId("pagina-mandato-anterior-vacancia")).toBeInTheDocument();
         expect(screen.queryByTestId("pagina-mandato-vigente-vacancia")).not.toBeInTheDocument();
+    });
+
+    it("deve exibir a exportação na composição atual do mandato vigente", () => {
+        render(<MembrosDaAssociacaoVacancia />);
+
+        expect(screen.getByText("Exportar dados da associação")).toBeInTheDocument();
+    });
+
+    it("não deve exibir a exportação nas demais composições do mandato vigente", () => {
+        render(<MembrosDaAssociacaoVacancia />);
+
+        fireEvent.click(screen.getByText("ver composicao anterior"));
+
+        expect(screen.queryByText("Exportar dados da associação")).not.toBeInTheDocument();
+    });
+
+    it("não deve exibir a exportação nos mandatos anteriores", () => {
+        useGetMandatosAnterioresVacancia.mockReturnValue({ data: [{ uuid: "mandato-1" }] });
+
+        render(<MembrosDaAssociacaoVacancia />);
+
+        fireEvent.click(screen.getByText("Mandatos anteriores"));
+
+        expect(screen.queryByText("Exportar dados da associação")).not.toBeInTheDocument();
     });
 });
