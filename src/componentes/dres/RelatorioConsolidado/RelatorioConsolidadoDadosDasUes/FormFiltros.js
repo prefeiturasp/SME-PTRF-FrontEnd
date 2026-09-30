@@ -13,6 +13,7 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                         value={stateFiltros.filtrar_por_ue}
                         onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                         name='filtrar_por_ue'
+                        id='filtrar_por_ue'
                         type="text"
                         className="form-control"
                         placeholder="Escreva o nome da unidade"
@@ -24,6 +25,7 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                         value={stateFiltros.filtrar_por_tipo_unidade}
                         onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                         name='filtrar_por_tipo_unidade'
+                        id='filtrar_por_tipo_unidade'
                         className='form-control'
                     >
                         <option key='' value="">Selecione um tipo de unidade</option>
@@ -38,6 +40,7 @@ export const FormFiltros = ({stateFiltros, handleChangeFiltros, limpaFiltros, ha
                         value={stateFiltros.filtrar_por_status_pc}
                         onChange={(e) => handleChangeFiltros(e.target.name, e.target.value)}
                         name='filtrar_por_status_pc'
+                        id='filtrar_por_status_pc'
                         className='form-control'
                     >
                         <option key='' value="">Selecione o status</option>
