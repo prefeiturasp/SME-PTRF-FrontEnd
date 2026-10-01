@@ -25,7 +25,6 @@ import { BarraAvisoPreencerData } from "../../../BarraAvisoPreencerData";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
-import { getCargosComposicaoData } from "../../../../../../services/Mandatos.service";
 import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../services/MandatosVacancia.service";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 import { ModalNotificarRegeracaoAta } from "./ModalNotificarRegeracaoAta";
@@ -36,7 +35,6 @@ import {
   extraiProfessorDefaults,
   listaPossuiParticipantesAssociacao,
   marcaParticipantesComoMembrosDaAssociacao,
-  formatarListaCargoComposicaoParaFormatoDaListaParticipantes,
   formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
   normalizaParaData,
 } from "../utils";
@@ -113,32 +111,18 @@ export const NovoFormularioEditaAta = ({
   const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
 
   const montarListaPorData = async (dataFormatada) => {
-    const flaghistoricoDeMembrosV2 = visoesService.featureFlagAtiva("historico-de-membros-v2");
-
     let composicao_formatada;
 
-    if(flaghistoricoDeMembrosV2) {
-      const lista_cargos_composicao = await getCargosComposicaoVacanciaPorDataEAssociacao(
+    const lista_cargos_composicao = await getCargosComposicaoVacanciaPorDataEAssociacao(
         dataFormatada || stateFormEditarAta.data_reuniao,
         associacaoUuid
-      );
+    );
 
-      composicao_formatada =
+    composicao_formatada =
         formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes(
             lista_cargos_composicao
         );
 
-    } else {
-      const lista_cargos_composicao = await getCargosComposicaoData(
-        dataFormatada || stateFormEditarAta.data_reuniao,
-        associacaoUuid,
-      );
-
-      composicao_formatada =
-        formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
-          lista_cargos_composicao,
-        );
-    }
     const professorDefaultValues =
       professorDefaults &&
       (professorDefaults.nome || professorDefaults.cargo || professorDefaults.identificacao)
