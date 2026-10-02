@@ -1,5 +1,6 @@
 import React from "react";
-import { render, screen, waitFor, act } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import moment from "moment";
 
 import { EdicaoAtaParecerTecnico } from "../EdicaoAta/index";
 
@@ -294,6 +295,149 @@ describe("EdicaoAtaParecerTecnico", () => {
                     "Erro ao consultar lista de presentes padrão da ata"
                 );
             });
+        });
+    });
+
+    describe("Salvar edições da ata", () => {
+        const clicaEmSalvar = async () => {
+            const botaoSalvar = await screen.findByRole("button", {
+                name: "Salvar edições",
+            });
+
+            await waitFor(() => {
+                expect(screen.getByTestId("numero-ata")).toHaveTextContent("ATA-001");
+            });
+
+            fireEvent.click(botaoSalvar);
+        };
+
+        it("deve enviar os dados do formulário e exibir mensagem de sucesso", async () => {
+            renderComponent();
+
+            await clicaEmSalvar();
+
+            await waitFor(() => {
+                expect(postEdicaoAtaParecerTecnico).toHaveBeenCalledWith(uuidAta, {
+                    numero_ata: "ATA-001",
+                    data_reuniao: "2026-08-20",
+                    // Mesmo formato de conversão usado pelo componente
+                    hora_reuniao: moment("14:30", "HHmm").format("HH:mm"),
+                    local_reuniao: "Sala de reuniões",
+                    presentes_na_ata: dadosAta.presentes_na_ata,
+                    comentarios: "Comentários da ata",
+                    numero_portaria: "PORT-123",
+                    data_portaria: "2026-08-10",
+                });
+            });
+
+            expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
+                "Ata salva com sucesso",
+                "As edições da ata de parecer técnico foram salvas com sucesso."
+            );
+        });
+
+        it("deve enviar datas nulas e horário padrão quando não estiverem preenchidos", async () => {
+            getAtaParecerTecnico.mockResolvedValue({
+                ...dadosAta,
+                data_reuniao: null,
+                hora_reuniao: "",
+                data_portaria: null,
+            });
+
+            renderComponent();
+
+            await clicaEmSalvar();
+
+            await waitFor(() => {
+                expect(postEdicaoAtaParecerTecnico).toHaveBeenCalledWith(
+                    uuidAta,
+                    expect.objectContaining({
+                        data_reuniao: null,
+                        hora_reuniao: "00:00",
+                        data_portaria: null,
+                    })
+                );
+            });
+        });
+
+        it("deve enviar o motivo da retificação quando a ata for de retificação", async () => {
+            getAtaParecerTecnico.mockResolvedValue({
+                ...dadosAta,
+                eh_retificacao: true,
+                motivo_retificacao: "Correção de valores",
+            });
+
+            renderComponent();
+
+            await clicaEmSalvar();
+
+            await waitFor(() => {
+                expect(postEdicaoAtaParecerTecnico).toHaveBeenCalledWith(
+                    uuidAta,
+                    expect.objectContaining({
+                        motivo_retificacao: "Correção de valores",
+                    })
+                );
+            });
+        });
+
+        it("não deve enviar o motivo da retificação quando a ata não for de retificação", async () => {
+            renderComponent();
+
+            await clicaEmSalvar();
+
+            await waitFor(() => {
+                expect(postEdicaoAtaParecerTecnico).toHaveBeenCalled();
+            });
+
+            expect(postEdicaoAtaParecerTecnico.mock.calls[0][1]).not.toHaveProperty(
+                "motivo_retificacao"
+            );
+        });
+
+        it("não deve exibir mensagem de sucesso quando ocorrer erro ao salvar", async () => {
+            const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+            const erro = { response: { data: { detail: "Erro ao salvar" } } };
+            postEdicaoAtaParecerTecnico.mockRejectedValue(erro);
+
+            renderComponent();
+
+            await clicaEmSalvar();
+
+            await waitFor(() => {
+                expect(consoleSpy).toHaveBeenCalledWith(
+                    "Erro ao fazer edição da Ata ",
+                    erro.response
+                );
+            });
+            expect(toastCustom.ToastCustomSuccess).not.toHaveBeenCalled();
+
+            consoleSpy.mockRestore();
+        });
+    });
+
+    describe("Voltar para ata", () => {
+        const originalLocation = window.location;
+
+        beforeEach(() => {
+            delete window.location;
+            window.location = { assign: jest.fn() };
+        });
+
+        afterAll(() => {
+            window.location = originalLocation;
+        });
+
+        it("deve redirecionar para a visualização da ata", async () => {
+            renderComponent();
+
+            fireEvent.click(
+                await screen.findByRole("button", { name: "Voltar para ata" })
+            );
+
+            expect(window.location.assign).toHaveBeenCalledWith(
+                `/visualizacao-da-ata-parecer-tecnico/${uuidAta}/`
+            );
         });
     });
 });

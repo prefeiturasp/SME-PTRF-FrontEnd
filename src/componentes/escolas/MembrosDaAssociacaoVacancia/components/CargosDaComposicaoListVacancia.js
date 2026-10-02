@@ -15,9 +15,19 @@ export const CargosDaComposicaoListVacancia = ({ composicaoUuid, data }) => {
   const [cargoParaTimeline, setCargoParaTimeline] = useState(null);
 
   const acoesTemplate = (rowData) => {
+    // Composição de mandato na vigência atual
+    const ehComposicaoVigente = rowData.eh_composicao_vigente !== false;
+
+    // considera edição com ocupantes no cargo (para casos de edição de dados no formulário)
+    const ehCargoVigente = rowData.cargo_vigente;
+
+    // Abre permissão para último Ocupante que já saiu para permitir realizar o cancelamento de uma saída
+    const ehUltimoOcupante = rowData.eh_ultimo_ocupante;
+
+    const exibeBotaoEditar = ehComposicaoVigente && (ehCargoVigente || ehUltimoOcupante);
     return (
       <div className="d-flex">
-        {rowData.eh_composicao_vigente !== false &&
+        {exibeBotaoEditar &&
           <EditIconButton
             onClick={() => {
               navigate(`/cadastro-historico-de-membros-vacancia/${composicaoUuid}`, {
@@ -34,20 +44,25 @@ export const CargosDaComposicaoListVacancia = ({ composicaoUuid, data }) => {
   };
 
   const montaColunaNomeOcupante = (rowData) => {
-    let badge = null;
 
-    if (rowData.substituto) {
-      badge = <Badge className="badge-substituto" title={`substitui ${rowData.ocupante_substitui}`}>{rowData.tag_substituto}</Badge>;
-    } else if (rowData.substituido) {
-      badge = <Badge className="badge-substituido" title={`substituído por ${rowData.ocupante_substituido_por}`}>{rowData.tag_substituido}</Badge>;
-    } else if (rowData.cargo_vago === true) {
-      badge = <Badge className="badge-cargo-vago">{'Cargo Vago'}</Badge>;
+    let etiquetas = [];
+    if (rowData.cargo_vago === true) {
+      etiquetas.push(<Badge className="badge-cargo-vago">{'Cargo Vago'}</Badge>);
+    } else {
+      if (rowData.tag_novo_membro) {
+        etiquetas.push(<Badge className="badge-novo-membro">{rowData.tag_novo_membro}</Badge>);
+      }
+      if (rowData.tag_vacancia) {
+        etiquetas.push(<Badge className="badge-vacancia">{rowData.tag_vacancia}</Badge>);
+      }
     }
 
     return (
       <div className="d-flex flex-column align-items-start">
-        <span>{rowData.ocupante_do_cargo.nome}</span>
-        {badge}
+        <span>{rowData?.ocupante_do_cargo?.nome}</span>
+        {etiquetas.map((etiqueta) => (
+          <div key={etiqueta}>{etiqueta}</div>
+        ))}
       </div>
     );
   };

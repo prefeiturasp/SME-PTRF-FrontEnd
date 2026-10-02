@@ -15,7 +15,6 @@ export const Justificativa = ({
   lancamentosSelecionados,
   setClassBtnSalvarJustificativa,
   justificativaObrigatoria,
-  permiteEditarCamposExtrato,
   permissaoEditarConciliacao,
 }) => {
   const handleOnClick = () => {
@@ -48,10 +47,10 @@ export const Justificativa = ({
         name="justificativa"
         placeholder="Escreva o comentário"
         required={justificativaObrigatoria}
-        disabled={!permissaoEditarConciliacao || !permiteEditarCamposExtrato}
+        disabled={!permissaoEditarConciliacao}
       ></textarea>
 
-      {permissaoEditarConciliacao && permiteEditarCamposExtrato && (
+      {permissaoEditarConciliacao && (
         <div className="bd-highlight d-flex justify-content-end align-items-center">
           {checkSalvarJustificativa && (
             <div className="">

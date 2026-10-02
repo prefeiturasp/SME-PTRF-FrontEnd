@@ -41,7 +41,7 @@ describe('ModalConcluirAnalise', () => {
         status_de_conclusao_de_pc: [
             { id: 'APROVADA', nome: 'Aprovada' },
             { id: 'APROVADA_RESSALVA', nome: 'Aprovada com ressalva' },
-            { id: 'REPROVADA', nome: 'Reprovada' },
+            { id: 'REPROVADA', nome: 'Rejeitada' },
         ],
     };
 
@@ -95,7 +95,7 @@ describe('ModalConcluirAnalise', () => {
         expect(screen.getByText('Concluir análise')).toBeInTheDocument();
         expect(screen.getByText('Aprovada')).toBeInTheDocument();
         expect(screen.getByText('Aprovada com ressalva')).toBeInTheDocument();
-        expect(screen.getByText('Reprovada')).toBeInTheDocument();
+        expect(screen.getByText('Rejeitada')).toBeInTheDocument();
     });
 
     it('chama handleChangeConcluirAnalise ao selecionar o status', () => {

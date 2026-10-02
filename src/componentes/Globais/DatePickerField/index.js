@@ -9,7 +9,7 @@ import moment from "moment";
 registerLocale("pt", ptBR);
 
 
-export const DatePickerField = ({ dataQa="", name, id, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText, maxDate=null, wrapperClassName=null, minDate=null }) => {
+export const DatePickerField = ({ dataQa="", name, id, value, className="form-control", onChange, onCalendarOpen, onCalendarClose, disabled, placeholderText, maxDate=null, wrapperClassName=null, minDate=null, ...props }) => {
     const parseDate = (dateString) => {
         if (!dateString) return null;
         if (dateString instanceof Date) return dateString;
@@ -42,6 +42,7 @@ export const DatePickerField = ({ dataQa="", name, id, value, className="form-co
                     mask = {[/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/]}
                 />
             }
+            {...props}
         />
     );
 };

@@ -81,7 +81,17 @@ export const getCargosComposicaoVacanciaPorData = async (composicao_uuid, data) 
         params: {
             composicao_uuid: composicao_uuid,
             data: data,
-        }        
+        }
+    })).data
+}
+
+export const getCargosComposicaoVacanciaPorDataEAssociacao = async (data, associacao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/composicao-por-data/`, {
+        ...authHeader(),
+        params: {
+            data: data,
+            associacao_uuid: associacao_uuid,
+        }
     })).data
 }
 
@@ -91,6 +101,15 @@ export const getTimelineCargoComposicaoVacancia = async (composicao_uuid, cargo_
         params: {
             composicao_uuid: composicao_uuid,
             cargo_associacao_uuid: cargo_associacao
+        }
+    })).data
+}
+
+export const getTimelineConsolidadaComposicaoVacancia = async (composicao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/timeline-consolidada/`, {
+        ...authHeader(),
+        params: {
+            composicao_uuid: composicao_uuid,
         }
     })).data
 }

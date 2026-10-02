@@ -32,7 +32,7 @@ describe('Filtros', () => {
   test('Deve renderizar os elementos corretamente', () => {
     renderComponent();
 
-    expect(screen.getByLabelText('Filtrar por motivo de reprovação de PC')).toBeInTheDocument();
+    expect(screen.getByLabelText('Filtrar por motivo de rejeição de PC')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Busque por motivo')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Limpar' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Filtrar' })).toBeInTheDocument();
