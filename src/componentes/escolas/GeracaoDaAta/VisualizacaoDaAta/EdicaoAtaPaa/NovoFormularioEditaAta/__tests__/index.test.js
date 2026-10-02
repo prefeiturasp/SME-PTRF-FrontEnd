@@ -8,7 +8,6 @@ import {
     getListaPresentesPadraoPaa,
 } from "../../../../../../../services/escolas/PresentesAtaPaa.service";
 
-import { getCargosComposicaoData } from "../../../../../../../services/Mandatos.service";
 import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../../services/MandatosVacancia.service";
 
 import { visoesService } from "../../../../../../../services/visoes.service";
@@ -27,10 +26,6 @@ jest.mock(
     }),
 );
 
-jest.mock("../../../../../../../services/Mandatos.service", () => ({
-    getCargosComposicaoData: jest.fn(),
-}));
-
 jest.mock("../../../../../../../services/MandatosVacancia.service", () => ({
     getCargosComposicaoVacanciaPorDataEAssociacao: jest.fn(),
 }));
@@ -41,9 +36,6 @@ jest.mock("../../utils", () => ({
     extraiProfessorDefaults: jest.fn(),
     listaPossuiParticipantesAssociacao: jest.fn(),
     marcaParticipantesComoMembrosDaAssociacao: jest.fn((lista) => lista),
-    formatarListaCargoComposicaoParaFormatoDaListaParticipantes: jest.fn(
-        (lista) => lista,
-    ),
 }));
 
 jest.mock("../../../../../../../services/visoes.service", () => ({
@@ -111,9 +103,7 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
 
         getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([]);
         getListaPresentesPadraoPaa.mockResolvedValue([]);
-        getCargosComposicaoData.mockResolvedValue([]);
         getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({});
-        visoesService.featureFlagAtiva.mockReturnValue(false);
 
         utils.listaPossuiParticipantesAssociacao.mockReturnValue(true);
 
@@ -124,10 +114,6 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         utils.extraiProfessorDefaults.mockReturnValue(null);
 
         utils.marcaParticipantesComoMembrosDaAssociacao.mockImplementation(
-            (lista) => lista,
-        );
-
-        utils.formatarListaCargoComposicaoParaFormatoDaListaParticipantes.mockImplementation(
             (lista) => lista,
         );
     });
@@ -288,9 +274,7 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
             });
         };
 
-        it("deve buscar a composição com vacância quando a flag historico-de-membros-v2 estiver ativa", async () => {
-            visoesService.featureFlagAtiva.mockReturnValue(true);
-
+        it("deve buscar a composição com vacância ao alterar a data da reunião", async () => {
             render(<NovoFormularioEditaAta {...propsBase} />);
 
             await alteraDataDaReuniao(new Date(2026, 8, 25));
@@ -301,28 +285,9 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
                     "assoc-1",
                 );
             });
-            expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith(
-                "historico-de-membros-v2",
-            );
-            expect(getCargosComposicaoData).not.toHaveBeenCalled();
-        });
-
-        it("deve buscar a composição padrão quando a flag historico-de-membros-v2 estiver inativa", async () => {
-            render(<NovoFormularioEditaAta {...propsBase} />);
-
-            await alteraDataDaReuniao(new Date(2026, 8, 25));
-
-            await waitFor(() => {
-                expect(getCargosComposicaoData).toHaveBeenCalledWith(
-                    "2026-09-25",
-                    "assoc-1",
-                );
-            });
-            expect(getCargosComposicaoVacanciaPorDataEAssociacao).not.toHaveBeenCalled();
         });
 
         it("deve exibir cargo vago como ausente, sem nome e com a data de vacância formatada", async () => {
-            visoesService.featureFlagAtiva.mockReturnValue(true);
             getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
                 vice_presidente: {
                     id: 2,
@@ -378,7 +343,6 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
                 ).toBe("Nome Anterior");
             });
 
-            visoesService.featureFlagAtiva.mockReturnValue(true);
             getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
                 vice_presidente: {
                     id: 2,
@@ -492,8 +456,6 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         });
 
         it("deve exibir o carregamento enquanto busca a composição da nova data", async () => {
-            visoesService.featureFlagAtiva.mockReturnValue(true);
-
             let resolverComposicao;
             getCargosComposicaoVacanciaPorDataEAssociacao.mockReturnValue(
                 new Promise((resolve) => {
@@ -521,7 +483,6 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         });
 
         it("deve notificar o erro retornado pela API quando a busca da composição falhar", async () => {
-            visoesService.featureFlagAtiva.mockReturnValue(true);
             getCargosComposicaoVacanciaPorDataEAssociacao.mockRejectedValue({
                 response: { data: { erro: "Data fora do mandato" } },
             });
@@ -548,7 +509,9 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         });
 
         it("deve notificar mensagem padrão quando o erro da composição não tiver mensagem da API", async () => {
-            getCargosComposicaoData.mockRejectedValue(new Error("Falha de rede"));
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockRejectedValue(
+                new Error("Falha de rede"),
+            );
             const toastErroSpy = jest
                 .spyOn(toastCustom, "ToastCustomError")
                 .mockImplementation(() => {});
