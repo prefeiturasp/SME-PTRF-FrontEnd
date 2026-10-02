@@ -5,18 +5,22 @@ import {RetornaSeTemPermissaoEdicaoHistoricoDeMembros} from "../RetornaSeTemPerm
 
 
 export const TopoComBotoesFormCadastroHistoricoDeMembrosVacancia = ({
+    cargo,
     mandato,
     isValid,
     onInformarSaida,
-    ehEdicao,
-    ocupanteVigente,
-    podeCancelarSaida, onCancelarSaida,
-    podeCancelarEntrada, onCancelarEntrada,
+    onCancelarSaida,
+    onCancelarEntrada,
     marcoSelecionado
     }) => {
 
     const dataTemplate = useDataTemplate()
     const TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS = RetornaSeTemPermissaoEdicaoHistoricoDeMembros()
+
+    const ehOcupanteVigente = cargo?.ocupante_vigente;
+    const podeCancelarEntrada = cargo?.pode_cancelar_entrada;
+    const podeCancelarSaida = cargo?.pode_cancelar_saida;
+    const ehEdicao = cargo?.cargo_vago === false;
 
     return (
         <div className="d-flex align-items-end mt-0 TopoComBotoesFormCadastroHistoricoDeMembrosVacancia">
@@ -29,11 +33,11 @@ export const TopoComBotoesFormCadastroHistoricoDeMembrosVacancia = ({
             <div className="p-2 pt-3" data-qa='composicao-info'>
                 {ehEdicao &&
                     <button
-                        disabled={!ocupanteVigente || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
+                        disabled={!ehOcupanteVigente || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS}
                         type='button'
                         className="btn btn-success mr-2"
                         onClick={onInformarSaida}
-                        title={!ocupanteVigente ? 'Cargo não é vigente' : 'Informar Saída de membro'}
+                        title={!ehOcupanteVigente ? 'Cargo não é vigente' : 'Informar Saída de membro'}
                     >
                         Informar saída
                     </button>

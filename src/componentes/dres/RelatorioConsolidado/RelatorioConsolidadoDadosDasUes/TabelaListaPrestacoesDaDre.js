@@ -136,7 +136,7 @@ export const TabelaListaPrestacoesDaDre = ({listaPrestacoes, valorTemplate})=>{
              }
          } else if (status_converter === 'REPROVADA') {
              return {
-                 texto_col_tabela: 'Reprovada',
+                 texto_col_tabela: 'Rejeitada',
              }
          } else if (status_converter === 'NAO_APRESENTADA') {
              return {

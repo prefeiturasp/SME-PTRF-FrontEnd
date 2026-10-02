@@ -50,9 +50,8 @@ describe("Tabela", () => {
     count: 1,
   };
 
-  it("renderiza título e tabela", () => {
+  it("renderiza somente tabela", () => {
     render(<Tabela {...defaultProps} />);
-    expect(screen.getByText("Ações PDDE")).toBeInTheDocument();
     expect(screen.getAllByText("Ação PDDE").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Programa").length).toBeGreaterThan(0);
   });

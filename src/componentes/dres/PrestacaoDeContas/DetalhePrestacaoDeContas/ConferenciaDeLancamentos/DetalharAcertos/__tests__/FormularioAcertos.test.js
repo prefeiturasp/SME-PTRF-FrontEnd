@@ -50,6 +50,7 @@ const renderComponent = ({
     lancamentosParaAcertos = [],
     setListaTiposDeAcertoLancamentosAgrupado = jest.fn(),
     setIsValorParcialValido = jest.fn(),
+    handleChangeTipoDeAcertoLancamento = jest.fn(),
 } = {}) => {
     const validaContaAoSalvar = jest.fn();
 
@@ -60,7 +61,7 @@ const renderComponent = ({
                 listaTiposDeAcertoLancamentosAgrupado={listaTiposDeAcertoLancamentosAgrupado}
                 setListaTiposDeAcertoLancamentosAgrupado={setListaTiposDeAcertoLancamentosAgrupado}
                 formRef={React.createRef()}
-                handleChangeTipoDeAcertoLancamento={jest.fn()}
+                handleChangeTipoDeAcertoLancamento={handleChangeTipoDeAcertoLancamento}
                 exibeCamposCategoriaDevolucao={exibeCamposCategoriaDevolucao}
                 tiposDevolucao={[]}
                 bloqueiaSelectTipoDeAcerto={[]}
@@ -77,7 +78,7 @@ const renderComponent = ({
         </ValidarParcialTesouro.Provider>,
     );
 
-    return { validaContaAoSalvar, setIsValorParcialValido };
+    return { validaContaAoSalvar, setIsValorParcialValido, handleChangeTipoDeAcertoLancamento };
 };
 
 describe('FormularioAcertos', () => {
@@ -244,5 +245,58 @@ describe('FormularioAcertos', () => {
         });
 
         expect(screen.queryByRole('group', { name: /Categoria teste/i })).toBeInTheDocument();
+    });
+
+    it('deve ocultar categoria quando não há mais itens para exibir após a seleção', () => {
+        renderComponent({
+            listaTiposDeAcertoLancamentosAgrupado: [
+                {
+                    id: 'CATEGORIA_LIVRE',
+                    nome: 'Categoria Livre',
+                    tipos_acerto_lancamento: [
+                        { uuid: 'UUID_UNICO', nome: 'Item Único', deve_exibir: true },
+                    ],
+                },
+            ],
+            solicitacoes_acerto: {
+                solicitacoes_acerto: [{ tipo_acerto: 'UUID_UNICO', devolucao_tesouro: {} }],
+            },
+        });
+
+        const grupo = screen.getByRole('group', { name: 'Categoria Livre' });
+        expect(grupo).toHaveClass('esconde-categoria');
+    });
+
+    it('deve manter categoria exibida quando ainda restam itens para exibir após a seleção', () => {
+        renderComponent({
+            listaTiposDeAcertoLancamentosAgrupado: [
+                {
+                    id: 'CATEGORIA_LIVRE',
+                    nome: 'Categoria Livre',
+                    tipos_acerto_lancamento: [
+                        { uuid: 'UUID_SEL', nome: 'Item Selecionado', deve_exibir: true },
+                        { uuid: 'UUID_OUTRO', nome: 'Item Outro', deve_exibir: true },
+                    ],
+                },
+            ],
+            solicitacoes_acerto: {
+                solicitacoes_acerto: [{ tipo_acerto: 'UUID_SEL', devolucao_tesouro: {} }],
+            },
+        });
+
+        const grupo = screen.getByRole('group', { name: 'Categoria Livre' });
+        expect(grupo).not.toHaveClass('esconde-categoria');
+    });
+
+    it('deve chamar handleChange do formik e handleChangeTipoDeAcertoLancamento ao alterar o tipo de acerto', async () => {
+        const user = userEvent.setup();
+        const handleChangeTipoDeAcertoLancamento = jest.fn();
+
+        renderComponent({ handleChangeTipoDeAcertoLancamento });
+
+        await user.selectOptions(screen.getByLabelText('Tipo de acerto'), 'UUID_DEV');
+
+        expect(handleChangeTipoDeAcertoLancamento).toHaveBeenCalled();
+        expect(screen.getByLabelText('Tipo de acerto')).toHaveValue('UUID_DEV');
     });
 });

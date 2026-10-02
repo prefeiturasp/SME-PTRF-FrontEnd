@@ -109,7 +109,7 @@ describe("BotoesAvancarRetroceder", () => {
     ).toBeInTheDocument();
   });
 
-  it("quando FLAG_ATIVA e status NAO_APRESENTADA renderiza botão 'Concluir como reprovada'", () => {
+  it("quando FLAG_ATIVA e status NAO_APRESENTADA renderiza botão 'Concluir como rejeitada'", () => {
     RetornaSeFlagAtiva.mockReturnValue(true);
     const setShowModalConcluirPcNaoApresentada = jest.fn();
 
@@ -119,7 +119,7 @@ describe("BotoesAvancarRetroceder", () => {
     });
 
     const btnReprovada = screen.getByRole("button", {
-      name: /Concluir como reprovada/i,
+      name: /Concluir como rejeitada/i,
     });
     expect(btnReprovada).toBeInTheDocument();
 

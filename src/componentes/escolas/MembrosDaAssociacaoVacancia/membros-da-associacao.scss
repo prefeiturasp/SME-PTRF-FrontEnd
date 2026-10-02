@@ -1,3 +1,5 @@
+@import "src/assets/css/variaveis.scss";
+
 .paginacao-composicoes-v2 {
   text-align: right !important;
   padding: 0 10px 0 0 !important;
@@ -41,4 +43,235 @@
 
 .asterisco-vermelho {
   color: #b40c02;
+}
+
+// Linha do tempo (LinhaDoTempoComposicaoVacancia)
+.LinhaDoTempoComposicaoVacancia {
+  .linha-do-tempo-controles {
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+  }
+
+  .fonte-12 {
+    font-size: 12px;
+  }
+
+  .legenda-timeline {
+    font-size: 13px;
+  }
+
+  .quadrado-legenda {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 6px;
+  }
+
+  .seg-vigente {
+    background-color: var(--color-primary);
+  }
+
+  .seg-encerrado {
+    background-color: $corTagEncerrado;
+  }
+
+  .seg-vago {
+    background-color: $corTagCargoVago;
+  }
+
+  .area-timeline-vacancia {
+    position: relative;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 16px 16px;
+    overflow-x: auto;
+  }
+
+  // Corpo da timeline: coluna de rótulos + coluna de trilhas lado a lado. A coluna de
+  // trilhas é o único container relativo usado para posicionar ticks, segmentos e o
+  // cursor - todos em %, então nunca dependem de nenhuma largura fixa duplicada em JS.
+  .timeline-corpo {
+    display: flex;
+  }
+
+  .timeline-rotulos {
+    width: 140px;
+    min-width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-trilhas {
+    position: relative;
+    flex: 1;
+    min-width: 880px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .timeline-rotulo-cabecalho {
+    height: 20px;
+  }
+
+  .timeline-rotulo-cargo {
+    height: 40px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+    padding-right: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Cabeçalho de seção (Diretoria executiva / Conselho Fiscal). A versão sem texto
+  // (.timeline-trilha-secao) só existe para manter as linhas alinhadas entre as duas
+  // colunas, já que cada uma é montada em .map() independentes.
+  .timeline-rotulo-secao {
+    height: 24px;
+    margin-top: 14px;
+    display: flex;
+    align-items: flex-end;
+    font-size: 12px;
+    font-weight: 700;
+    color: #898781;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .timeline-trilha-secao {
+    height: 24px;
+    margin-top: 14px;
+  }
+
+  .ticks-mes-timeline {
+    position: relative;
+    height: 20px;
+  }
+
+  .tick-mes-timeline {
+    position: absolute;
+    top: 0;
+    font-size: 10px;
+    color: var(--color-primary);
+    border-left: 1px solid #e1e0d9;
+    padding-left: 4px;
+    height: 100%;
+  }
+
+  .trilha-cargo-timeline {
+    position: relative;
+    height: 40px;
+    margin-top: 10px;
+    background-color: #f2f1ed;
+    border-radius: 6px;
+  }
+
+  .segmento-timeline {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    min-width: 6px;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    text-align: left;
+
+    &.selecionado {
+      border-color: #0b0b0b;
+    }
+
+    
+    &.seg-vago .segmento-timeline-label {
+      color: #fff;
+    }
+  }
+
+  .segmento-timeline:hover {
+    border-color: var(--color-primary);
+  }
+
+  .segmento-timeline-label {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #ffffff;
+  }
+
+  .cursor-timeline {
+    position: absolute;
+    top: 20px;
+    bottom: 0;
+    width: 2px;
+    background-color: #0b0b0b;
+    pointer-events: none;
+  }
+
+  .paineis-timeline {
+    align-items: stretch;
+  }
+
+  .card-timeline {
+    flex: 1;
+    min-width: 300px;
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+  }
+
+  .titulo-painel-timeline {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .cargo-label-painel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #898781;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .nome-painel {
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .periodo-painel {
+    font-size: 13px;
+  }
+
+  .titulo-secao-composicao {
+    font-size: 12px;
+    font-weight: 700;
+    color: #898781;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+
+  .linha-composicao-data {
+    display: flex;
+    // justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e1e0d9;
+    font-size: 13px;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
 }

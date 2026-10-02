@@ -17,13 +17,13 @@ export const useDeleteMotivoReprovacaoPc = () => {
             queryClient.invalidateQueries(['motivos-reprovacao-pc']).then();
             // Mensagens
             handleCloseModalForm();
-            toastCustom.ToastCustomSuccess('Motivo de reprovação de PC excluído', `O motivo de reprovação de PC foi excluído com sucesso.`);
+            toastCustom.ToastCustomSuccess('Motivo de rejeição de PC excluído', `O motivo de rejeição de PC foi excluído com sucesso.`);
         },
         onError: (error) => {
             if (error?.response?.data?.mensagem) {
-                toastCustom.ToastCustomError('Erro ao apagar o motivo de reprovação de PC', error.response.data.mensagem)
+                toastCustom.ToastCustomError('Erro ao apagar o motivo de rejeição de PC', error.response.data.mensagem)
             } else {
-                toastCustom.ToastCustomError('Erro ao apagar o motivo de reprovação de PC', `Não foi possível apagar o motivo de reprovação de PC`)
+                toastCustom.ToastCustomError('Erro ao apagar o motivo de rejeição de PC', `Não foi possível apagar o motivo de rejeição de PC`)
             }
         },
         onSettled: () => {

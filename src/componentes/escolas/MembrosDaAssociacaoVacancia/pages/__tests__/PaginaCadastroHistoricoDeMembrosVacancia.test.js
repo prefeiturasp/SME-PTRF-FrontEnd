@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { PaginaCadastroHistoricoDeMembrosVacancia } from "../PaginaCadastroHistoricoDeMembrosVacancia";
 import { usePostCargoComposicaoVacancia } from "../../hooks/usePostCargoComposicaoVacancia";
@@ -8,6 +8,8 @@ import { useRegistrarSaidaCargoComposicaoVacancia } from "../../hooks/useRegistr
 import { useCancelarSaidaCargoComposicaoVacancia } from "../../hooks/useCancelarSaidaCargoComposicaoVacancia";
 import { useCancelarEntradaCargoComposicaoVacancia } from "../../hooks/useCancelarEntradaCargoComposicaoVacancia";
 import { useGetMandatoVigente } from "../../hooks/useGetMandatoVigente";
+import { getCargosDaComposicaoVacancia } from "../../../../../services/MandatosVacancia.service";
+import { toastCustom } from "../../../../Globais/ToastCustom";
 
 const mockNavigate = jest.fn();
 const mockUseLocation = jest.fn();
@@ -27,18 +29,16 @@ jest.mock("../../../../../paginas/PaginasContainer", () => ({
 jest.mock("../../components/FormCadastroVacancia", () => ({
     FormCadastroVacancia: ({
         cargo, mandato, onSubmitForm, onInformarSaida,
-        ehEdicao, ocupanteVigente,
-        podeCancelarSaida, onCancelarSaida,
-        podeCancelarEntrada, onCancelarEntrada,
+        onCancelarSaida, onCancelarEntrada,
     }) => (
         <div>
             <h2>FormCadastroVacancia</h2>
             <div data-testid="cargo-label">{cargo?.cargo_associacao_label || ""}</div>
             <div data-testid="mandato-inicial">{mandato?.data_inicial || ""}</div>
-            <div data-testid="eh-edicao">{String(ehEdicao)}</div>
-            <div data-testid="ocupante-vigente">{String(ocupanteVigente)}</div>
-            <div data-testid="pode-cancelar-saida">{String(podeCancelarSaida)}</div>
-            <div data-testid="pode-cancelar-entrada">{String(podeCancelarEntrada)}</div>
+            <div data-testid="eh-edicao">{String(cargo?.cargo_vago === false)}</div>
+            <div data-testid="ocupante-vigente">{String(cargo?.ocupante_vigente)}</div>
+            <div data-testid="pode-cancelar-saida">{String(cargo?.pode_cancelar_saida)}</div>
+            <div data-testid="pode-cancelar-entrada">{String(cargo?.pode_cancelar_entrada)}</div>
             <button onClick={() => onSubmitForm(mockSubmitValues.current)}>Salvar</button>
             <button onClick={onInformarSaida}>Informar saída</button>
             <button onClick={onCancelarSaida}>Cancelar Ocupante</button>
@@ -53,6 +53,17 @@ jest.mock("../../components/ModalInformarSaidaCargoVacancia", () => ({
             {show ? <button onClick={() => handleConfirm("2026-07-15")}>Confirmar saída</button> : null}
             <button onClick={handleClose}>Fechar</button>
         </div>
+    ),
+}));
+
+jest.mock("../../components/ModalIncluirNovoMembroVacancia", () => ({
+    ModalIncluirNovoMembroVacancia: ({ show, handleConfirm, handleClose }) => (
+        show ? (
+            <div>
+                <button onClick={handleClose}>Não incluir</button>
+                <button onClick={handleConfirm}>Incluir novo membro</button>
+            </div>
+        ) : null
     ),
 }));
 
@@ -80,6 +91,14 @@ jest.mock("../../hooks/useGetMandatoVigente", () => ({
     useGetMandatoVigente: jest.fn(),
 }));
 
+jest.mock("../../../../../services/MandatosVacancia.service", () => ({
+    getCargosDaComposicaoVacancia: jest.fn(),
+}));
+
+jest.mock("../../../../Globais/ToastCustom", () => ({
+    toastCustom: { ToastCustomError: jest.fn() },
+}));
+
 const mockSubmitValues = { current: {} };
 
 const baseCargoVago = {
@@ -91,6 +110,8 @@ const baseCargoVago = {
     cargo_vago_vigente: true,
     ocupante_vigente: false,
     substituido: false,
+    pode_cancelar_entrada: false,
+    pode_cancelar_saida: false,
 };
 
 const baseCargoOcupado = {
@@ -99,6 +120,22 @@ const baseCargoOcupado = {
     cargo_vago: false,
     cargo_vago_vigente: false,
     ocupante_vigente: true,
+    pode_cancelar_entrada: true,
+    pode_cancelar_saida: false,
+};
+
+// registro do TESOUREIRO no board atual (GET /cargos-da-composicao/), já vago e vigente
+// logo após a saída - é o que o backend efetivamente monta, com data_inicio_no_cargo
+// correspondente ao início do vago aberto, não ao início do mandato.
+const cargoVagoVigenteDoBoard = {
+    uuid: "",
+    cargo_associacao: "TESOUREIRO",
+    cargo_associacao_label: "Tesoureiro",
+    data_inicio_no_cargo: "2026-07-15",
+    cargo_vago: true,
+    cargo_vago_vigente: true,
+    ocupante_vigente: false,
+    substituido: false,
 };
 
 const renderComponent = () => render(<PaginaCadastroHistoricoDeMembrosVacancia />);
@@ -138,6 +175,11 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         useCancelarSaidaCargoComposicaoVacancia.mockReturnValue({ mutationCancelarSaidaCargoComposicaoVacancia: cancelarSaidaMutation });
         useCancelarEntradaCargoComposicaoVacancia.mockReturnValue({ mutationCancelarEntradaCargoComposicaoVacancia: cancelarEntradaMutation });
         useGetMandatoVigente.mockReturnValue({ data: { data_inicial: "2026-01-01", data_final: "2026-12-31" } });
+
+        getCargosDaComposicaoVacancia.mockResolvedValue({
+            diretoria_executiva: [cargoVagoVigenteDoBoard],
+            conselho_fiscal: [],
+        });
     });
 
     it("deve renderizar o formulário passando cargo e mandato", () => {
@@ -149,7 +191,7 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         expect(screen.getByTestId("mandato-inicial")).toHaveTextContent("2026-01-01");
     });
 
-    it("deve calcular ehEdicao=false e podeCancelarEntrada=false para um cargo vago", () => {
+    it("deve repassar ehEdicao=false e pode_cancelar_entrada/saida=false para um cargo vago", () => {
         renderComponent();
 
         expect(screen.getByTestId("eh-edicao")).toHaveTextContent("false");
@@ -157,7 +199,7 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         expect(screen.getByTestId("pode-cancelar-saida")).toHaveTextContent("false");
     });
 
-    it("deve calcular ehEdicao=true, ocupanteVigente=true e podeCancelarEntrada=true para um cargo ocupado e vigente", () => {
+    it("deve repassar ehEdicao=true, ocupanteVigente=true e pode_cancelar_entrada=true vindos do cargo para um cargo ocupado e vigente", () => {
         mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
 
         renderComponent();
@@ -168,9 +210,17 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         expect(screen.getByTestId("pode-cancelar-saida")).toHaveTextContent("false");
     });
 
-    it("deve calcular podeCancelarOcupante=true para um cargo já saído sem sucessor", () => {
+    it("deve repassar pode_cancelar_saida=true vindo do cargo para um cargo já saído sem sucessor", () => {
         mockUseLocation.mockReturnValue({
-            state: { cargo: { ...baseCargoOcupado, ocupante_vigente: false, substituido: false } },
+            state: {
+                cargo: {
+                    ...baseCargoOcupado,
+                    ocupante_vigente: false,
+                    substituido: false,
+                    pode_cancelar_entrada: false,
+                    pode_cancelar_saida: true,
+                },
+            },
         });
 
         renderComponent();
@@ -179,9 +229,16 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         expect(screen.getByTestId("pode-cancelar-entrada")).toHaveTextContent("false");
     });
 
-    it("não deve calcular podeCancelarOcupante=true quando já existe sucessor", () => {
+    it("deve repassar pode_cancelar_saida=false vindo do cargo quando já existe sucessor", () => {
         mockUseLocation.mockReturnValue({
-            state: { cargo: { ...baseCargoOcupado, ocupante_vigente: false, substituido: true } },
+            state: {
+                cargo: {
+                    ...baseCargoOcupado,
+                    ocupante_vigente: false,
+                    substituido: true,
+                    pode_cancelar_saida: false,
+                },
+            },
         });
 
         renderComponent();
@@ -248,7 +305,7 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
         expect(screen.getByRole("button", { name: /confirmar saída/i })).toBeInTheDocument();
     });
 
-    it("deve registrar a saída e navegar para a listagem ao confirmar", () => {
+    it("deve registrar a saída e abrir o modal de incluir novo membro ao confirmar", () => {
         mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
         registrarSaidaMutation.mutate.mockImplementation((_, { onSuccess }) => onSuccess());
 
@@ -261,7 +318,87 @@ describe("PaginaCadastroHistoricoDeMembrosVacancia", () => {
             { uuid: "cargo-uuid", data_saida: "2026-07-15" },
             expect.objectContaining({ onSuccess: expect.any(Function) })
         );
-        // registrar saída altera a timeline do cargo - sempre volta pro padrão, sem preservar marco
+        // não navega direto: primeiro pergunta se quer incluir um novo membro no cargo
+        expect(mockNavigate).not.toHaveBeenCalled();
+        expect(screen.getByRole("button", { name: /incluir novo membro/i })).toBeInTheDocument();
+        // o modal de informar saída fecha ao abrir o de incluir novo membro
+        expect(screen.queryByRole("button", { name: /confirmar saída/i })).not.toBeInTheDocument();
+    });
+
+    it("deve navegar para a listagem ao optar por não incluir um novo membro", () => {
+        mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
+        registrarSaidaMutation.mutate.mockImplementation((_, { onSuccess }) => onSuccess());
+
+        renderComponent();
+
+        fireEvent.click(screen.getByRole("button", { name: /informar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /confirmar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /não incluir/i }));
+
+        expect(mockNavigate).toHaveBeenCalledWith("/membros-da-associacao");
+    });
+
+    it("deve buscar o board atual e navegar com o registro vago vigente do cargo ao optar por incluir um novo membro", async () => {
+        mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
+        registrarSaidaMutation.mutate.mockImplementation((_, { onSuccess }) => onSuccess());
+
+        renderComponent();
+
+        fireEvent.click(screen.getByRole("button", { name: /informar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /confirmar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /incluir novo membro/i }));
+
+        await waitFor(() => expect(mockNavigate).toHaveBeenCalled());
+
+        // busca no mesmo endpoint/data (hoje) que a listagem usa, pra achar o vago vigente
+        expect(getCargosDaComposicaoVacancia).toHaveBeenCalledWith(
+            "composicao-1",
+            expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/)
+        );
+        expect(mockNavigate).toHaveBeenCalledWith(
+            "/cadastro-historico-de-membros-vacancia/composicao-1",
+            { state: { cargo: cargoVagoVigenteDoBoard } }
+        );
+    });
+
+    it("deve mostrar toast de erro e voltar pra listagem (sem abrir o formulário) se a busca do board falhar", async () => {
+        mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
+        registrarSaidaMutation.mutate.mockImplementation((_, { onSuccess }) => onSuccess());
+        getCargosDaComposicaoVacancia.mockRejectedValueOnce(new Error("Network Error"));
+
+        renderComponent();
+
+        fireEvent.click(screen.getByRole("button", { name: /informar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /confirmar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /incluir novo membro/i }));
+
+        await waitFor(() => expect(mockNavigate).toHaveBeenCalled());
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith("/membros-da-associacao");
+    });
+
+    it("deve mostrar toast de erro e voltar pra listagem (sem abrir o formulário) se o cargo não estiver mais vago vigente", async () => {
+        mockUseLocation.mockReturnValue({ state: { cargo: baseCargoOcupado } });
+        registrarSaidaMutation.mutate.mockImplementation((_, { onSuccess }) => onSuccess());
+        // outra pessoa já preencheu o cargo (ou o board não retorna mais o registro vago)
+        getCargosDaComposicaoVacancia.mockResolvedValueOnce({
+            diretoria_executiva: [{ ...cargoVagoVigenteDoBoard, cargo_vago: false, cargo_vago_vigente: false }],
+            conselho_fiscal: [],
+        });
+
+        renderComponent();
+
+        fireEvent.click(screen.getByRole("button", { name: /informar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /confirmar saída/i }));
+        fireEvent.click(screen.getByRole("button", { name: /incluir novo membro/i }));
+
+        await waitFor(() => expect(mockNavigate).toHaveBeenCalled());
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+            "Não foi possível incluir um novo membro.",
+            expect.any(String)
+        );
         expect(mockNavigate).toHaveBeenCalledWith("/membros-da-associacao");
     });
 

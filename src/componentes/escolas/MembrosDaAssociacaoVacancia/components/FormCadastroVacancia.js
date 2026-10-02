@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useMemo } from "react";
 import MaskedInput from "react-text-mask";
 import {Formik} from "formik";
 import {YupSignupSchemaHistoricoDeMembrosVacancia} from "../YupSignupSchemaHistoricoDeMembrosVacancia";
@@ -14,12 +14,12 @@ export const FormCadastroVacancia = ({
     mandato,
     onSubmitForm,
     onInformarSaida,
-    ehEdicao,
-    ocupanteVigente,
-    podeCancelarSaida, onCancelarSaida,
-    podeCancelarEntrada, onCancelarEntrada,
+    onCancelarSaida,
+    onCancelarEntrada,
     marcoSelecionado,
     }) => {
+
+    const ehEdicao = cargo?.cargo_vago === false;
 
     const TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS = RetornaSeTemPermissaoEdicaoHistoricoDeMembros()
     const ehCargoVagoVigente = cargo?.cargo_vago_vigente === true;
@@ -123,6 +123,10 @@ export const FormCadastroVacancia = ({
         }
     };
 
+    const campoPeriodoInicialBloqueado = useMemo(() => {
+        return ehEdicao || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS || !ehCargoVagoVigente
+    }, [ehEdicao, TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS, ehCargoVagoVigente]);
+
     return (
         <div className='p-2 pt-3 FormCadastroVacancia'>
             <Formik
@@ -137,14 +141,11 @@ export const FormCadastroVacancia = ({
                     return (
                         <form onSubmit={props.handleSubmit} onKeyDown={onKeyDown}>
                             <TopoComBotoesFormCadastroHistoricoDeMembrosVacancia
+                                cargo={cargo}
                                 mandato={mandato}
                                 isValid={props.isValid}
                                 onInformarSaida={onInformarSaida}
-                                ehEdicao={ehEdicao}
-                                ocupanteVigente={ocupanteVigente}
-                                podeCancelarSaida={podeCancelarSaida}
                                 onCancelarSaida={onCancelarSaida}
-                                podeCancelarEntrada={podeCancelarEntrada}
                                 onCancelarEntrada={onCancelarEntrada}
                                 marcoSelecionado={marcoSelecionado}
                             />
@@ -357,7 +358,7 @@ export const FormCadastroVacancia = ({
                                             onChange={setFieldValue}
                                             minDate={mandato ? moment(mandato.data_inicial).toDate() : ""}
                                             maxDate={mandato ? moment(mandato.data_final).toDate() : ""}
-                                            disabled={ehEdicao || !TEM_PERMISSAO_EDICAO_HISTORICO_DE_MEMBROS || !ehCargoVagoVigente}
+                                            disabled={campoPeriodoInicialBloqueado}
                                         />
                                         {props.errors.data_inicio_no_cargo && <span className="span_erro text-danger mt-1"> {props.errors.data_inicio_no_cargo}</span>}
                                     </div>

@@ -3,21 +3,25 @@ import {retornaMenuAtualizadoPorStatusCadastro, UrlsMenuInterno} from "../Associ
 import {MenuInterno} from "../../Globais/MenuInterno";
 import {ExportaDadosDaAsssociacao} from "../Associacao/ExportaDadosAssociacao";
 import {useGetStatusCadastroAssociacao} from "./hooks/useGetStatusCadastroAssociacao";
+import {FiqueDeOlhoMembroAssociacao} from "./components/FiqueDeOlhoMembroAssociação";
 import {PaginaMandatoVigenteVacancia} from "./pages/PaginaMandatoVigenteVacancia";
 import {PaginaMandatoAnteriorVacancia} from "./pages/PaginaMandatoAnteriorVacancia";
 import {useGetMandatosAnterioresVacancia} from "./hooks/useGetMandatosAnterioresVacancia";
+import {visoesService} from "../../../services/visoes.service";
 import "./membros-da-associacao.scss"
 
 // Módulo v2 (ComposicaoVacancia/CargoComposicaoVacancia), isolado de
 // componentes/escolas/MembrosDaAssociacao (v1)
 
 export const MembrosDaAssociacaoVacancia = () => {
+    const HISTORICO_DE_MEMBROS_V2_ATIVA = visoesService.featureFlagAtiva('historico-de-membros-v2');
     const {data: mandatosAnteriores} = useGetMandatosAnterioresVacancia()
     const count_mandatos_anteriores = mandatosAnteriores?.length || 0
     const {data_status_cadastro_associacao} = useGetStatusCadastroAssociacao()
     const [menuUrls, setMenuUrls] = useState(UrlsMenuInterno);
     const [isActiveMandatoVigente, setIsActiveMandatoVigente] = useState(true)
     const [isActiveMandatosAnteriores, setIsActiveMandatosAnteriores] = useState(false)
+    const [exibeExportacao, setExibeExportacao] = useState(false)
     const isActive = useCallback(()=>{
             setIsActiveMandatoVigente(prevState => !prevState)
             setIsActiveMandatosAnteriores(prevState => !prevState)
@@ -34,10 +38,13 @@ export const MembrosDaAssociacaoVacancia = () => {
 
     return (
         <span className="MembrosDaAssociacaoVacancia">
+            {HISTORICO_DE_MEMBROS_V2_ATIVA && <FiqueDeOlhoMembroAssociacao/>}
             <MenuInterno
                 caminhos_menu_interno={menuUrls}
             />
-            <ExportaDadosDaAsssociacao/>
+            {isActiveMandatoVigente && exibeExportacao &&
+                <ExportaDadosDaAsssociacao/>
+            }
 
             <nav>
                 <div className="nav nav-tabs nav-mandatos" id="nav-tab" role="tablist">
@@ -77,7 +84,7 @@ export const MembrosDaAssociacaoVacancia = () => {
                 <div className="tab-pane fade show active" id="nav-mandato-vigente" role="tabpanel"
                         aria-labelledby="nav-mandato-vigente-tab">
                     {isActiveMandatoVigente &&
-                        <PaginaMandatoVigenteVacancia/>
+                        <PaginaMandatoVigenteVacancia onComposicaoAtualChange={setExibeExportacao}/>
                     }
                 </div>
                 <div className="tab-pane fade" id="nav-mandatos-anteriores" role="tabpanel"

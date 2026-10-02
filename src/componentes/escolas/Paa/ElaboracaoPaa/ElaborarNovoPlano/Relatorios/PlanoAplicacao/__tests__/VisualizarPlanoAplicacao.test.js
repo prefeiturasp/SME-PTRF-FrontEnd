@@ -263,8 +263,6 @@ describe("VisualizarPlanoAplicacao", () => {
             });
 
             renderComponent();
-
-            screen.debug();
             expect(
                 screen.getByRole("columnheader", { name: "Descrição" }),
             ).toBeInTheDocument();

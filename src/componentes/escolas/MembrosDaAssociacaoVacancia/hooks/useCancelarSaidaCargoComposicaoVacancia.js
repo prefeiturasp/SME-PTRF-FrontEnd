@@ -13,7 +13,9 @@ export const useCancelarSaidaCargoComposicaoVacancia = () => {
         onSuccess: (data) => {
             console.log("Saída cancelada com sucesso ", data)
             queryClient.invalidateQueries(['cargos-da-composicao-vacancia']).then()
+            queryClient.invalidateQueries(['timeline-cargo-composicao-vacancia']).then()
             queryClient.invalidateQueries(['status-cadastro-associacao']).then()
+            queryClient.invalidateQueries(['timeline-consolidada-composicao-vacancia']).then()
             toastCustom.ToastCustomSuccess('Saída cancelada com sucesso.', `O membro voltou a ocupar o cargo normalmente.`)
         },
         onError: (error) => {
