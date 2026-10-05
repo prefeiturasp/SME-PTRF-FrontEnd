@@ -11,6 +11,7 @@ export const BarraSelecionaData = ({
     mandato,
     marcos,
     dataSelecionada,
+    label="Filtrar por data",
 }) => {
     const hoje = moment().format("YYYY-MM-DD");
 
@@ -29,9 +30,9 @@ export const BarraSelecionaData = ({
     };
 
     return (
-        <Flex wrap justify="space-between" className="BarraSelecionaData">
+        <Flex wrap justify="space-between" className="BarraSelecionaData align-items-end mb-3">
             <div>
-                <label className="d-block fonte-12 mb-1">Ir para uma data qualquer do mandato</label>
+                <label className="d-block fonte-12 mb-1">{label}</label>
                 <DatePickerField
                     dataQa="seletor-data-timeline"
                     name="dataSelecionada"

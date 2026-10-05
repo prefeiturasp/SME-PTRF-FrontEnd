@@ -24,7 +24,7 @@ import { CargosTimelineModoListagem } from "./VisualizacaoTimeLine/CargosTimelin
 
 // Linha do tempo visual de todos os cargos da composição, lado a lado, com navegação
 // livre por qualquer data do mandato (data exata ou marco anterior/seguinte).
-export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSelecionada, onSelecionarData }) => {
+export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSelecionada, onSelecionarData, habilitarClick=false }) => {
     const dataTemplate = useDataTemplate();
     const navigate = useNavigate();
     const temPermissaoEdicao = RetornaSeTemPermissaoEdicaoHistoricoDeMembros();
@@ -182,6 +182,7 @@ export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSe
                                 dataTemplate={dataTemplate}
                                 registroSelecionado={registroSelecionado}
                                 onSelecionarRegistro={setRegistroSelecionado}
+                                habilitarClick={habilitarClick}
                             />
                         ))}
 
@@ -197,6 +198,7 @@ export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSe
                                 dataTemplate={dataTemplate}
                                 registroSelecionado={registroSelecionado}
                                 onSelecionarRegistro={setRegistroSelecionado}
+                                habilitarClick={habilitarClick}
                             />
                         ))}
 
@@ -208,12 +210,15 @@ export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSe
                     </div>
                 </div>
             </div>
-
-            <BarraSelecionaData
-                marcos={marcos}
-                mandato={mandato}
-                onSelecionarData={onSelecionarData}
-                dataSelecionada={dataSelecionada} />
+            
+            <div className="mt-5">
+                <BarraSelecionaData
+                    marcos={marcos}
+                    mandato={mandato}
+                    onSelecionarData={onSelecionarData}
+                    dataSelecionada={dataSelecionada}
+                />
+            </div>
 
             {dataSelecionada !== "Invalid date" && (
                 <div className="d-flex flex-wrap mt-3 paineis-timeline">
@@ -222,6 +227,8 @@ export const LinhaDoTempoComposicaoVacancia = ({ composicaoUuid, mandato, dataSe
 
                         <CargosTimelineModoListagem
                             cargos={cargoRowsDiretoriaExecutiva} secao="Diretoria executiva" />
+
+                        <div className="mt-4"/>
 
                         <CargosTimelineModoListagem
                             cargos={cargoRowsConselhoFiscal} secao="Conselho Fiscal" />
