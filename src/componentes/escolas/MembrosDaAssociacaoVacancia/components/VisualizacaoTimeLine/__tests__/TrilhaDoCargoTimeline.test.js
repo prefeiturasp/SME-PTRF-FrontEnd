@@ -23,6 +23,7 @@ describe("TrilhaDoCargoTimeline", () => {
                 dataTemplate={dataTemplate}
                 registroSelecionado={null}
                 onSelecionarRegistro={onSelecionarRegistro}
+                habilitarClick={true}
                 {...props}
             />
         );
