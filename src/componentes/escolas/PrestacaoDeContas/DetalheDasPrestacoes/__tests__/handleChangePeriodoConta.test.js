@@ -252,6 +252,21 @@ describe("DetalheDasPrestacoes - alteração de período e conta", () => {
             expect(periodoSelect.value).toBe("periodo-1");
         });
 
+        it("atualiza o demonstrativo financeiro com o tipo da conta selecionada", async () => {
+            conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: "periodo-1", conta: "conta-1" });
+
+            renderComponent();
+
+            const contaSelect = screen.getByLabelText("Conta:");
+            await waitFor(() => expect(contaSelect.value).toBe("conta-1"));
+
+            expect(screen.getByText("Demonstrativo financeiro da conta Custeio")).toBeInTheDocument();
+
+            fireEvent.change(contaSelect, { target: { name: "conta", value: "conta-2" } });
+
+            expect(screen.getByText("Demonstrativo financeiro da conta Capital")).toBeInTheDocument();
+        });
+
         it("o storage inclui o período atual ao salvar a nova conta", async () => {
             conciliacaoStorageService.getPeriodoConta.mockReturnValue({ periodo: "periodo-1", conta: "conta-1" });
 

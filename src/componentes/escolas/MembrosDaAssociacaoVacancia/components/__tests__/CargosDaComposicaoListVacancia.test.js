@@ -43,16 +43,24 @@ describe("CargosDaComposicaoListVacancia", () => {
                 uuid: "1",
                 cargo_associacao_label: "Presidente",
                 ocupante_do_cargo: { nome: "João Silva", representacao_label: "Servidor" },
+                cargo_vago: false,
+                cargo_vigente: true,
                 substituto: false,
-                substituido: false,
+                tag_novo_membro: null,
+                tem_saida: false,
+                tag_vacancia: null,
             },
             {
                 uuid: "2",
                 cargo_associacao: "TESOUREIRO",
                 cargo_associacao_label: "Tesoureiro",
                 ocupante_do_cargo: { nome: "Maria Souza", representacao_label: "Servidor" },
+                cargo_vago: false,
+                cargo_vigente: true,
                 substituto: true,
-                tag_substituto: "Novo membro em 01/02/2026",
+                tag_novo_membro: "Novo membro em 01/02/2026",
+                tem_saida: false,
+                tag_vacancia: null,
             },
         ],
         conselho_fiscal: [
@@ -60,8 +68,12 @@ describe("CargosDaComposicaoListVacancia", () => {
                 uuid: "3",
                 cargo_associacao_label: "Conselheiro",
                 ocupante_do_cargo: { nome: "Carlos Oliveira", representacao_label: "Servidor" },
-                substituido: true,
-                tag_substituido: "Substituído em 01/02/2026",
+                cargo_vago: false,
+                cargo_vigente: true,
+                substituto: false,
+                tag_novo_membro: null,
+                tem_saida: true,
+                tag_vacancia: "Vacância em 01/02/2026",
             },
         ],
     };
@@ -92,20 +104,39 @@ describe("CargosDaComposicaoListVacancia", () => {
         expect(screen.getByText("Carlos Oliveira")).toBeInTheDocument();
     });
 
-    it("deve renderizar a badge de substituto quando aplicável", () => {
+    it("deve renderizar a badge de novo membro quando aplicável", () => {
         useGetCargosDaComposicaoVacancia.mockReturnValue({ isLoading: false, data: mockData });
 
         render(<CargosDaComposicaoListVacancia composicaoUuid="composicao-1" />);
 
-        expect(screen.getByText("Novo membro em 01/02/2026")).toHaveClass("badge-substituto");
+        expect(screen.getByText("Novo membro em 01/02/2026")).toHaveClass("badge-novo-membro");
     });
 
-    it("deve renderizar a badge de substituído quando aplicável", () => {
+    it("deve renderizar a badge de vacância quando aplicável", () => {
         useGetCargosDaComposicaoVacancia.mockReturnValue({ isLoading: false, data: mockData });
 
         render(<CargosDaComposicaoListVacancia composicaoUuid="composicao-1" />);
 
-        expect(screen.getByText("Substituído em 01/02/2026")).toHaveClass("badge-substituido");
+        expect(screen.getByText("Vacância em 01/02/2026")).toHaveClass("badge-vacancia");
+    });
+
+    it("deve renderizar a badge de cargo vago quando aplicável, mesmo com outras tags marcadas", () => {
+        const mockDataComVago = {
+            diretoria_executiva: [
+                {
+                    ...mockData.diretoria_executiva[0],
+                    ocupante_do_cargo: { nome: null, representacao_label: null },
+                    cargo_vago: true,
+                    tag_novo_membro: "Novo membro em 01/02/2026",
+                },
+            ],
+        };
+        useGetCargosDaComposicaoVacancia.mockReturnValue({ isLoading: false, data: mockDataComVago });
+
+        render(<CargosDaComposicaoListVacancia composicaoUuid="composicao-1" />);
+
+        expect(screen.getByText("Cargo Vago")).toHaveClass("badge-cargo-vago");
+        expect(screen.queryByText("Novo membro em 01/02/2026")).not.toBeInTheDocument();
     });
 
     it("deve buscar os cargos usando o composicaoUuid recebido por prop, sem data de referência", () => {
@@ -147,6 +178,20 @@ describe("CargosDaComposicaoListVacancia", () => {
             ],
         };
         useGetCargosDaComposicaoVacancia.mockReturnValue({ isLoading: false, data: mockDataMandatoAnterior });
+
+        render(<CargosDaComposicaoListVacancia composicaoUuid="uuid-123" />);
+
+        expect(screen.queryByTestId("mock-edit-icon-button")).not.toBeInTheDocument();
+        expect(screen.getByTestId("mock-timeline-icon-button")).toBeInTheDocument();
+    });
+
+    it("não deve renderizar o EditIconButton quando o cargo não for o vigente (navegando um marco antigo)", () => {
+        const mockDataMarcoAntigo = {
+            diretoria_executiva: [
+                { ...mockData.diretoria_executiva[0], cargo_vigente: false },
+            ],
+        };
+        useGetCargosDaComposicaoVacancia.mockReturnValue({ isLoading: false, data: mockDataMarcoAntigo });
 
         render(<CargosDaComposicaoListVacancia composicaoUuid="uuid-123" />);
 

@@ -300,7 +300,7 @@ export const EdicaoAtaPaa = () => {
 
         let payload = {}
 
-        if(visoesService.featureFlagAtiva('historico-de-membros')) {
+        if(visoesService.featureFlagAtiva('historico-de-membros-v2')) {
             let result = getPresidenteAndSecretario(dadosForm.listaParticipantes)
 
             let listaParticipantes = adicionaAtaUuidAosParticipantes(dadosForm.listaParticipantes)
@@ -372,7 +372,7 @@ export const EdicaoAtaPaa = () => {
 
                 <div className="col-12">
                     <Spin spinning={isLoadingPresentes}>
-                    {visoesService.featureFlagAtiva('historico-de-membros') ?  <NovoFormularioEditaAta
+                    {visoesService.featureFlagAtiva('historico-de-membros-v2') ?  <NovoFormularioEditaAta
                         stateFormEditarAta={stateFormEditarAta}
                         tabelas={tabelas}
                         formRef={formRef}

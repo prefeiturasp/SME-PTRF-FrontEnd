@@ -1,5 +1,6 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { NovoFormularioEditaAta } from "../index";
 
 import {
@@ -7,7 +8,11 @@ import {
     getListaPresentesPadraoPaa,
 } from "../../../../../../../services/escolas/PresentesAtaPaa.service";
 
-import { getCargosComposicaoData } from "../../../../../../../services/Mandatos.service";
+import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../../services/MandatosVacancia.service";
+
+import { visoesService } from "../../../../../../../services/visoes.service";
+import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
+import { toastCustom } from "../../../../../../Globais/ToastCustom";
 
 import * as utils from "../../utils";
 
@@ -21,8 +26,8 @@ jest.mock(
     }),
 );
 
-jest.mock("../../../../../../../services/Mandatos.service", () => ({
-    getCargosComposicaoData: jest.fn(),
+jest.mock("../../../../../../../services/MandatosVacancia.service", () => ({
+    getCargosComposicaoVacanciaPorDataEAssociacao: jest.fn(),
 }));
 
 jest.mock("../../utils", () => ({
@@ -31,14 +36,29 @@ jest.mock("../../utils", () => ({
     extraiProfessorDefaults: jest.fn(),
     listaPossuiParticipantesAssociacao: jest.fn(),
     marcaParticipantesComoMembrosDaAssociacao: jest.fn((lista) => lista),
-    formatarListaCargoComposicaoParaFormatoDaListaParticipantes: jest.fn(
-        (lista) => lista,
-    ),
 }));
 
 jest.mock("../../../../../../../services/visoes.service", () => ({
     visoesService: {
         getPermissoes: jest.fn(() => true),
+        featureFlagAtiva: jest.fn(() => false),
+    },
+}));
+
+const mockDatePickerField = jest.fn();
+
+jest.mock("../../../../../../Globais/DatePickerField", () => ({
+    DatePickerField: (props) => {
+        mockDatePickerField(props);
+
+        return (
+            <input
+                aria-label="Data"
+                value={props.value || ""}
+                onChange={(e) => props.onChange(props.name, e.target.value)}
+                disabled={props.disabled}
+            />
+        );
     },
 }));
 
@@ -72,14 +92,18 @@ const propsBase = {
 };
 
 describe("NovoFormularioEditaAta - alterações do PR", () => {
+    const dataFixaAtual = new Date(2026, 5, 15, 10, 0, 0);
+
     beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(dataFixaAtual);
         jest.clearAllMocks();
 
-        localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
+        localStorage.setItem(ASSOCIACAO_UUID, "assoc-1");
 
         getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([]);
         getListaPresentesPadraoPaa.mockResolvedValue([]);
-        getCargosComposicaoData.mockResolvedValue([]);
+        getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({});
 
         utils.listaPossuiParticipantesAssociacao.mockReturnValue(true);
 
@@ -88,6 +112,14 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
         );
 
         utils.extraiProfessorDefaults.mockReturnValue(null);
+
+        utils.marcaParticipantesComoMembrosDaAssociacao.mockImplementation(
+            (lista) => lista,
+        );
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
     });
 
     describe("recarregamento quando precisaProfessorGremio mudar", () => {
@@ -194,6 +226,353 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
 
                 expect(textarea.value).toBe("");
             });
+        });
+    });
+
+    it("não deve permitir selecionar uma data de reunião posterior à data atual", async () => {
+        render(
+            <NovoFormularioEditaAta
+                {...propsBase}
+                precisaProfessorGremio={false}
+            />,
+        );
+
+        await waitFor(() => {
+            expect(mockDatePickerField).toHaveBeenCalled();
+        });
+
+        const propsDoCampoData = mockDatePickerField.mock.calls
+            .map(([props]) => props)
+            .find(
+                (props) => props.name === "stateFormEditarAta.data_reuniao",
+            );
+
+        expect(propsDoCampoData).toBeDefined();
+        expect(propsDoCampoData.maxDate).toEqual(dataFixaAtual);
+    });
+
+    describe("composição por data com vacância de cargos", () => {
+        const obtemPropsDoCampoData = () =>
+            mockDatePickerField.mock.calls
+                .map(([props]) => props)
+                .reverse()
+                .find(
+                    (props) =>
+                        props.name === "stateFormEditarAta.data_reuniao",
+                );
+
+        const alteraDataDaReuniao = async (novaData) => {
+            await waitFor(() => {
+                expect(obtemPropsDoCampoData()).toBeDefined();
+            });
+
+            await act(async () => {
+                obtemPropsDoCampoData().onChange(
+                    "stateFormEditarAta.data_reuniao",
+                    novaData,
+                );
+            });
+        };
+
+        it("deve buscar a composição com vacância ao alterar a data da reunião", async () => {
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 25));
+
+            await waitFor(() => {
+                expect(getCargosComposicaoVacanciaPorDataEAssociacao).toHaveBeenCalledWith(
+                    "2026-09-25",
+                    "assoc-1",
+                );
+            });
+        });
+
+        it("deve exibir cargo vago como ausente, sem nome e com a data de vacância formatada", async () => {
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
+                vice_presidente: {
+                    id: 2,
+                    cargo_associacao_label: "Vice-presidente",
+                    data_inicio_no_cargo: "2026-09-25",
+                    vago: true,
+                    ocupante_do_cargo: null,
+                },
+            });
+
+            const { container } = render(
+                <NovoFormularioEditaAta {...propsBase} />,
+            );
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            expect(
+                await screen.findByText("Cargo vago desde 25/09/2026"),
+            ).toBeInTheDocument();
+
+            const inputNome = container.querySelector(
+                'input[name="listaParticipantes[0].nome"]',
+            );
+            expect(inputNome.value).toBe("");
+
+            const switchPresenca = screen
+                .getByText("Ausente")
+                .closest('[role="switch"]');
+            expect(switchPresenca).toHaveAttribute("aria-checked", "false");
+        });
+
+        it("deve limpar o nome anterior quando a nova composição vier com cargo vago", async () => {
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    identificacao: "1234567",
+                    nome: "Nome Anterior",
+                    membro: true,
+                    presente: true,
+                },
+            ]);
+
+            const { container } = render(
+                <NovoFormularioEditaAta {...propsBase} />,
+            );
+
+            await waitFor(() => {
+                expect(
+                    container.querySelector(
+                        'input[name="listaParticipantes[0].nome"]',
+                    ).value,
+                ).toBe("Nome Anterior");
+            });
+
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
+                vice_presidente: {
+                    id: 2,
+                    cargo_associacao_label: "Vice-presidente",
+                    data_inicio_no_cargo: "2026-09-25",
+                    vago: true,
+                    ocupante_do_cargo: null,
+                },
+            });
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(
+                    container.querySelector(
+                        'input[name="listaParticipantes[0].nome"]',
+                    ).value,
+                ).toBe("");
+            });
+            expect(
+                container.querySelector(
+                    'input[name="listaParticipantes[0].identificacao"]',
+                ).value,
+            ).toBe("");
+        });
+
+        it("deve manter a data de vacância quando ela já vier formatada", async () => {
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    membro: true,
+                    presente: false,
+                    vago: true,
+                    data_inicio_no_cargo: "25/09/2026",
+                },
+            ]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            expect(
+                await screen.findByText("Cargo vago desde 25/09/2026"),
+            ).toBeInTheDocument();
+        });
+
+        it("deve bloquear presença, presidente e secretário para cargo vago mesmo após clicar em Membro estava", async () => {
+            visoesService.getPermissoes.mockReturnValue(true);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                {
+                    id: 1,
+                    cargo: "Presidente",
+                    identificacao: "1234567",
+                    nome: "Maria Silva",
+                    membro: true,
+                    presente: true,
+                    vago: false,
+                },
+                {
+                    id: 2,
+                    cargo: "Vice-presidente",
+                    membro: true,
+                    presente: false,
+                    vago: true,
+                    data_inicio_no_cargo: "25/09/2026",
+                },
+            ]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByText("Cargo vago desde 25/09/2026");
+
+            const obtemSwitches = () => {
+                const [
+                    presencaOcupado,
+                    presidenteOcupado,
+                    secretarioOcupado,
+                    presencaVago,
+                    presidenteVago,
+                    secretarioVago,
+                ] = screen.getAllByRole("switch");
+
+                return {
+                    presencaOcupado,
+                    presidenteOcupado,
+                    secretarioOcupado,
+                    presencaVago,
+                    presidenteVago,
+                    secretarioVago,
+                };
+            };
+
+            const antesDoClique = obtemSwitches();
+
+            expect(antesDoClique.presencaOcupado).toBeEnabled();
+            expect(antesDoClique.presidenteOcupado).toBeEnabled();
+            expect(antesDoClique.secretarioOcupado).toBeEnabled();
+
+            expect(antesDoClique.presencaVago).toBeDisabled();
+
+            fireEvent.click(antesDoClique.presencaVago);
+
+            const depoisDoClique = obtemSwitches();
+
+            expect(depoisDoClique.presencaVago).toBeDisabled();
+            expect(depoisDoClique.presencaVago).toHaveAttribute(
+                "aria-checked",
+                "false",
+            );
+            expect(depoisDoClique.presidenteVago).toBeDisabled();
+            expect(depoisDoClique.secretarioVago).toBeDisabled();
+        });
+
+        it("deve exibir o carregamento enquanto busca a composição da nova data", async () => {
+            let resolverComposicao;
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockReturnValue(
+                new Promise((resolve) => {
+                    resolverComposicao = resolve;
+                }),
+            );
+
+            const { container } = render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            // O Spin do antd ativa o estado "spinning" via debounce (setTimeout);
+            // o waitFor avança os fake timers até ele aparecer.
+            await waitFor(() => {
+                expect(container.querySelector(".ant-spin-spinning")).toBeInTheDocument();
+            });
+
+            await act(async () => {
+                resolverComposicao({});
+            });
+
+            await waitFor(() => {
+                expect(container.querySelector(".ant-spin-spinning")).not.toBeInTheDocument();
+            });
+        });
+
+        it("deve notificar o erro retornado pela API quando a busca da composição falhar", async () => {
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockRejectedValue({
+                response: { data: { erro: "Data fora do mandato" } },
+            });
+            const toastErroSpy = jest
+                .spyOn(toastCustom, "ToastCustomError")
+                .mockImplementation(() => {});
+
+            const { container } = render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(toastErroSpy).toHaveBeenCalledWith(
+                    "Erro ao carregar participantes",
+                    "Data fora do mandato",
+                );
+            });
+            expect(
+                container.querySelector('input[name="listaParticipantes[0].nome"]'),
+            ).not.toBeInTheDocument();
+            expect(container.querySelector(".ant-spin-spinning")).not.toBeInTheDocument();
+
+            toastErroSpy.mockRestore();
+        });
+
+        it("deve notificar mensagem padrão quando o erro da composição não tiver mensagem da API", async () => {
+            getCargosComposicaoVacanciaPorDataEAssociacao.mockRejectedValue(
+                new Error("Falha de rede"),
+            );
+            const toastErroSpy = jest
+                .spyOn(toastCustom, "ToastCustomError")
+                .mockImplementation(() => {});
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+            await waitFor(() => {
+                expect(toastErroSpy).toHaveBeenCalledWith(
+                    "Erro ao carregar participantes",
+                    "Não foi possível carregar a composição por data.",
+                );
+            });
+
+            toastErroSpy.mockRestore();
+        });
+    });
+
+    describe("permissões de edição da ata", () => {
+        const membroOcupado = {
+            id: 1,
+            cargo: "Presidente",
+            identificacao: "1234567",
+            nome: "Maria Silva",
+            membro: true,
+            presente: true,
+            vago: false,
+        };
+
+        it("deve bloquear presença, presidente, secretário e data sem permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(false);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeDisabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeDisabled();
+            expect(visoesService.getPermissoes).toHaveBeenCalledWith(
+                ["change_ata_prestacao_contas"],
+                0,
+                [["change_ata_prestacao_contas"]],
+            );
+        });
+
+        it("deve liberar presença, presidente, secretário e data com permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(true);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeEnabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeEnabled();
         });
     });
 });

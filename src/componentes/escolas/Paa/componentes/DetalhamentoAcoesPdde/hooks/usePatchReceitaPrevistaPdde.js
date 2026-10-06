@@ -21,6 +21,7 @@ export const usePatchReceitaPrevistaPdde = (setModalForm) => {
     mutationOptions: {
       onSuccess: () => {
         queryClient.invalidateQueries(["acoes"]).then();
+        queryClient.invalidateQueries(["resumo-acoes-pdde-programa"]);
         setModalForm({ open: false });
         toastCustom.ToastCustomSuccess(
           "Sucesso",

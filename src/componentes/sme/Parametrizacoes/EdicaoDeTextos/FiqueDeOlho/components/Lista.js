@@ -9,6 +9,8 @@ import { EditIconButton } from "../../../../../Globais/UI/Button";
 import { Paginacao } from './Paginacao';
 import { useFiqueDeOlhoContext } from "../hooks/useFiqueDeOlhoContext";
 import { TotalRegistros } from "../../../componentes/TotalRegistros";
+import { visoesService } from "../../../../../../services/visoes.service";
+import { TEXTOS_FIQUE_DE_OLHO } from "../../../../../../constantes/textosFiqueDeOlho";
 
 export const Lista = () => {
   const {
@@ -22,7 +24,17 @@ export const Lista = () => {
     mutationPatch,
   } = useFiqueDeOlhoContext();
 
+  const HISTORICO_DE_MEMBROS_V2_ATIVA = visoesService.featureFlagAtiva('historico-de-membros-v2');
+
   const { results } = dataFiqueDeOlho;
+
+  const resultadosFiltrados = results?.filter((resultado) => {
+    const ehTipoHistoricoDeMembros = resultado.tipo_texto === TEXTOS_FIQUE_DE_OLHO.UE_HISTORICO_MEMBROS;
+    if (ehTipoHistoricoDeMembros) {
+        return HISTORICO_DE_MEMBROS_V2_ATIVA;
+    }
+    return true;
+  });
 
   const acoesTemplate = (rowData) => {
       return (
@@ -77,7 +89,7 @@ export const Lista = () => {
 
   return (
     <>
-        {results && results.length > 0 ? (
+        {resultadosFiltrados && resultadosFiltrados.length > 0 ? (
             <>
                 <TotalRegistros
                     titulo="Texto(s) do Fique de Olho"
@@ -85,7 +97,7 @@ export const Lista = () => {
                 />
 
                 <DataTable
-                    value={results}
+                    value={resultadosFiltrados}
                     className='tabela-lista-fique-de-olho'
                     data-qa='tabela-lista-fique-de-olho'
                     data-testid="tabela-lista-fique-de-olho"

@@ -49,8 +49,8 @@ describe("usePatchMotivoReprovacaoPc", () => {
         expect(patchMotivosReprovacaoPc).toHaveBeenCalled();
         expect(handleCloseModalForm).toHaveBeenCalled();
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
-            'Motivo de reprovação de PC atualizada',
-            'O motivo de reprovação de PC foi atualizada com sucesso.'
+            'Motivo de rejeição de PC atualizada',
+            'O motivo de rejeição de PC foi atualizada com sucesso.'
         );
     });
 
@@ -69,7 +69,7 @@ describe("usePatchMotivoReprovacaoPc", () => {
         });
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            'Erro ao atualizar o motivo de reprovação de PC',
+            'Erro ao atualizar o motivo de rejeição de PC',
             'Já existe um motivo com esse nome'
         );
     });
@@ -89,8 +89,8 @@ describe("usePatchMotivoReprovacaoPc", () => {
         });
 
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
-            'Erro ao atualizar o motivo de reprovação de PC',
-            'Não foi possível atualizar o motivo de reprovação de PC'
+            'Erro ao atualizar o motivo de rejeição de PC',
+            'Não foi possível atualizar o motivo de rejeição de PC'
         );
     });
 });

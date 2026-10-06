@@ -14,7 +14,7 @@ describe("TabelaAprovadas Component", () => {
     textos_ata: {
       letra_a: "<span>Contas Aprovadas</span>",
       letra_b: "<span>Contas Aprovadas com Ressalva</span>",
-      letra_c: "<span>Contas Reprovadas</span>",
+      letra_c: "<span>Contas Rejeitadas</span>",
       letra_d: "<span>Considerações Finais</span>"
     }
   };
@@ -141,7 +141,7 @@ describe("TabelaAprovadas Component", () => {
         <TabelaAprovadas infoContas={mockInfoContasReprovadas} status="reprovadas" />
       );
 
-      expect(screen.getByText("Contas Reprovadas")).toBeInTheDocument();
+      expect(screen.getByText("Contas Rejeitadas")).toBeInTheDocument();
       expect(screen.getByText("123456 - EMEF DUQUE DE CAXIAS")).toBeInTheDocument();
       expect(screen.getByText("Falta de notas fiscais")).toBeInTheDocument();
     });

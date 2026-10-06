@@ -6,11 +6,14 @@ import {RetornaSeTemPermissaoEdicaoPainelParametrizacoes} from "../../../../Para
 import { useFiqueDeOlhoContext } from "../hooks/useFiqueDeOlhoContext";
 import { useRecursoSelecionadoContext } from "../../../../../../context/RecursoSelecionado";
 import EditorWysiwyg from "../../../../../Globais/EditorWysiwyg";
+import { visoesService } from "../../../../../../services/visoes.service";
+import { TEXTOS_FIQUE_DE_OLHO } from "../../../../../../constantes/textosFiqueDeOlho";
 
 export const ModalForm = ({handleSubmitFormModal}) => {
     const TEM_PERMISSAO_EDICAO_PAINEL_PARAMETRIZACOES = RetornaSeTemPermissaoEdicaoPainelParametrizacoes()
     const { stateFormModal, bloquearBtnSalvarForm, handleCloseModalForm, dataTabelaFiqueDeOlho } = useFiqueDeOlhoContext();
     const { recursos } = useRecursoSelecionadoContext()
+    const HISTORICO_DE_MEMBROS_V2_ATIVA = visoesService.featureFlagAtiva('historico-de-membros-v2');
 
     const bodyTextarea = () => {
         return (
@@ -71,15 +74,23 @@ export const ModalForm = ({handleSubmitFormModal}) => {
                                     >
                                         <option data-qa="option-recurso-vazio" value=''>Selecione um tipo de texto</option>
                                         {
-                                            dataTabelaFiqueDeOlho?.tipos_de_texto?.map((tipo) =>
-                                                <option
-                                                    data-qa={`option-form-tipo-texto-${tipo[0]}`}
-                                                    key={tipo[0]}
-                                                    value={tipo[0]}
-                                                >
-                                                    {tipo[1]}
-                                                </option>
-                                            )
+                                            dataTabelaFiqueDeOlho?.tipos_de_texto
+                                                ?.filter((tipo) => {
+                                                    const ehTipoHistoricoDeMembros = tipo[0] === TEXTOS_FIQUE_DE_OLHO.UE_HISTORICO_MEMBROS;
+                                                    if (ehTipoHistoricoDeMembros) {
+                                                        return HISTORICO_DE_MEMBROS_V2_ATIVA;
+                                                    }
+                                                    return true;
+                                                })
+                                                ?.map((tipo) =>
+                                                    <option
+                                                        data-qa={`option-form-tipo-texto-${tipo[0]}`}
+                                                        key={tipo[0]}
+                                                        value={tipo[0]}
+                                                    >
+                                                        {tipo[1]}
+                                                    </option>
+                                                )
                                         }
                                     </select>
                                     {props.touched.recurso_uuid && props.errors.recurso_uuid && <span className="span_erro text-danger mt-1"> {props.errors.recurso_uuid} </span>}

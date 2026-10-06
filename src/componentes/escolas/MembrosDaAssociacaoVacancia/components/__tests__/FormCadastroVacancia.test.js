@@ -77,8 +77,6 @@ describe("FormCadastroVacancia", () => {
                     mandato={mandato}
                     onSubmitForm={onSubmitForm}
                     onInformarSaida={onInformarSaida}
-                    ehEdicao={true}
-                    ocupanteVigente={true}
                     {...props}
                 />
             </MemoryRouter>
@@ -120,9 +118,8 @@ describe("FormCadastroVacancia", () => {
             expect(screen.getByText(/cpf do pai ou responsável/i)).toBeInTheDocument();
         });
 
-        it("deve exibir título de adicionar membro quando ehEdicao for false", () => {
+        it("deve exibir título de adicionar membro quando cargo_vago for true", () => {
             renderComponent({
-                ehEdicao: false,
                 cargo: buildCargo({ uuid: "", cargo_vago: true, cargo_vago_vigente: true, ocupante_vigente: false }),
             });
 
@@ -256,7 +253,6 @@ describe("FormCadastroVacancia", () => {
 
         it("deve desabilitar nome quando a representação for servidor, mesmo na criação", () => {
             renderComponent({
-                ehEdicao: false,
                 cargo: buildCargo({
                     uuid: "",
                     cargo_vago: true,
@@ -273,7 +269,6 @@ describe("FormCadastroVacancia", () => {
     describe("restrições específicas da v2 (sem edição de vínculo)", () => {
         it("deve travar representação e código de identificação ao editar um cargo já ocupado", () => {
             renderComponent({
-                ehEdicao: true,
                 cargo: buildCargo({
                     uuid: "cargo-1",
                     ocupante_do_cargo: { ...buildCargo().ocupante_do_cargo, representacao: "SERVIDOR" },
@@ -285,14 +280,13 @@ describe("FormCadastroVacancia", () => {
         });
 
         it("deve travar o período inicial de ocupação ao editar um cargo já ocupado", () => {
-            renderComponent({ ehEdicao: true, cargo: buildCargo({ uuid: "cargo-1" }) });
+            renderComponent({ cargo: buildCargo({ uuid: "cargo-1" }) });
 
             expect(screen.getByLabelText(/período inicial de ocupação/i)).toBeDisabled();
         });
 
         it("não deve travar o período inicial de ocupação ao criar um novo registro num cargo vago vigente", () => {
             renderComponent({
-                ehEdicao: false,
                 cargo: buildCargo({ uuid: "", cargo_vago: true, cargo_vago_vigente: true, ocupante_vigente: false }),
             });
 
@@ -301,7 +295,6 @@ describe("FormCadastroVacancia", () => {
 
         it("deve travar o período inicial de ocupação ao navegar por um vago histórico (não vigente)", () => {
             renderComponent({
-                ehEdicao: false,
                 cargo: buildCargo({ uuid: "vago-1", cargo_vago: true, cargo_vago_vigente: false, ocupante_vigente: false }),
             });
 
@@ -318,14 +311,20 @@ describe("FormCadastroVacancia", () => {
     });
 
     describe("integração com o Topo (botões condicionais)", () => {
-        it("deve exibir botão cancelar entrada quando podeCancelarEntrada for true", () => {
-            renderComponent({ podeCancelarEntrada: true, onCancelarEntrada: jest.fn() });
+        it("deve exibir botão cancelar entrada quando pode_cancelar_entrada for true", () => {
+            renderComponent({
+                cargo: buildCargo({ pode_cancelar_entrada: true }),
+                onCancelarEntrada: jest.fn(),
+            });
 
             expect(screen.getByRole("button", { name: /cancelar entrada/i })).toBeInTheDocument();
         });
 
-        it("deve exibir botão cancelar saída quando podeCancelarSaida for true", () => {
-            renderComponent({ podeCancelarSaida: true, onCancelarSaida: jest.fn() });
+        it("deve exibir botão cancelar saída quando pode_cancelar_saida for true", () => {
+            renderComponent({
+                cargo: buildCargo({ pode_cancelar_saida: true }),
+                onCancelarSaida: jest.fn(),
+            });
 
             expect(screen.getByRole("button", { name: /cancelar saída/i })).toBeInTheDocument();
         });

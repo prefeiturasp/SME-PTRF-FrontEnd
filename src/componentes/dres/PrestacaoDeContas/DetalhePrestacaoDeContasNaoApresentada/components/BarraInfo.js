@@ -14,7 +14,7 @@ export const BarraInfo = () => {
                                 className="icone-barra-info"
                                 icon={faExclamationCircle}
                             />
-                            Prestação de contas não apresentada, você pode concluí-la como reprovada.
+                            Prestação de contas não apresentada, você pode concluí-la como rejeitada.
                         </p>
                     </div>
                 </section>

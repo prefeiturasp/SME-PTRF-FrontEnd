@@ -15,6 +15,7 @@ export interface IGerarDocumentoProps {
     paa: {
         uuid: string,
         status: string,
+        atividades_previstas_preenchidas: boolean,
     }
 }
 

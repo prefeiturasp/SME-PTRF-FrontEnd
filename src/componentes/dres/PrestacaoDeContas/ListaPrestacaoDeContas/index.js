@@ -362,9 +362,9 @@ export const ListaPrestacaoDeContas = () => {
       };
     } else if (status_converter === "REPROVADA") {
       return {
-        texto_barra_de_status: "reprovadas",
-        texto_col_tabela: "Reprovada",
-        texto_titulo: "Prestações de contas reprovadas",
+        texto_barra_de_status: "rejeitadas",
+        texto_col_tabela: "Rejeitada",
+        texto_titulo: "Prestações de contas rejeitadas",
       };
     } else if (status_converter === "TODOS") {
       return {
