@@ -134,6 +134,7 @@ export const DetalhePrestacaoDeContas = () =>{
     const [infoAtaPorConta, setInfoAtaPorConta] = useState({});
     const [clickBtnTabelaAcoes, setClickBtnTabelaAcoes] = useState(false);
     const [analisesDeContaDaPrestacao, setAnalisesDeContaDaPrestacao] = useState([]);
+    const [analisesDeContaCarregadas, setAnalisesDeContaCarregadas] = useState(false);
     const [stateConcluirAnalise, setStateConcluirAnalise] = useState(initialConcluirAnalise);
     const [initialFormDevolucaoAoTesouro, setInitialFormDevolucaoAoTesouro] = useState(initialDevolucaoAoTesouro);
     const [despesas, setDespesas] = useState([]);
@@ -165,7 +166,21 @@ export const DetalhePrestacaoDeContas = () =>{
     }, [prestacaoDeContas]);
 
     useEffect(()=>{
+        let ativo = true;
+
+        setAnalisesDeContaCarregadas(false);
+
         getPrimeiraAtaPorConta()
+            .catch((e) => console.error("Erro ao carregar as análises de conta da prestação:", e))
+            .finally(() => {
+                if (ativo && Array.isArray(infoAta?.contas)) {
+                    setAnalisesDeContaCarregadas(true);
+                }
+            });
+
+        return () => {
+            ativo = false;
+        };
     }, [infoAta]);
 
     useEffect(() => {
@@ -1145,6 +1160,7 @@ export const DetalhePrestacaoDeContas = () =>{
                                     exibeAtaPorConta={exibeAtaPorConta}
                                     infoAtaPorConta={infoAtaPorConta}
                                     analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                                    analisesDeContaCarregadas={analisesDeContaCarregadas}
                                     handleChangeAnalisesDeContaDaPrestacao={handleChangeAnalisesDeContaDaPrestacao}
                                     getObjetoIndexAnalise={getObjetoIndexAnalise}
                                     toggleBtnTabelaAcoes={toggleBtnTabelaAcoes}
