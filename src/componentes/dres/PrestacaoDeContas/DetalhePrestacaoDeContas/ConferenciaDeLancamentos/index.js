@@ -8,12 +8,22 @@ import {TabsConferenciaDeLancamentos} from "./TabsConferenciaDeLancamentos";
 import {visoesService} from "../../../../../services/visoes.service";
 import {mantemEstadoAcompanhamentoDePc as meapcservice} from "../../../../../services/mantemEstadoAcompanhamentoDePc.service";
 
-const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaConferencia=null, editavel=true}) =>{
+const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaConferencia=null, onChangeCarregandoLancamentosParaConferencia=null, editavel=true}) =>{
     const [lancamentosParaConferencia, setLancamentosParaConferencia] = useState([])
     const [loadingLancamentosParaConferencia, setLoadingLancamentosParaConferencia] = useState(true)
     const [contaUuid, setContaUuid] = useState('')
     const [clickBtnEscolheConta, setClickBtnEscolheConta] = useState('');
     const [contasAssociacao, setContasAssociacao] = useState([])
+    const [contasAssociacaoBuscadas, setContasAssociacaoBuscadas] = useState(false)
+    const [requisicoesLancamentosPendentes, setRequisicoesLancamentosPendentes] = useState(0)
+
+    const carregandoLancamentosParaConferencia = !contasAssociacaoBuscadas || requisicoesLancamentosPendentes > 0;
+
+    useEffect(() => {
+        onChangeCarregandoLancamentosParaConferencia?.(
+            carregandoLancamentosParaConferencia
+        );
+    }, [carregandoLancamentosParaConferencia, onChangeCarregandoLancamentosParaConferencia]);
 
     // Manter o estado do Acompanhamento de PC
     let dados_acompanhamento_de_pc_usuario_logado = meapcservice.getAcompanhamentoDePcUsuarioLogado()
@@ -37,7 +47,9 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
                 }
                 buscaContasDaAssociacao()
             }catch (e) {
-                console.log("Erro ao buscar contas pela associacao.uuid em ConferenciaDeLancamentos")
+                console.log("Erro ao buscar contas pela associacao.uuid em ConferenciaDeLancamentos", e)
+            } finally {
+                setContasAssociacaoBuscadas(true)
             }
         }
     }, [prestacaoDeContas])
@@ -106,37 +118,42 @@ const ConferenciaDeLancamentos = ({prestacaoDeContas, onCarregaLancamentosParaCo
 
         setContaUuid(conta_uuid)
         setLoadingLancamentosParaConferencia(true)
+        setRequisicoesLancamentosPendentes(pendentes => pendentes + 1)
 
-        let lancamentos;
+        try {
+            let lancamentos;
 
-        if (editavel){
-            if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
-                lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
-            }
-        }else {
-            if (prestacao_de_contas && prestacao_de_contas.uuid){
-                let ultima_analise =  await getUltimaAnalisePc(prestacao_de_contas.uuid)
+            if (editavel){
+                if (prestacao_de_contas && prestacao_de_contas.uuid && prestacao_de_contas.analise_atual && prestacao_de_contas.analise_atual.uuid && conta_uuid){
+                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, prestacao_de_contas.analise_atual.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
+                }
+            }else {
+                if (prestacao_de_contas && prestacao_de_contas.uuid){
+                    let ultima_analise =  await getUltimaAnalisePc(prestacao_de_contas.uuid)
 
-                if (ultima_analise && ultima_analise.uuid){
-                    lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
+                    if (ultima_analise && ultima_analise.uuid){
+                        lancamentos =  await getLancamentosParaConferencia(prestacao_de_contas.uuid, ultima_analise.uuid, conta_uuid, filtrar_por_acao, filtrar_por_lancamento, ordenar_por_imposto, filtrar_por_data_inicio, filtrar_por_data_fim, filtrar_por_nome_fornecedor, filtrar_por_numero_de_documento, filtrar_por_tipo_de_documento, filtrar_por_tipo_de_pagamento, filtrar_por_informacoes, filtrar_por_conferencia)
+                    }
                 }
             }
-        }
 
-        // Adicionando a propriedade selecionando todos os itens
-        if (lancamentos && lancamentos.length > 0){
-            let unis = lancamentos.map((lancamento)=>{
-                return {
-                    ...lancamento,
-                    selecionado: false
-                }
-            })
-            setLancamentosParaConferencia(unis)
-        }else {
-            setLancamentosParaConferencia([])
+            // Adicionando a propriedade selecionando todos os itens
+            if (lancamentos && lancamentos.length > 0){
+                let unis = lancamentos.map((lancamento)=>{
+                    return {
+                        ...lancamento,
+                        selecionado: false
+                    }
+                })
+                setLancamentosParaConferencia(unis)
+            }else {
+                setLancamentosParaConferencia([])
+            }
+            onCarregaLancamentosParaConferencia && onCarregaLancamentosParaConferencia();
+            setLoadingLancamentosParaConferencia(false)
+        } finally {
+            setRequisicoesLancamentosPendentes(pendentes => pendentes - 1)
         }
-        onCarregaLancamentosParaConferencia && onCarregaLancamentosParaConferencia();
-        setLoadingLancamentosParaConferencia(false)
     }
 
     const [stateCheckBoxOrdenarPorImposto, setStateCheckBoxOrdenarPorImposto] = useState(false);

@@ -39,6 +39,7 @@ export const GetComportamentoPorStatus = (
         exibeAtaPorConta,
         infoAtaPorConta,
         analisesDeContaDaPrestacao,
+        analisesDeContaCarregadas,
         handleChangeAnalisesDeContaDaPrestacao,
         getObjetoIndexAnalise,
         toggleBtnTabelaAcoes,
@@ -73,6 +74,7 @@ export const GetComportamentoPorStatus = (
     const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
     const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
     const [carregaDespesasPeriodosAnterioresParaConferencia, setCarregaDespesasPeriodosAnterioresParaConferencia] = useState(0);
+    const [carregandoLancamentosParaConferencia, setCarregandoLancamentosParaConferencia] = useState(true);
 
     const onUpdateListaDeDocumentosParaConferencia = () => {
         setUpdateListaDeDocumentosParaConferencia(prev => prev + 1);
@@ -272,8 +274,9 @@ export const GetComportamentoPorStatus = (
                         prestacaoDeContas={prestacaoDeContas}
                         editavel={TEMPERMISSAO}
                         onCarregaLancamentosParaConferencia={onCarregaLancamentosParaConferencia}
+                        onChangeCarregandoLancamentosParaConferencia={setCarregandoLancamentosParaConferencia}
                     />
-                    
+
                     {
                         flagAjustesDespesasAnterioresAtiva ? (
                             <ConferenciaDespesasPeriodosAnteriores
@@ -293,6 +296,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={TEMPERMISSAO}
@@ -300,6 +304,7 @@ export const GetComportamentoPorStatus = (
                         setAnalisesDeContaDaPrestacao={setAnalisesDeContaDaPrestacao}
                         updateListaDeDocumentosParaConferencia={updateListaDeDocumentosParaConferencia}
                         carregaLancamentosParaConferencia={carregaLancamentosParaConferencia}
+                        carregandoLancamentosParaConferencia={carregandoLancamentosParaConferencia}
                         carregaDespesasPeriodosAnterioresParaConferencia={carregaDespesasPeriodosAnterioresParaConferencia}
                     />
                     <ComentariosDeAnalise
@@ -393,6 +398,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
@@ -502,6 +508,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
@@ -604,6 +611,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
@@ -705,6 +713,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
@@ -807,6 +816,7 @@ export const GetComportamentoPorStatus = (
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}
                         analisesDeContaDaPrestacao={analisesDeContaDaPrestacao}
+                        analisesDeContaCarregadas={analisesDeContaCarregadas}
                         carregaPrestacaoDeContas={carregaPrestacaoDeContas}
                         infoAta={infoAta}
                         editavel={false}
