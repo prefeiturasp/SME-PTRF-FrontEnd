@@ -301,7 +301,49 @@ describe('GetComportamentoPorStatus', () => {
             act(() => { mockCapturedConferenciaDespesasAnteriores.onCarregaLancamentosParaConferencia(); });
             expect(mockCapturedDevolucaoParaAcertos.carregaDespesasPeriodosAnterioresParaConferencia).toBe(1);
         });
+
+        it('inicia DevolucaoParaAcertos aguardando o carregamento dos lançamentos para conferência', () => {
+            renderComponent({ prestacaoDeContas: statusEmAnalise });
+
+            expect(mockCapturedDevolucaoParaAcertos.carregandoLancamentosParaConferencia).toBe(true);
+            expect(typeof mockCapturedConferenciaLancamentos.onChangeCarregandoLancamentosParaConferencia).toBe('function');
+        });
+
+        it('propaga para DevolucaoParaAcertos o estado de carregamento informado por ConferenciaDeLancamentos', () => {
+            renderComponent({ prestacaoDeContas: statusEmAnalise });
+
+            act(() => { mockCapturedConferenciaLancamentos.onChangeCarregandoLancamentosParaConferencia(false); });
+            expect(mockCapturedDevolucaoParaAcertos.carregandoLancamentosParaConferencia).toBe(false);
+
+            act(() => { mockCapturedConferenciaLancamentos.onChangeCarregandoLancamentosParaConferencia(true); });
+            expect(mockCapturedDevolucaoParaAcertos.carregandoLancamentosParaConferencia).toBe(true);
+        });
+
+        it.each([true, false])('repassa analisesDeContaCarregadas=%s para DevolucaoParaAcertos', (analisesDeContaCarregadas) => {
+            renderComponent({ prestacaoDeContas: statusEmAnalise, analisesDeContaCarregadas });
+
+            expect(mockCapturedDevolucaoParaAcertos.analisesDeContaCarregadas).toBe(analisesDeContaCarregadas);
+        });
     });
+
+    describe.each(['DEVOLVIDA', 'DEVOLVIDA_RETORNADA', 'DEVOLVIDA_RECEBIDA', 'APROVADA_RESSALVA', 'APROVADA', 'REPROVADA'])(
+        'DevolucaoParaAcertos no status %s',
+        (status) => {
+            it.each([true, false])('repassa analisesDeContaCarregadas=%s', (analisesDeContaCarregadas) => {
+                renderComponent({ prestacaoDeContas: { uuid: 'pc-1', status }, analisesDeContaCarregadas });
+
+                expect(mockCapturedDevolucaoParaAcertos.analisesDeContaCarregadas).toBe(analisesDeContaCarregadas);
+            });
+
+            it('não condiciona DevolucaoParaAcertos ao carregamento dos lançamentos para conferência', () => {
+                renderComponent({ prestacaoDeContas: { uuid: 'pc-1', status } });
+
+                expect(mockCapturedDevolucaoParaAcertos.editavel).toBe(false);
+                expect(mockCapturedDevolucaoParaAcertos.carregandoLancamentosParaConferencia).toBeUndefined();
+                expect(mockCapturedConferenciaLancamentos.onChangeCarregandoLancamentosParaConferencia).toBeUndefined();
+            });
+        }
+    );
 
     describe('DEVOLVIDA', () => {
         it('renderiza com os botões de avançar/retroceder desabilitados e sem PendenciasRecebimento', () => {

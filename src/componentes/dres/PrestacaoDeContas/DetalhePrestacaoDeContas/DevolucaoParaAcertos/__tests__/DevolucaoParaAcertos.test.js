@@ -33,8 +33,8 @@ jest.mock("react-tooltip", () => ({
 }));
 
 jest.mock("../../../../../../utils/Loading", () => {
-  return function Loading() {
-    return <div data-testid="loading">Loading...</div>;
+  return function Loading({ mensagem }) {
+    return <div data-testid="loading">{mensagem ?? "Loading..."}</div>;
   };
 });
 
@@ -408,32 +408,92 @@ describe("DevolucaoParaAcertos - cobertura adicional", () => {
     );
   });
 
-  it("não define analise_atual_uuid quando a última análise da PC não possui uuid", async () => {
+  it("não busca ajustes e conclui o carregamento quando a última análise da PC não possui uuid", async () => {
     service.getUltimaAnalisePc.mockResolvedValueOnce({});
 
     renderWithRouter(<DevolucaoParaAcertos {...defaultProps} editavel={false} />);
 
     await waitFor(() => expect(service.getUltimaAnalisePc).toHaveBeenCalled());
     await waitFor(() =>
-      expect(service.getLancamentosAjustes).toHaveBeenCalledWith(
-        undefined,
-        "conta-uuid-1"
-      )
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
     );
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+    expect(service.getDocumentosAjustes).not.toHaveBeenCalled();
+    expect(service.getDespesasPeriodosAnterioresAjustes).not.toHaveBeenCalled();
   });
 
-  it("não busca a última análise quando não editável e a prestação de contas não possui uuid", async () => {
+  it("exibe toast de erro e conclui o carregamento quando falha ao buscar a última análise da PC", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    service.getUltimaAnalisePc.mockRejectedValueOnce(new Error("falha"));
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} editavel={false} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar a última análise da prestação de contas."
+      )
+    );
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+
+    console.error.mockRestore();
+  });
+
+  it("aguarda dependências e não busca a última análise quando a prestação de contas não possui uuid", async () => {
     renderWithRouter(
       <DevolucaoParaAcertos {...defaultProps} editavel={false} prestacaoDeContas={{}} />
     );
 
-    await waitFor(() =>
-      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
-    );
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("Aguardando...");
     expect(service.getUltimaAnalisePc).not.toHaveBeenCalled();
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
   });
 
-  it("não interrompe a busca de ajustes quando editável e a prestação não possui analise_atual", async () => {
+  it("aguarda dependências enquanto as análises de conta não foram carregadas", async () => {
+    renderWithRouter(
+      <DevolucaoParaAcertos {...defaultProps} analisesDeContaCarregadas={false} />
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("Aguardando...");
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+  });
+
+  it("aguarda dependências enquanto os lançamentos para conferência estão carregando", async () => {
+    renderWithRouter(
+      <DevolucaoParaAcertos {...defaultProps} carregandoLancamentosParaConferencia={true} />
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("Aguardando...");
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+  });
+
+  it("aguarda dependências enquanto infoAta não possui a lista de contas", async () => {
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} infoAta={{}} />);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(screen.getByTestId("loading")).toHaveTextContent("Aguardando...");
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+  });
+
+  it("não busca ajustes e conclui o carregamento quando editável e a prestação não possui analise_atual", async () => {
     renderWithRouter(
       <DevolucaoParaAcertos
         {...defaultProps}
@@ -444,22 +504,206 @@ describe("DevolucaoParaAcertos - cobertura adicional", () => {
     await waitFor(() =>
       expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
     );
-    expect(service.getLancamentosAjustes).toHaveBeenCalledWith(
-      undefined,
-      "conta-uuid-1"
-    );
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
   });
 
-  it("não conclui o carregamento quando infoAta não possui contas", async () => {
+  it("conclui o carregamento sem buscar ajustes quando infoAta possui lista de contas vazia", async () => {
     renderWithRouter(
       <DevolucaoParaAcertos {...defaultProps} infoAta={{ contas: [] }} />
     );
 
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
+  });
+
+  it("busca ajustes de todas as contas e agrega os resultados", async () => {
+    service.getLancamentosAjustes
+      .mockResolvedValueOnce([{ uuid: "lanc-1" }])
+      .mockResolvedValueOnce([{ uuid: "lanc-2" }]);
+
+    renderWithRouter(
+      <DevolucaoParaAcertos {...defaultProps} analisesDeContaDaPrestacao={[]} />
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+    expect(service.getLancamentosAjustes).toHaveBeenCalledWith("analise-uuid", "conta-uuid-1");
+    expect(service.getLancamentosAjustes).toHaveBeenCalledWith("analise-uuid", "conta-uuid-2");
+    expect(service.getDocumentosAjustes).toHaveBeenCalledTimes(2);
+    expect(service.getDespesasPeriodosAnterioresAjustes).toHaveBeenCalledTimes(2);
+
+    // Sem análises de conta, só os lançamentos agregados habilitam a devolução
+    fireEvent.change(screen.getByTestId("data_limite_devolucao"), { target: { value: "2024-02-15" } });
+    expect(screen.getByRole("button", { name: /devolver para associação/i })).toBeEnabled();
+  });
+
+  it("exibe 'Carregando...' enquanto busca os ajustes com as dependências já carregadas", async () => {
+    service.getLancamentosAjustes.mockImplementation(() => new Promise(() => {}));
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() => expect(service.getLancamentosAjustes).toHaveBeenCalled());
+    expect(screen.getByTestId("loading")).toHaveTextContent("Carregando...");
+  });
+
+  it("trata respostas nulas dos serviços de ajustes como listas vazias", async () => {
+    service.getLancamentosAjustes.mockResolvedValue(null);
+    service.getDocumentosAjustes.mockResolvedValue(null);
+    service.getDespesasPeriodosAnterioresAjustes.mockResolvedValue(null);
+
+    renderWithRouter(
+      <DevolucaoParaAcertos {...defaultProps} analisesDeContaDaPrestacao={[]} />
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+    expect(screen.getByText("Devolver para Associação")).toHaveAttribute(
+      "data-tooltip-html",
+      "Não é permitido devolver PC sem acertos indicados."
+    );
+    expect(toastCustom.ToastCustomError).not.toHaveBeenCalled();
+  });
+
+  it("usa a mensagem do erro no toast quando a API não retorna detail", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    service.getDocumentosAjustes
+      .mockRejectedValueOnce(new Error("Falha de rede"))
+      .mockResolvedValueOnce([]);
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar algumas solicitações de acertos. Falha de rede"
+      )
+    );
+
+    console.error.mockRestore();
+  });
+
+  it("converte o erro em texto no toast quando não há detail nem message", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    service.getDespesasPeriodosAnterioresAjustes
+      .mockRejectedValueOnce("erro inesperado")
+      .mockResolvedValueOnce([]);
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar algumas solicitações de acertos. erro inesperado"
+      )
+    );
+
+    console.error.mockRestore();
+  });
+
+  it("exibe um único toast sem repetir a mensagem quando todas as contas falham com o mesmo erro", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    const erro = { response: { data: { detail: "Análise inválida" } } };
+    service.getLancamentosAjustes.mockRejectedValue(erro);
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar algumas solicitações de acertos. Análise inválida"
+      )
+    );
+    expect(toastCustom.ToastCustomError).toHaveBeenCalledTimes(1);
+
+    console.error.mockRestore();
+  });
+
+  it("separa por ' | ' mensagens de erro distintas entre contas", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    service.getLancamentosAjustes
+      .mockRejectedValueOnce({ response: { data: { detail: "Erro na conta 1" } } })
+      .mockRejectedValueOnce({ response: { data: { detail: "Erro na conta 2" } } });
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar algumas solicitações de acertos. Erro na conta 1 | Erro na conta 2"
+      )
+    );
+
+    console.error.mockRestore();
+  });
+
+  it("busca os ajustes novamente quando carregaLancamentosParaConferencia muda", async () => {
+    const { rerender } = renderWithRouter(
+      <DevolucaoParaAcertos {...defaultProps} carregaLancamentosParaConferencia={0} />
+    );
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+    expect(service.getLancamentosAjustes).toHaveBeenCalledTimes(2);
+
+    rerender(
+      <BrowserRouter>
+        <DevolucaoParaAcertos {...defaultProps} carregaLancamentosParaConferencia={1} />
+      </BrowserRouter>
+    );
+
+    await waitFor(() => expect(service.getLancamentosAjustes).toHaveBeenCalledTimes(4));
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+  });
+
+  it("não exibe toast quando o componente é desmontado antes da resposta dos ajustes", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    const rejeitarLancamentos = [];
+    service.getLancamentosAjustes.mockImplementation(
+      () => new Promise((_, reject) => { rejeitarLancamentos.push(reject); })
+    );
+
+    const { unmount } = renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() => expect(rejeitarLancamentos).toHaveLength(2));
+    unmount();
+
     await act(async () => {
-      await Promise.resolve();
+      rejeitarLancamentos.forEach((rejeitar) =>
+        rejeitar({ response: { data: { detail: "Erro tardio" } } })
+      );
     });
 
-    expect(screen.getByTestId("loading")).toBeInTheDocument();
+    expect(toastCustom.ToastCustomError).not.toHaveBeenCalled();
+
+    console.error.mockRestore();
+  });
+
+  it("exibe toast com os detalhes quando falha ao buscar os ajustes de uma conta", async () => {
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    service.getLancamentosAjustes
+      .mockRejectedValueOnce({ response: { data: { detail: "Erro na conta 1" } } })
+      .mockResolvedValueOnce([]);
+
+    renderWithRouter(<DevolucaoParaAcertos {...defaultProps} />);
+
+    await waitFor(() =>
+      expect(toastCustom.ToastCustomError).toHaveBeenCalledWith(
+        "Erro ao carregar acertos",
+        "Não foi possível carregar algumas solicitações de acertos. Erro na conta 1"
+      )
+    );
+    await waitFor(() =>
+      expect(screen.queryByTestId("loading")).not.toBeInTheDocument()
+    );
+
+    console.error.mockRestore();
   });
 
   it("não atualiza o estado após o componente ser desmontado antes da resposta da última análise", async () => {
@@ -482,6 +726,8 @@ describe("DevolucaoParaAcertos - cobertura adicional", () => {
       await Promise.resolve();
       await Promise.resolve();
     });
+
+    expect(service.getLancamentosAjustes).not.toHaveBeenCalled();
   });
 
   // ---- efeito de rolagem por hash (linhas 141-164) ----

@@ -1489,4 +1489,153 @@ describe('DetalhePrestacaoDeContas', () => {
             );
         });
     });
+
+    describe('analisesDeContaCarregadas', () => {
+        const mockInfoAtaComContas = () =>
+            getInfoAta.mockImplementation(() =>
+                Promise.resolve({ contas: [{ conta_associacao: { uuid: 'conta-1', nome: 'Conta A' } }] })
+            );
+
+        const mockDetalheComChamadasPendentes = (aPartirDaChamada) => {
+            const resolvers = [];
+            let chamadas = 0;
+            getPrestacaoDeContasDetalhe.mockImplementation(() => {
+                chamadas += 1;
+                if (chamadas < aPartirDaChamada) {
+                    return Promise.resolve({ ...basePrestacao });
+                }
+                return new Promise((resolve) => resolvers.push(resolve));
+            });
+            return resolvers;
+        };
+
+        it('repassa analisesDeContaCarregadas=false para GetComportamentoPorStatus antes da ata ser carregada', async () => {
+            getInfoAta.mockImplementation(() => new Promise(() => {}));
+
+            renderComponent();
+            await waitForCarregado();
+
+            expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(false);
+        });
+
+        it('mantém analisesDeContaCarregadas=false quando a ata não possui a lista de contas', async () => {
+            getInfoAta.mockResolvedValue({});
+
+            renderComponent();
+            await waitForCarregado();
+            await waitFor(() => expect(getInfoAta).toHaveBeenCalledWith('pc-1'));
+
+            await act(async () => {
+                await Promise.resolve();
+            });
+
+            expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(false);
+        });
+
+        it('marca analisesDeContaCarregadas=true após buscar as análises quando a ata possui contas', async () => {
+            mockInfoAtaComContas();
+            getPrestacaoDeContasDetalhe.mockResolvedValue({
+                ...basePrestacao,
+                analises_de_conta_da_prestacao: [{
+                    uuid: 'analise-carregada-1',
+                    conta_associacao: { uuid: 'conta-1' },
+                    data_extrato: '2024-01-31',
+                    saldo_extrato: null,
+                    solicitar_correcao_da_data_do_saldo_da_conta: false,
+                    solicitar_envio_do_comprovante_do_saldo_da_conta: false,
+                    observacao_solicitar_envio_do_comprovante_do_saldo_da_conta: null,
+                    solicitar_correcao_de_justificativa_de_conciliacao: false,
+                }],
+            });
+
+            renderComponent();
+            await waitForCarregado();
+
+            await waitFor(() => {
+                expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(true);
+            });
+            expect(mockCapturedComportamentoProps.analisesDeContaDaPrestacao).toHaveLength(1);
+        });
+
+        it('marca analisesDeContaCarregadas=true quando a ata possui uma lista de contas vazia', async () => {
+            getInfoAta.mockResolvedValue({ contas: [] });
+
+            renderComponent();
+            await waitForCarregado();
+
+            await waitFor(() => {
+                expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(true);
+            });
+        });
+
+        it('mantém analisesDeContaCarregadas=false enquanto a busca das análises está pendente', async () => {
+            mockInfoAtaComContas();
+            const resolvers = mockDetalheComChamadasPendentes(2);
+
+            renderComponent();
+            await waitForCarregado();
+            await waitFor(() => expect(resolvers).toHaveLength(1));
+
+            expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(false);
+
+            await act(async () => {
+                resolvers[0]({ ...basePrestacao });
+            });
+
+            await waitFor(() => {
+                expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(true);
+            });
+        });
+
+        it('loga o erro e libera analisesDeContaCarregadas quando a busca das análises falha', async () => {
+            const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+            const erro = new Error('falha ao buscar análises');
+            mockInfoAtaComContas();
+            getPrestacaoDeContasDetalhe
+                .mockResolvedValueOnce({ ...basePrestacao })
+                .mockRejectedValueOnce(erro);
+
+            renderComponent();
+            await waitForCarregado();
+
+            await waitFor(() => {
+                expect(consoleErrorSpy).toHaveBeenCalledWith('Erro ao carregar as análises de conta da prestação:', erro);
+            });
+            await waitFor(() => {
+                expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(true);
+            });
+
+            consoleErrorSpy.mockRestore();
+        });
+
+        it('volta para false ao recarregar a ata e ignora a resposta da busca anterior', async () => {
+            mockInfoAtaComContas();
+            const resolvers = mockDetalheComChamadasPendentes(2);
+
+            renderComponent();
+            await waitForCarregado();
+            await waitFor(() => expect(resolvers).toHaveLength(1));
+
+            act(() => { mockCapturedComportamentoProps.carregaPrestacaoDeContas(); });
+            await waitFor(() => expect(resolvers).toHaveLength(2));
+
+            await act(async () => {
+                resolvers[1]({ ...basePrestacao });
+            });
+            await waitFor(() => expect(resolvers).toHaveLength(3));
+            expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(false);
+
+            await act(async () => {
+                resolvers[0]({ ...basePrestacao });
+            });
+            expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(false);
+
+            await act(async () => {
+                resolvers[2]({ ...basePrestacao });
+            });
+            await waitFor(() => {
+                expect(mockCapturedComportamentoProps.analisesDeContaCarregadas).toBe(true);
+            });
+        });
+    });
 });

@@ -191,4 +191,109 @@ describe('ConferenciaDeLancamentos', () => {
             'pc-1', 'analise-1', 'conta-1', null, null, true, null, null, null, null, null, null, [], []
         );
     });
+
+    describe('onChangeCarregandoLancamentosParaConferencia', () => {
+        const prestacaoDeContas = { uuid: 'pc-1', associacao: { uuid: 'assoc-1' }, analise_atual: { uuid: 'analise-1' } };
+        const ultimoValorInformado = (callback) => callback.mock.calls[callback.mock.calls.length - 1][0];
+
+        it('informa carregando=true na montagem', () => {
+            const onChange = jest.fn();
+            getContasComMovimentoNaPc.mockImplementation(() => new Promise(() => {}));
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            expect(onChange).toHaveBeenNthCalledWith(1, true);
+        });
+
+        it('informa carregando=false após buscar as contas e os lançamentos', async () => {
+            const onChange = jest.fn();
+            getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'conta-1' }]);
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            await waitFor(() => expect(getLancamentosParaConferencia).toHaveBeenCalled());
+            await waitFor(() => expect(ultimoValorInformado(onChange)).toBe(false));
+        });
+
+        it('mantém carregando=true enquanto a busca de lançamentos está pendente', async () => {
+            const onChange = jest.fn();
+            let resolverLancamentos;
+            getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'conta-1' }]);
+            getLancamentosParaConferencia.mockImplementation(
+                () => new Promise((resolve) => { resolverLancamentos = resolve; })
+            );
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            await waitFor(() => expect(getLancamentosParaConferencia).toHaveBeenCalled());
+            expect(ultimoValorInformado(onChange)).toBe(true);
+
+            await act(async () => {
+                resolverLancamentos([{ uuid: 'lanc-1' }]);
+            });
+
+            await waitFor(() => expect(ultimoValorInformado(onChange)).toBe(false));
+        });
+
+        it('informa carregando=false sem buscar lançamentos quando não há contas com movimento', async () => {
+            const onChange = jest.fn();
+            getContasComMovimentoNaPc.mockResolvedValue([]);
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            await waitFor(() => expect(getContasComMovimentoNaPc).toHaveBeenCalledWith('pc-1'));
+            await waitFor(() => expect(ultimoValorInformado(onChange)).toBe(false));
+            expect(getLancamentosParaConferencia).not.toHaveBeenCalled();
+        });
+
+        it('permanece informando carregando=true quando a prestação de contas não possui associação', async () => {
+            const onChange = jest.fn();
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={{ uuid: 'pc-1' }} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            await act(async () => {
+                await Promise.resolve();
+            });
+
+            expect(onChange).toHaveBeenCalledWith(true);
+            expect(onChange).not.toHaveBeenCalledWith(false);
+        });
+
+        it('volta a informar carregando=true ao recarregar os lançamentos e false ao concluir', async () => {
+            const onChange = jest.fn();
+            getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'conta-1' }]);
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} onChangeCarregandoLancamentosParaConferencia={onChange} />);
+
+            await waitFor(() => expect(mockCapturedTabsProps?.contaUuid).toBe('conta-1'));
+            await waitFor(() => expect(getLancamentosParaConferencia).toHaveBeenCalled());
+            await waitFor(() => expect(ultimoValorInformado(onChange)).toBe(false));
+
+            let resolverRecarga;
+            getLancamentosParaConferencia.mockImplementationOnce(
+                () => new Promise((resolve) => { resolverRecarga = resolve; })
+            );
+            onChange.mockClear();
+
+            await act(async () => {
+                mockCapturedTabsProps.handleChangeCheckBoxOrdenarPorImposto(true);
+            });
+
+            expect(ultimoValorInformado(onChange)).toBe(true);
+
+            await act(async () => {
+                resolverRecarga([]);
+            });
+
+            await waitFor(() => expect(ultimoValorInformado(onChange)).toBe(false));
+        });
+
+        it('não quebra quando o callback não é informado', async () => {
+            getContasComMovimentoNaPc.mockResolvedValue([{ uuid: 'conta-1' }]);
+
+            render(<ConferenciaDeLancamentos prestacaoDeContas={prestacaoDeContas} />);
+
+            await waitFor(() => expect(mockCapturedTabsProps.contaUuid).toBe('conta-1'));
+        });
+    });
 });

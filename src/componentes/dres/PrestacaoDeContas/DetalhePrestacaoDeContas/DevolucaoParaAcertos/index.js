@@ -27,15 +27,17 @@ const TITULO_COMPROVANTE_SALDO = 'Comprovante de saldo da conta';
 const TITULO_JUSTIFICATIVA_SALDO = 'Justificativa de saldo da conta';
 
 const DevolucaoParaAcertos = ({
-    prestacaoDeContas, 
-    analisesDeContaDaPrestacao, 
-    carregaPrestacaoDeContas, 
-    infoAta, 
-    editavel=true, 
-    setLoadingAcompanhamentoPC, 
+    prestacaoDeContas,
+    analisesDeContaDaPrestacao,
+    analisesDeContaCarregadas=true,
+    carregaPrestacaoDeContas,
+    infoAta,
+    editavel=true,
+    setLoadingAcompanhamentoPC,
     setAnalisesDeContaDaPrestacao,
     updateListaDeDocumentosParaConferencia=null,
-    carregaLancamentosParaConferencia=null
+    carregaLancamentosParaConferencia=null,
+    carregandoLancamentosParaConferencia=false
 }) => {
     const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
     const [dataLimiteDevolucao, setDataLimiteDevolucao] = useState('')
@@ -60,6 +62,11 @@ const DevolucaoParaAcertos = ({
     const totalDocumentosAjustes = useMemo(() => documentosAjustes.length, [documentosAjustes]);
     const totalDespesasPeriodosAnterioresAjustes = useMemo(() => despesasPeriodosAnterioresAjustes.length, [despesasPeriodosAnterioresAjustes]);
 
+    const dependenciasCarregadas = !!prestacaoDeContas?.uuid && Array.isArray(infoAta?.contas) && analisesDeContaCarregadas;
+    const aguardandoDependencias = !dependenciasCarregadas || carregandoLancamentosParaConferencia;
+    const carregandoDevolucao = loading || aguardandoDependencias;
+    const mensagemLoadingDevolucao = aguardandoDependencias ? 'Aguardando...' : 'Carregando...';
+
     const handleDevolverParaAssociacao = useHandleDevolverParaAssociacao({
         prestacaoDeContas,
         setContasPendenciaConciliacao,
@@ -74,7 +81,7 @@ const DevolucaoParaAcertos = ({
         setContasSolicitarCorrecaoJustificativaConciliacao
     });
 
-    
+
     const totalDeAnalises = () => {
         // Esta função é necessária para não liberar o botão "ver resumo" enquanto o usuario esta cadastrando a analise
 
@@ -92,49 +99,93 @@ const DevolucaoParaAcertos = ({
 
     const totalAnalisesDeContaDaPrestacao = totalDeAnalises();
 
-    useEffect(()=>{
+    const fetchContaAjustes = async (analiseUuid, contaUuid, onError) => {
+        try {
+            const [lancamentos, documentos, despesas] = await Promise.all([
+                getLancamentosAjustes(analiseUuid, contaUuid),
+                getDocumentosAjustes(analiseUuid, contaUuid),
+                getDespesasPeriodosAnterioresAjustes(analiseUuid, contaUuid)
+            ]);
+
+            return {
+                lancamentos_ajustes: lancamentos || [],
+                documentos_ajustes: documentos || [],
+                despesas_periodos_anteriores_ajustes: despesas || []
+            };
+        } catch (err) {
+            console.error(err);
+            const erroMsg = err?.response?.data?.detail || err?.message || String(err);
+            onError(erroMsg);
+            return { lancamentos_ajustes: [], documentos_ajustes: [], despesas_periodos_anteriores_ajustes: [] };
+        }
+    };
+
+    const obterAnaliseUuid = useCallback(async () => {
+        if (editavel) {
+            return (prestacaoDeContas?.analise_atual?.uuid && infoAta?.contas?.length > 0)
+                ? prestacaoDeContas.analise_atual.uuid
+                : null;
+        }
+
+        if (!prestacaoDeContas?.uuid) return null;
+
+        try {
+            const ultimaAnalise = await getUltimaAnalisePc(prestacaoDeContas.uuid);
+            return ultimaAnalise?.uuid || null;
+        } catch (e) {
+            console.error("Erro ao carregar a última análise:", e);
+            toastCustom.ToastCustomError('Erro ao carregar acertos', 'Não foi possível carregar a última análise da prestação de contas.');
+            return null;
+        }
+    }, [editavel, prestacaoDeContas, infoAta]);
+
+    useEffect(() => {
+        if (aguardandoDependencias) return;
 
         let mounted = true;
 
-        const verificaSeTemSolicitacaoAcertos = async () =>{
+        const carregarSolicitacoesAcertos = async () => {
             setLoading(true);
-            let analise_atual_uuid;
-            if (editavel) {
-                if (prestacaoDeContas && prestacaoDeContas.analise_atual && prestacaoDeContas.analise_atual.uuid && infoAta && infoAta.contas && infoAta.contas.length > 0) {
-                    analise_atual_uuid = prestacaoDeContas.analise_atual.uuid
-                }
-            }else {
-                if (prestacaoDeContas && prestacaoDeContas.uuid){
-                    let ultima_analise =  await getUltimaAnalisePc(prestacaoDeContas.uuid)
-                    if (ultima_analise && ultima_analise.uuid){
-                        analise_atual_uuid = ultima_analise.uuid
-                    }
-                }
-            }
-            if (mounted) {
-                if (infoAta && infoAta.contas && infoAta.contas.length > 0) {    
-                    return await infoAta.contas.map(async (conta) => {
-                        let lancamentos_ajustes = await getLancamentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
-                        setLancamentosAjustes([...lancamentos_ajustes])
-                        
-                        let documentos_ajustes = await getDocumentosAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
-                        setDocumentosAjustes([...documentos_ajustes])
 
-                        const despesas_periodos_anteriores_ajustes = await getDespesasPeriodosAnterioresAjustes(analise_atual_uuid, conta.conta_associacao.uuid)
-                        setDespesasPeriodosAnterioresAjustes(despesas_periodos_anteriores_ajustes)
+            try {
+                const analiseAtualUuid = await obterAnaliseUuid();
+                const temContas = infoAta?.contas?.length > 0;
 
-                        setLoading(false);
-                    })
+                if (!analiseAtualUuid || !temContas || !mounted) return;
+
+                const errosAjustes = [];
+                const registrarErro = (msg) => errosAjustes.push(msg);
+
+                const resultados = await Promise.all(
+                    infoAta.contas.map(conta =>
+                        fetchContaAjustes(analiseAtualUuid, conta.conta_associacao.uuid, registrarErro)
+                    )
+                );
+
+                if (!mounted) return;
+
+                if (errosAjustes.length > 0) {
+                    const detalhesErro = [...new Set(errosAjustes)].join(' | ');
+                    toastCustom.ToastCustomError('Erro ao carregar acertos', `Não foi possível carregar algumas solicitações de acertos. ${detalhesErro}`);
                 }
+
+                setLancamentosAjustes(resultados.flatMap(r => r.lancamentos_ajustes));
+                setDocumentosAjustes(resultados.flatMap(r => r.documentos_ajustes));
+                setDespesasPeriodosAnterioresAjustes(resultados.flatMap(r => r.despesas_periodos_anteriores_ajustes));
+
+            } catch (e) {
+                console.error("Erro ao verificar solicitações de acertos:", e);
+            } finally {
+                if (mounted) setLoading(false);
             }
-        }
-        verificaSeTemSolicitacaoAcertos()
-        
-        return () =>{
+        };
+
+        void carregarSolicitacoesAcertos();
+
+        return () => {
             mounted = false;
         }
-
-    }, [infoAta, prestacaoDeContas, editavel, updateListaDeDocumentosParaConferencia, carregaLancamentosParaConferencia])
+    }, [infoAta, prestacaoDeContas, obterAnaliseUuid, updateListaDeDocumentosParaConferencia, carregaLancamentosParaConferencia, aguardandoDependencias]);
 
     useEffect(() => {
         if (!loading && window && window.location && window.location.hash === '#collapse_sintese_por_realizacao_da_despesa') {
@@ -403,7 +454,7 @@ const DevolucaoParaAcertos = ({
     const possuiHistoricoDeDevolucoes = () => {
         return (prestacaoDeContas && prestacaoDeContas.devolucoes_da_prestacao && prestacaoDeContas.devolucoes_da_prestacao.length > 0);
     };
-    
+
     const possuiAcertosSelecionados = useCallback( () => {
         if(flagAjustesDespesasAnterioresAtiva){
             return totalLancamentosAjustes > 0 || totalDocumentosAjustes > 0 || totalAnalisesDeContaDaPrestacao > 0 || totalDespesasPeriodosAnterioresAjustes > 0
@@ -420,7 +471,7 @@ const DevolucaoParaAcertos = ({
         <>
             <hr className='mt-4 mb-3'/>
             <h4  id='devolucao_para_acerto' className='mb-4'>Devolução para acertos</h4>
-            {!loading  ? (
+            {!carregandoDevolucao ? (
                     <>
                         <p className='mt-4'>Caso deseje enviar todos esses apontamentos a Associação, determine o prazo e clique em "Devolver para a Associação".</p>
                         <div className="d-flex mt-4">
@@ -462,10 +513,10 @@ const DevolucaoParaAcertos = ({
                                         data-tooltip-id="btn-devolver-para-associacao"
                                         data-tooltip-html={!possuiAcertosSelecionados() ? 'Não é permitido devolver PC sem acertos indicados.' : ''}>
                                         Devolver para Associação
-                                    </span>                                         
+                                    </span>
                                     <ReactTooltip id="btn-devolver-para-associacao"/>
                                 </button>
-                            </div>                            
+                            </div>
                         </div>
                         <section>
                             <ModalErroDevolverParaAcerto
@@ -550,6 +601,7 @@ const DevolucaoParaAcertos = ({
                     corFonte="dark"
                     marginTop="0"
                     marginBottom="0"
+                    mensagem={mensagemLoadingDevolucao}
                 />
             }
         </>
