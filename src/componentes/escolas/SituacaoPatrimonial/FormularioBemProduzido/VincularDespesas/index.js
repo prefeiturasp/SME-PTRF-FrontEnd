@@ -40,6 +40,7 @@ export const VincularDespesas = ({
   salvarRascunho,
   bemProduzidoDespesas,
   statusCompletoBemProduzido,
+  somenteLeitura = false,
 }) => {
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(null);
@@ -222,9 +223,10 @@ export const VincularDespesas = ({
                 dataKey="uuid"
                 selection={despesasSelecionadas}
                 onSelectionChange={(e) => {
+                  if (somenteLeitura) return;
                   setDespesasSelecionadas(Array.isArray(e.value) ? e.value : []);
                 }}
-                selectableRowDisabled={rowData => isRowDisabled(rowData)}
+                selectableRowDisabled={rowData => somenteLeitura || isRowDisabled(rowData)}
                 expandedRows={expandedRows}
                 onRowToggle={(e) => setExpandedRows(e.data)}
                 rowExpansionTemplate={expandedRowTemplate}
@@ -277,11 +279,14 @@ export const VincularDespesas = ({
               Cancelar
             </button>
 
-            <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>          
+            <ButtonExcluirBemProduzido
+              desabilitado={somenteLeitura}
+              handleDelete={() => setShowModalDelete(true)}
+            />          
 
             <button
               className="btn btn-outline-success float-right"
-              disabled={!despesasSelecionadas.length && !uuid}
+              disabled={somenteLeitura || (!despesasSelecionadas.length && !uuid)}
               onClick={salvarRascunho}
             >
               {uuid ? "Salvar" : "Salvar rascunho"}

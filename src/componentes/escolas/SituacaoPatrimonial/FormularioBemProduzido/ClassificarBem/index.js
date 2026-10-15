@@ -35,6 +35,7 @@ export const ClassificarBem = ({
   total = 0,
   statusCompletoBemProduzido,
   uuid,
+  somenteLeitura = false,
 }) => {
   const navigate = useNavigate();
   const [especificacoes, setEspecificacoes] = useState([]);
@@ -135,6 +136,7 @@ export const ClassificarBem = ({
   }, [items, form]);
 
   const onFinish = () => {
+    if (somenteLeitura) return;
     salvar();
   };
 
@@ -188,6 +190,7 @@ export const ClassificarBem = ({
 
       <Form
         form={form}
+        disabled={somenteLeitura}
         onValuesChange={handleValuesChange}
         onFinish={onFinish}
         layout="vertical"
@@ -213,7 +216,11 @@ export const ClassificarBem = ({
                       type="text"
                       style={{ fontWeight: 600 }}
                       danger
-                      onClick={() => remove(index)}
+                      disabled={somenteLeitura}
+                      onClick={() => {
+                        if (somenteLeitura) return;
+                        remove(index);
+                      }}
                     >
                       Remover item
                     </Button>
@@ -358,14 +365,16 @@ export const ClassificarBem = ({
                 <Button
                   color="primary"
                   icon={<PlusOutlined />}
-                  onClick={() =>
+                  disabled={somenteLeitura}
+                  onClick={() => {
+                    if (somenteLeitura) return;
                     add({
                       num_processo_incorporacao: "",
                       especificacao_do_bem: "",
                       quantidade: "",
                       valor_individual: "",
-                    })
-                  }
+                    });
+                  }}
                 >
                   Adicionar item
                 </Button>
@@ -412,12 +421,19 @@ export const ClassificarBem = ({
             Cancelar
           </button>
 
-          <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>             
+          <ButtonExcluirBemProduzido
+            desabilitado={somenteLeitura}
+            handleDelete={() => setShowModalDelete(true)}
+          />
 
           <button
             className="btn btn-outline-success float-right"
             type="button"
-            onClick={salvarRacuscunho}
+            disabled={somenteLeitura}
+            onClick={() => {
+              if (somenteLeitura) return;
+              salvarRacuscunho();
+            }}
           >
             {uuid ? "Salvar" : "Salvar rascunho"}
           </button>
