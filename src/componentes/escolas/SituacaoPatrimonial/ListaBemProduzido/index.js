@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 import { Flex, Spin } from "antd";
 import { DataTable } from "primereact/datatable";
@@ -16,8 +16,9 @@ import {faDownload} from "@fortawesome/free-solid-svg-icons";
 import { MsgImgCentralizada } from "../../../Globais/Mensagens/MsgImgCentralizada";
 import Img404 from "../../../../assets/img/img-404.svg";
 import { Tooltip as ReactTooltip } from "react-tooltip";
-import { getExportarBensProduzidos } from '../../../../services/escolas/BensProduzidos.service';
+import { getExportarBensProduzidos, getModoVisualizacaoBemProduzido } from '../../../../services/escolas/BensProduzidos.service';
 import { toastCustom } from '../../../Globais/ToastCustom';
+import { visoesService } from '../../../../services/visoes.service';
 
 const filtroInicial = {
   especificacao_bem: "",
@@ -150,6 +151,7 @@ export const ListaBemProduzido = ({visao_dre=false}) => {
   const [firstPage, setFirstPage] = useState(0);
   const [expandedRows, setExpandedRows] = useState({});
   const [filtroSalvo, setFiltroSalvo] = useState(filtroInicial);
+  const [modoVisualizacaoPorBem, setModoVisualizacaoPorBem] = useState({});
 
   const { data, refetch, isLoading, error, isError } = useGetBemProduzidosComAdquiridos(
     {
@@ -209,6 +211,24 @@ export const ListaBemProduzido = ({visao_dre=false}) => {
       console.log("Erro ao exportar dados", error)
     }
   }
+
+  const flagSituacaoPatrimonial = visoesService.featureFlagAtiva("situacao-patrimonial");
+
+  const botaoEdicaoBem = (linha) => {
+    const bemUuid = linha.bem_produzido_uuid;
+    const modoVisualizacao = modoVisualizacaoPorBem[bemUuid];
+    const consultaConcluida = !flagSituacaoPatrimonial || !bemUuid || modoVisualizacao === true || modoVisualizacao === false;
+
+    return (
+      <button
+        className="btn btn-outline-success float-right"
+        disabled={!consultaConcluida}
+        onClick={() => navigate(`/edicao-bem-produzido/${bemUuid}`)}
+      >
+        {modoVisualizacao === true ? "Visualizar bem" : "Editar bem"}
+      </button>
+    );
+  };
 
   const expandedRowTemplate = (data) => {
     const todosRateios = data.despesas.flatMap((despesa, despesaIndex) => 
@@ -300,28 +320,52 @@ export const ListaBemProduzido = ({visao_dre=false}) => {
           />
         </DataTable>
         <Flex justify="end" gap={8} className="mt-1 mb-4 mx-4">
-          {!visao_dre && <button 
-              className="btn btn-outline-success float-right"
-              onClick={() => navigate(`/edicao-bem-produzido/${data.bem_produzido_uuid}`)}
-            >
-              Editar bem
-            </button>}
+          {!visao_dre && botaoEdicaoBem(data)}
         </Flex>
       </>
     );
   };
 
   const isRowExpanded = (rowData) => !!expandedRows[rowData.uuid];
+
+  const consultarModoVisualizacao = (bemUuid) => {
+    if (!bemUuid || bemUuid in modoVisualizacaoPorBem) return;
+
+    setModoVisualizacaoPorBem((atual) => ({ ...atual, [bemUuid]: null }));
+
+    getModoVisualizacaoBemProduzido(bemUuid)
+      .then((resposta) => {
+        setModoVisualizacaoPorBem((atual) => ({
+          ...atual,
+          [bemUuid]: resposta?.modo_visualizacao === true,
+        }));
+      })
+      .catch(() => {
+        setModoVisualizacaoPorBem((atual) => {
+          const proximo = { ...atual };
+          delete proximo[bemUuid];
+          return proximo;
+        });
+        toastCustom.ToastCustomError("Não foi possível verificar se o bem produzido pode ser editado.");
+      });
+  };
+
   const handleToggleRow = (rowData) => {
-    setExpandedRows(prev => {
-      const updated = { ...prev };
-      if (updated[rowData.uuid]) {
-        delete updated[rowData.uuid];
+    const abrindo = !expandedRows[rowData.uuid];
+
+    setExpandedRows((atual) => {
+      const proximas = { ...atual };
+      if (proximas[rowData.uuid]) {
+        delete proximas[rowData.uuid];
       } else {
-        updated[rowData.uuid] = true;
+        proximas[rowData.uuid] = true;
       }
-      return updated;
+      return proximas;
     });
+
+    if (!abrindo || !flagSituacaoPatrimonial || visao_dre || rowData.tipo !== "Produzido") return;
+
+    consultarModoVisualizacao(rowData.bem_produzido_uuid);
   };
 
   return (
