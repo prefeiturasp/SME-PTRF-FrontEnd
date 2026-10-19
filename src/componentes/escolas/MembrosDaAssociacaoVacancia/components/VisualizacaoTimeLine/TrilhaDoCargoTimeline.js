@@ -12,7 +12,9 @@ export const TrilhaDoCargoTimeline = ({
     dataTemplate,
     registroSelecionado,
     onSelecionarRegistro,
+    habilitarClick=false
 }) => {
+ 
     const registros =
         registrosDoCargo && registrosDoCargo.length > 0
             ? registrosDoCargo
@@ -46,10 +48,10 @@ export const TrilhaDoCargoTimeline = ({
                         type="button"
                         key={registro.uuid}
                         className={`segmento-timeline ${corClasse} ${isSelecionado ? "selecionado" : ""}`}
-                        style={{ left: `${leftPct}%`, width: `${widthPct}%`, color: "#fff" }}
+                        style={{ left: `${leftPct}%`, width: `${widthPct}%`, color: "#fff", cursor: habilitarClick ? 'auto' : 'default' }}
                         title={titulo}
                         aria-label={titulo}
-                        onClick={() => onSelecionarRegistro({ ...registro, cargoLabel: cargoRow.cargo_associacao_label })}
+                        onClick={() => habilitarClick ? onSelecionarRegistro({ ...registro, cargoLabel: cargoRow.cargo_associacao_label }) : null}
                     >
                         {widthPct >= 5 && (
                             <span className="segmento-timeline-label">{registro.cargo_vago ? "Vago" : nome}</span>

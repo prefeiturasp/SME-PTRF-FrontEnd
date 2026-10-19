@@ -30,6 +30,7 @@ export const InformarValores = ({
   statusCompletoBemProduzido,
   onDespesasExcluidas,
   registerSyncRateios,
+  somenteLeitura = false,
 }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -262,6 +263,8 @@ export const InformarValores = ({
   }, [registerSyncRateios, form, setRateiosComValores, setRecursosPropriosComValores]);
 
   const handleSaveRascunho = (values) => {
+    if (somenteLeitura) return;
+
     const validationErrors = validateDespesas(values);
 
     if (validationErrors.length > 0) {
@@ -424,7 +427,7 @@ export const InformarValores = ({
                             placeholder="0,00"
                             style={{ width: "100%" }}
                             controls={false}
-                            disabled={rateio.valor_disponivel - parseFloat(rateio.bem_produzido_rateio_valor_utilizado) === 0}
+                            disabled={somenteLeitura || rateio.valor_disponivel - parseFloat(rateio.bem_produzido_rateio_valor_utilizado) === 0}
                             formatter={formatMoneyByCentsBRL}
                             parser={parseMoneyBRL}
                           />
@@ -491,7 +494,7 @@ export const InformarValores = ({
                         placeholder="0,00"
                         style={{ width: "100%" }}
                         controls={false}
-                        disabled={false}
+                        disabled={somenteLeitura}
                         formatter={formatMoneyByCentsBRL}
                         parser={parseMoneyBRL}
                       />
@@ -612,7 +615,7 @@ export const InformarValores = ({
           Exibindo <span className="total">{data.length}</span> items
         </p>
 
-        {despesasSelecionadas.length > 0 ? (
+        {!somenteLeitura && despesasSelecionadas.length > 0 ? (
           <BarraAcaoEmLote
             setDespesasSelecionadas={setDespesasSelecionadas}
             despesasSelecionadas={despesasSelecionadas}
@@ -622,6 +625,7 @@ export const InformarValores = ({
 
         <Form
           form={form}
+          disabled={somenteLeitura}
           onFinish={handleSaveRascunho}
           layout="vertical"
           onValuesChange={(changed, allValues) => {
@@ -636,7 +640,10 @@ export const InformarValores = ({
             autoLayout={true}
             selectionMode="multiple"
             selection={despesasSelecionadas}
-            onSelectionChange={(e) => setDespesasSelecionadas(e.value)}
+            onSelectionChange={(e) => {
+              if (somenteLeitura) return;
+              setDespesasSelecionadas(e.value);
+            }}
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}
             rowExpansionTemplate={expandedRowTemplate}
@@ -676,9 +683,15 @@ export const InformarValores = ({
               Cancelar
             </button>
 
-            <ButtonExcluirBemProduzido handleDelete={() => setShowModalDelete(true)}/>           
+            <ButtonExcluirBemProduzido
+              desabilitado={somenteLeitura}
+              handleDelete={() => setShowModalDelete(true)}
+            />
 
-            <button className="btn btn-outline-success float-right">
+            <button
+              className="btn btn-outline-success float-right"
+              disabled={somenteLeitura}
+            >
               {uuid ? "Salvar" : "Salvar rascunho"}
             </button>
           </Flex>

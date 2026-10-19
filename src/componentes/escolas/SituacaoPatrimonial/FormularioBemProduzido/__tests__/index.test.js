@@ -1,5 +1,6 @@
 import React from "react";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { FormularioBemProduzido } from "../index";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -15,6 +16,14 @@ import { usePostBemProduzidoRascunho } from "../hooks/usePostBemProduzidoRascunh
 import { useGetDespesas } from "../VincularDespesas/hooks/useGetDespesas";
 import { useGetPeriodos } from "../../../../../hooks/Globais/useGetPeriodo";
 import * as BensProduzidosService from "../../../../../services/escolas/BensProduzidos.service";
+import * as DespesasService from "../../../../../services/escolas/Despesas.service";
+import { visoesService } from "../../../../../services/visoes.service";
+
+jest.mock("../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(() => false),
+  },
+}));
 
 const mockUseNavigate = jest.fn();
 
@@ -250,6 +259,88 @@ describe("Componente FormularioBemProduzido", () => {
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /Classificar o bem/ })).toBeDisabled();
+    });
+  });
+
+  describe("quando o bem produzido está em período fechado", () => {
+    beforeEach(() => {
+      visoesService.featureFlagAtiva.mockImplementation(
+        (flag) => flag === "situacao-patrimonial"
+      );
+      useParams.mockReturnValue({ uuid: "bem-1" });
+      jest.spyOn(BensProduzidosService, "getStatusDelecaoBemProduzido").mockResolvedValue({});
+    });
+
+    it("deve manter Informar valores e a seleção bloqueados até a consulta responder", async () => {
+      const user = userEvent.setup();
+      let resolverConsulta;
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido").mockImplementation(
+        () => new Promise((resolve) => {
+          resolverConsulta = resolve;
+        })
+      );
+
+      renderComponent();
+
+      const botaoInformarValores = screen.getByRole("button", { name: "Informar valores" });
+      expect(botaoInformarValores).toBeDisabled();
+
+      const checkbox = screen.getByRole("checkbox");
+      await user.click(checkbox);
+      expect(checkbox).not.toBeChecked();
+
+      await act(async () => {
+        resolverConsulta({ modo_visualizacao: false });
+      });
+
+      expect(await screen.findByRole("button", { name: "Informar valores" })).toBeEnabled();
+    });
+
+    it("deve exibir o modal de período fechado de bens produzidos e não o modal de inclusão", async () => {
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido").mockResolvedValue({
+        modo_visualizacao: true,
+      });
+
+      renderComponent();
+
+      expect(await screen.findByText(/inclusão ou edição de bens produzidos/)).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Para inclusão do bem produzido é necessário reabrir ou selecionar despesas/)
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Informar valores" })).toBeEnabled();
+      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+    });
+
+    it("deve percorrer informar valores e classificar sem abrir o modal de período e sem habilitar salvar", async () => {
+      const user = userEvent.setup();
+      jest.spyOn(DespesasService, "getEspecificacoesCapital").mockResolvedValue([]);
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido").mockResolvedValue({
+        modo_visualizacao: true,
+      });
+
+      renderComponent();
+
+      await waitFor(() => {
+        expect(screen.getByRole("button", { name: "Informar valores" })).toBeEnabled();
+      });
+      const botaoInformarValores = screen.getByRole("button", { name: "Informar valores" });
+
+      await user.click(botaoInformarValores);
+
+      expect(
+        await screen.findByText("Informar valores utilizados na produção do bem")
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText(/Para inclusão do bem produzido é necessário reabrir ou selecionar despesas/)
+      ).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+
+      const botaoClassificar = screen.getByRole("button", { name: "Classificar o bem" });
+      expect(botaoClassificar).toBeEnabled();
+      await user.click(botaoClassificar);
+
+      expect(await screen.findByText("Classifique o bem")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
     });
   });
 });

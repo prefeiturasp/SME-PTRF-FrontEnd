@@ -98,6 +98,7 @@ describe("LinhaDoTempoComposicaoVacancia - modais de confirmação de cancelamen
                     mandato={mandato}
                     dataSelecionada="2026-03-01"
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                 />
             </MemoryRouter>
         );
@@ -277,6 +278,7 @@ describe("LinhaDoTempoComposicaoVacancia - editar dados / incluir novo membro / 
                     mandato={mandato}
                     dataSelecionada="2026-03-01"
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                 />
             </MemoryRouter>
         );
@@ -439,6 +441,7 @@ describe("LinhaDoTempoComposicaoVacancia - navegação por data e marco", () => 
                     mandato={mandato}
                     dataSelecionada={dataSelecionada}
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                 />
             </MemoryRouter>
         );
@@ -568,6 +571,7 @@ describe("LinhaDoTempoComposicaoVacancia - painel sem ações disponíveis", () 
                     mandato={mandato}
                     dataSelecionada="2026-03-01"
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                 />
             </MemoryRouter>
         );
@@ -648,6 +652,7 @@ describe("LinhaDoTempoComposicaoVacancia - casos gerais de renderização", () =
                     mandato={{ data_inicial: "2026-01-01", data_final: "2026-12-31" }}
                     dataSelecionada="2026-03-01"
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                     {...props}
                 />
             </MemoryRouter>
@@ -790,6 +795,7 @@ describe("LinhaDoTempoComposicaoVacancia - navegação por marco (chevron esquer
                     mandato={mandato}
                     dataSelecionada={dataSelecionada}
                     onSelecionarData={onSelecionarData}
+                    habilitarClick={true}
                 />
             </MemoryRouter>
         );
