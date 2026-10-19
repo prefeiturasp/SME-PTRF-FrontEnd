@@ -964,18 +964,21 @@ const routesConfig = [
     path: "/lista-situacao-patrimonial",
     component: SituacaoPatrimonialPage,
     permissoes: ["access_situacao_patrimonial"],
+    featureFlag: "situacao-patrimonial",
   },
   {
     exact: true,
     path: "/cadastro-bem-produzido/",
     component: CadastroBemProduzidoPage,
     permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
+    featureFlag: "situacao-patrimonial",
   },
   {
     exact: true,
     path: "/edicao-bem-produzido/:uuid/",
     component: EdicaoBemProduzidoPage,
     permissoes: ["access_situacao_patrimonial", "change_situacao_patrimonial"],
+    featureFlag: "situacao-patrimonial",
   },
   {
     exact: true,

@@ -58,7 +58,7 @@ const renderComponent = (props = {}) => {
     ],
     salvar: jest.fn(),
     cadastrarBens: jest.fn(),
-    salvarRascunhoClassificarBens: jest.fn(),
+    salvarRacuscunho: jest.fn(),
     setBemProduzidoItems: jest.fn(),
     setHabilitaCadastrarBem: jest.fn(),
     habilitaCadastrarBem: false,

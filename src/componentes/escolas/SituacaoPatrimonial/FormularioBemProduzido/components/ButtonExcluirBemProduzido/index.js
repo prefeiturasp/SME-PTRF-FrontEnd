@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { useGetStatusDelecaoBemProduzido } from "../../hooks/useGetStatusDelecaoBemProduzido";
 
-export const ButtonExcluirBemProduzido = ({ handleDelete }) => {
+export const ButtonExcluirBemProduzido = ({ handleDelete, desabilitado = false }) => {
     const { uuid } = useParams()
 
     const {
@@ -26,6 +26,7 @@ export const ButtonExcluirBemProduzido = ({ handleDelete }) => {
                             type="button"
                             className="btn btn-danger float-right"
                             disabled={
+                                desabilitado ||
                                 estaCarregandoConfirmacaoStatusDelecao ||
                                 erroConfirmacaoStatusDelecao
                             }

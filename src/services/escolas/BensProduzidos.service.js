@@ -106,6 +106,13 @@ export const getExportarBensProduzidos = async () => {
   ).data;
 };
 
+export const getModoVisualizacaoBemProduzido = async (uuid) => {
+  return (await api.get(
+    `api/bens-produzidos/${uuid}/modo-visualizacao/`,
+    authHeader()
+  )).data;
+};
+
 export const getStatusDelecaoBemProduzido = async (uuid) => {
   return (await api.get(`api/bens-produzidos/${uuid}/status-delecao-bem-produzido/`,
     authHeader())).data;

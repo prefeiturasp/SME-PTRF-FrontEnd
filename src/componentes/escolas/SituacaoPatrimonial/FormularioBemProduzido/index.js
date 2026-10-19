@@ -13,8 +13,11 @@ import { usePatchBemProduzidoRascunho } from "./hooks/usePatchBemProduzidoRascun
 import { ClassificarBem } from "./ClassificarBem";
 import ModalConfirmarAlteracaoBemProduzido from "./components/ModalConfirmarAlteracaoBemProduzido";
 import ModalPeriodoFechado from "./components/ModalPeriodoFechado";
+import ModalPeriodoFechadoVisualizacao from "./components/ModalPeriodoFechadoVisualizacao";
 import { postVerificarSePodeInformarValores } from "../../../../services/escolas/BensProduzidos.service";
 import { toastCustom } from "../../../Globais/ToastCustom";
+import { useGetModoVisualizacaoBemProduzido } from "./hooks/useGetModoVisualizacaoBemProduzido";
+import { visoesService } from "../../../../services/visoes.service";
 
 const stepList = [
   { label: "Selecionar despesas" },
@@ -36,14 +39,40 @@ export const FormularioBemProduzido = () => {
   const [statusCompletoBemProduzido, setStatusCompletoBemProduzido] = useState(false);
   const [showModalConfirmacao, setShowModalConfirmacao] = useState(false);
   const [showModalPeriodoFechado, setShowModalPeriodoFechado] = useState(false);
+  const [showModalPeriodoFechadoVisualizacao, setShowModalPeriodoFechadoVisualizacao] = useState(false);
   const [onConfirmSalvar, setOnConfirmSalvar] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
   const [originalData, setOriginalData] = useState(null);
   const syncRateiosFromFormRef = useRef(null);
 
   const { data } = useGetBemProduzido(uuid);
+  const flagSituacaoPatrimonial = visoesService.featureFlagAtiva("situacao-patrimonial");
+  const {
+    data: modoVisualizacaoData,
+    isLoading: carregandoModoVisualizacao,
+    isError: erroModoVisualizacao,
+  } = useGetModoVisualizacaoBemProduzido(flagSituacaoPatrimonial ? uuid : undefined);
+  const modoVisualizacao = flagSituacaoPatrimonial && modoVisualizacaoData?.modo_visualizacao === true;
+  const aguardandoModoVisualizacao = flagSituacaoPatrimonial && !!uuid && (carregandoModoVisualizacao || modoVisualizacaoData === undefined);
+  const consultaModoVisualizacaoPendente = aguardandoModoVisualizacao || erroModoVisualizacao;
+  const bloquearEdicao = consultaModoVisualizacaoPendente || modoVisualizacao;
   const { mutationPost } = usePostBemProduzido();
   const { mutationPatch } = usePatchBemProduzido();
+
+  useEffect(() => {
+    if (modoVisualizacao) {
+      setShowModalPeriodoFechadoVisualizacao(true);
+      setShowModalPeriodoFechado(false);
+    }
+  }, [modoVisualizacao]);
+
+  useEffect(() => {
+    if (erroModoVisualizacao) {
+      toastCustom.ToastCustomError(
+        "Não foi possível verificar se o período do bem produzido está fechado."
+      );
+    }
+  }, [erroModoVisualizacao]);
 
   useEffect(() => {
     setBemProduzidoItems(data?.items)
@@ -184,6 +213,15 @@ export const FormularioBemProduzido = () => {
   };
 
   const handleInformarValores = async () => {
+    if (consultaModoVisualizacaoPendente) {
+      return;
+    }
+
+    if (modoVisualizacao) {
+      setStep(2);
+      return;
+    }
+
     try {
       const uuids = despesasSelecionadas.map((despesa) => despesa.uuid);
       const resultado = await postVerificarSePodeInformarValores({ uuids });
@@ -200,6 +238,15 @@ export const FormularioBemProduzido = () => {
   };
 
   const handleClassificarBem = async () => {
+    if (consultaModoVisualizacaoPendente) {
+      return;
+    }
+
+    if (modoVisualizacao) {
+      setStep(3);
+      return;
+    }
+
     if (syncRateiosFromFormRef.current) {
       try { 
         syncRateiosFromFormRef.current(); 
@@ -268,7 +315,7 @@ export const FormularioBemProduzido = () => {
               iconProps={{
                 style: { color: "white" },
               }}
-              disabled={!uuid && !despesasSelecionadas.length}
+              disabled={consultaModoVisualizacaoPendente || (!modoVisualizacao && !uuid && !despesasSelecionadas.length)}
               onClick={handleInformarValores}
             />
           </div>
@@ -292,7 +339,7 @@ export const FormularioBemProduzido = () => {
               iconProps={{
                 style: { color: "white" },
               }}
-              disabled={!habilitaClassificarBem}
+              disabled={!modoVisualizacao && !habilitaClassificarBem}
               onClick={handleClassificarBem}
             />
           </div>
@@ -314,7 +361,7 @@ export const FormularioBemProduzido = () => {
               iconProps={{
                 style: { color: "white" },
               }}
-              disabled={!habilitaCadastrarBem}
+              disabled={modoVisualizacao || !habilitaCadastrarBem}
               onClick={handleSalvar}
             />
           </div>
@@ -331,6 +378,7 @@ export const FormularioBemProduzido = () => {
           salvarRascunho={salvarRascunho}
           bemProduzidoDespesas={data?.despesas}
           statusCompletoBemProduzido={statusCompletoBemProduzido}
+          somenteLeitura={bloquearEdicao}
         />
       ) : null}
       {step === 2 ? (
@@ -348,6 +396,7 @@ export const FormularioBemProduzido = () => {
           statusCompletoBemProduzido={statusCompletoBemProduzido}
           onDespesasExcluidas={handleDespesasExcluidas}
           registerSyncRateios={(fn) => { syncRateiosFromFormRef.current = fn; }}
+          somenteLeitura={modoVisualizacao}
         />
       ) : step === 3 ? (
         <ClassificarBem
@@ -360,6 +409,7 @@ export const FormularioBemProduzido = () => {
           habilitaCadastrarBem={habilitaCadastrarBem}
           statusCompletoBemProduzido={statusCompletoBemProduzido}
           uuid={uuid}
+          somenteLeitura={modoVisualizacao}
         />
       ) : null}
 
@@ -375,9 +425,16 @@ export const FormularioBemProduzido = () => {
         message={"Você alterou valores do bem produzido. Tem certeza que deseja salvar essas alterações?"}
       />
 
-      <ModalPeriodoFechado
-        open={showModalPeriodoFechado}
-        onClose={() => setShowModalPeriodoFechado(false)}
+      {!modoVisualizacao && (
+        <ModalPeriodoFechado
+          open={showModalPeriodoFechado}
+          onClose={() => setShowModalPeriodoFechado(false)}
+        />
+      )}
+
+      <ModalPeriodoFechadoVisualizacao
+        show={showModalPeriodoFechadoVisualizacao}
+        handleClose={() => setShowModalPeriodoFechadoVisualizacao(false)}
       />
     </div>
   );

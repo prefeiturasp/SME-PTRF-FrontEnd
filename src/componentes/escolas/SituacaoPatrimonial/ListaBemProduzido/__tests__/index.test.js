@@ -1,8 +1,17 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { ListaBemProduzido } from "../index";
 import { act } from "react-dom/test-utils";
+import * as BensProduzidosService from "../../../../../services/escolas/BensProduzidos.service";
+import { visoesService } from "../../../../../services/visoes.service";
+
+jest.mock("../../../../../services/visoes.service", () => ({
+  visoesService: {
+    featureFlagAtiva: jest.fn(() => false),
+  },
+}));
 
 const mockNavigate = jest.fn();
 
@@ -218,6 +227,132 @@ describe("ListaBemProduzido", () => {
         name: /editar bem/i,
       });
       expect(editButtons).toHaveLength(0);
+    });
+  });
+
+  describe("modo visualização ao expandir", () => {
+    const linhaProduzida = (uuid, bemUuid, especificacao) => ({
+      uuid,
+      numero_documento: "123",
+      especificacao_do_bem: especificacao,
+      status: "COMPLETO",
+      num_processo_incorporacao: "2023123456789",
+      data_aquisicao_producao: "2023-01-01",
+      periodo: "2023",
+      quantidade: 1,
+      valor_total: 100,
+      tipo: "Produzido",
+      bem_produzido_uuid: bemUuid,
+      despesas: [
+        {
+          despesa_uuid: `despesa-${uuid}`,
+          rateios: [
+            {
+              num_documento: "A1",
+              data_documento: "01/01/2023",
+              especificacao_do_bem: especificacao,
+              acao: "Ação 1",
+              valor: 100,
+              valor_utilizado: 100,
+            },
+          ],
+        },
+      ],
+    });
+
+    const dadosDuasLinhas = {
+      count: 2,
+      results: [
+        linhaProduzida("linha-1", "bem-1", "Cadeira"),
+        linhaProduzida("linha-2", "bem-2", "Mesa"),
+      ],
+    };
+
+    const alternarLinha = async (user, indice) => {
+      const botoes = screen.getAllByRole("button", { name: /expandir|recolher/i });
+      await user.click(botoes[indice]);
+    };
+
+    beforeEach(() => {
+      visoesService.featureFlagAtiva.mockImplementation(
+        (flag) => flag === "situacao-patrimonial"
+      );
+      useGetBemProduzidosComAdquiridos.mockReturnValue({
+        isLoading: false,
+        data: dadosDuasLinhas,
+        refetch: jest.fn(),
+      });
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+      visoesService.featureFlagAtiva.mockImplementation(() => false);
+    });
+
+    it("deve trocar o botão para Visualizar bem quando o período está fechado", async () => {
+      const user = userEvent.setup();
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido").mockResolvedValue({
+        modo_visualizacao: true,
+      });
+
+      render(<ListaBemProduzido />, { wrapper: RouterWrapper });
+      await alternarLinha(user, 0);
+
+      expect(await screen.findByRole("button", { name: "Visualizar bem" })).toBeEnabled();
+      expect(screen.queryByRole("button", { name: "Editar bem" })).not.toBeInTheDocument();
+    });
+
+    it("deve manter Editar bem habilitado ao reabrir a linha quando o período está aberto", async () => {
+      const user = userEvent.setup();
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido")
+        .mockResolvedValue({ modo_visualizacao: false });
+
+      render(<ListaBemProduzido />, { wrapper: RouterWrapper });
+      await alternarLinha(user, 0);
+
+      expect(await screen.findByRole("button", { name: "Editar bem" })).toBeEnabled();
+
+      await alternarLinha(user, 0);
+      await alternarLinha(user, 0);
+
+      expect(screen.getByRole("button", { name: "Editar bem" })).toBeEnabled();
+      expect(screen.queryByRole("button", { name: "Visualizar bem" })).not.toBeInTheDocument();
+    });
+
+    it("deve manter editável a linha aberta e mostrar Visualizar bem ao reabrir a linha de período fechado", async () => {
+      const user = userEvent.setup();
+      const pendentes = {};
+      jest.spyOn(BensProduzidosService, "getModoVisualizacaoBemProduzido")
+        .mockImplementation((uuid) => new Promise((resolve) => {
+          pendentes[uuid] = resolve;
+        }));
+
+      render(<ListaBemProduzido />, { wrapper: RouterWrapper });
+      await alternarLinha(user, 0);
+      await alternarLinha(user, 1);
+
+      const botoesEditar = screen.getAllByRole("button", { name: "Editar bem" });
+      expect(botoesEditar).toHaveLength(2);
+      expect(botoesEditar[0]).toBeDisabled();
+      expect(botoesEditar[1]).toBeDisabled();
+
+      await alternarLinha(user, 0);
+
+      await act(async () => {
+        pendentes["bem-1"]({ modo_visualizacao: true });
+        pendentes["bem-2"]({ modo_visualizacao: false });
+      });
+
+      expect(await screen.findByRole("button", { name: "Editar bem" })).toBeEnabled();
+      expect(screen.queryByRole("button", { name: "Visualizar bem" })).not.toBeInTheDocument();
+
+      await alternarLinha(user, 0);
+
+      await act(async () => {
+        pendentes["bem-1"]({ modo_visualizacao: true });
+      });
+
+      expect(await screen.findByRole("button", { name: "Visualizar bem" })).toBeEnabled();
     });
   });
 });

@@ -10,6 +10,7 @@ import {
   getBemProduzidosComAdquiridos,
   getTodosPeriodosComPC,
   getExportarBensProduzidos,
+  getModoVisualizacaoBemProduzido,
 } from "../BensProduzidos.service";
 import { TOKEN_ALIAS, ASSOCIACAO_UUID } from "../../auth.service";
 import { getUuidAssociacao } from "../../../utils/AssociacaoUtils";
@@ -159,6 +160,16 @@ describe("BensProduzidos.service", () => {
       authHeader()
     );
     expect(result).toEqual(mockData);
+  });
+
+  test("getModoVisualizacaoBemProduzido", async () => {
+    api.get.mockResolvedValue({ data: { modo_visualizacao: true } });
+    const result = await getModoVisualizacaoBemProduzido("bem-1");
+    expect(api.get).toHaveBeenCalledWith(
+      "api/bens-produzidos/bem-1/modo-visualizacao/",
+      expect.objectContaining(authHeader())
+    );
+    expect(result).toEqual({ modo_visualizacao: true });
   });
 
   test("getExportarBensProduzidos", async () => {

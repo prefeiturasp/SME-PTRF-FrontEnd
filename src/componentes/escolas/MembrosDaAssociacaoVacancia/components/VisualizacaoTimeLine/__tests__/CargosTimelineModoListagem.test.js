@@ -27,23 +27,42 @@ describe("CargosTimelineModoListagem", () => {
         expect(screen.getByText("Vago")).toBeInTheDocument();
     });
 
-    it("destaca 'Vago' com a classe text-muted/font-weight-bold e um nome real apenas com font-weight-bold", () => {
-        const cargos = [
-            { cargo_associacao: "PRESIDENTE_DIRETORIA_EXECUTIVA", cargo_associacao_label: "Presidente", nomeOuVago: "Maria Silva" },
-            { cargo_associacao: "TESOUREIRO", cargo_associacao_label: "Tesoureiro", nomeOuVago: "Vago" },
+    it("exibe as informações do cargo e do ocupante corretamente", () => { 
+        
+        const cargos = [ 
+            { 
+                cargo_associacao: "PRESIDENTE_DIRETORIA_EXECUTIVA",
+                cargo_associacao_label: "Presidente",
+                ocupante_do_cargo: {
+                    representacao: "SERVIDOR",
+                    representacao_label: "Servidor",
+                    codigo_identificacao: "123456",
+                },
+                nomeOuVago: "Maria Silva", 
+            }, 
+            { cargo_associacao: "TESOUREIRO", cargo_associacao_label: "Tesoureiro", nomeOuVago: "Vago" }
         ];
 
-        render(<CargosTimelineModoListagem cargos={cargos} secao="Diretoria executiva" />);
-
-        expect(screen.getByText("Maria Silva")).toHaveClass("font-weight-bold");
-        expect(screen.getByText("Maria Silva")).not.toHaveClass("text-muted");
-        expect(screen.getByText("Vago")).toHaveClass("text-muted", "font-weight-bold");
+        render( <CargosTimelineModoListagem cargos={cargos} secao="Diretoria executiva" /> ); 
+        
+        //Cargo 
+        expect(screen.getByText("Presidente")).toHaveClass("text-muted");
+        expect(screen.getByText("Tesoureiro")).toHaveClass("text-muted");     
+        // Representação 
+        expect(screen.getByText("Servidor")).toBeInTheDocument()
+        // Código de identificação 
+        expect(screen.getByText("123456")).toBeInTheDocument()
+        //Nome 
+        expect(screen.getByText("Maria Silva")).toBeInTheDocument()
+        expect(screen.getByText("Maria Silva")).toHaveClass("text-muted"); 
+        // Cargo vago 
+        expect(screen.getByText("Vago")).toBeInTheDocument()
     });
 
     it("renderiza apenas o título da seção quando não há cargos", () => {
         render(<CargosTimelineModoListagem cargos={[]} secao="Conselho Fiscal" />);
 
         expect(screen.getByText("Conselho Fiscal")).toBeInTheDocument();
-        expect(document.querySelectorAll(".linha-composicao-data")).toHaveLength(0);
+        expect(document.querySelectorAll(".linha-composicao-data")).toHaveLength(1);
     });
 });
