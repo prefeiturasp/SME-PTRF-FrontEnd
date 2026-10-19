@@ -23,7 +23,7 @@ const renderComponent = (props = {}) => {
   const defaultProps = {
     items: [],
     salvar: jest.fn(),
-    salvarRascunhoClassificarBens: jest.fn(),
+    salvarRacuscunho: jest.fn(),
     setBemProduzidoItems: jest.fn(),
     setHabilitaCadastrarBem: jest.fn(),
     habilitaCadastrarBem: true,
