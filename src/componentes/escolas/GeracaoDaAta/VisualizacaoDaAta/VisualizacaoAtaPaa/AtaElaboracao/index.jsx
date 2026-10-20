@@ -47,7 +47,7 @@ export const AtaElaboracao = memo((
 
                 <div className="col-12 mt-4">
                     <p>
-                    O (A) Presidente da Diretoria Executiva explicou que a Associação recebe a verba do PTRF e conforme art. 3º,
+                    O (A) Presidente explicou que a Associação recebe a verba do PTRF e conforme art. 3º,
                     da Lei Municipal nº 13.991/2005, os recursos transferidos pelo Programa devem ser aplicados: I – na
                     aquisição de material permanente; II – na aquisição de material de consumo necessário ao funcionamento da
                     Unidade Educacional; III – na manutenção, conservação e pequenos reparos da Unidade Educacional; IV – no
