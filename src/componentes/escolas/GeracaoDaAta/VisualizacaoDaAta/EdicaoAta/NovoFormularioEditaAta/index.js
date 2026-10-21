@@ -18,7 +18,11 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { Tooltip as ReactTooltip } from "react-tooltip";
 import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
 import { getProfessorGremioInfo } from "../../../../../../services/escolas/PresentesAtaPaa.service";
-import { getCargosComposicaoData } from "../../../../../../services/Mandatos.service";
+import { getCargosComposicaoVacanciaPorDataEAssociacao } from "../../../../../../services/MandatosVacancia.service"
+import {
+  formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
+  formataDataInicioNoCargo,
+} from "./utils";
 import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
 import { ModalNotificarRegeracaoAta } from "./ModalNotificarRegeracaoAta";
 import { getParticipantesOrdenadosPorCargo } from "../../../../../../services/escolas/PresentesAta.service";
@@ -131,14 +135,14 @@ export const NovoFormularioEditaAta = ({
   useEffect(() => {
     const getComposicao = async () => {
       try {
-        const lista_cargos_composicao = await getCargosComposicaoData(
-          stateFormEditarAta.data_reuniao,
-          associacaoUuid
+        const lista_cargos_composicao = await getCargosComposicaoVacanciaPorDataEAssociacao(
+            stateFormEditarAta.data_reuniao,
+            associacaoUuid
         );
         const composicao_formatada =
-          formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
+        formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes(
             lista_cargos_composicao
-          );
+        );
 
         let listaFiltrada = composicao_formatada.filter(p => !p.professor_gremio);
 
@@ -516,6 +520,16 @@ export const NovoFormularioEditaAta = ({
       remove(index);
     }
   };
+
+    const obterParticipanteAdicionado = () => {
+        if (!formRef?.current?.values?.listaParticipantes) return null;
+
+        return formRef.current.values.listaParticipantes.flat().filter(
+            (participante) => {
+                return !participante.membro
+            }
+        );
+    };
 
   const obterParticipanteAtual = (index) => {
     if (
@@ -970,19 +984,24 @@ export const NovoFormularioEditaAta = ({
   const handleChangeDate = async (value, name, setFieldValue) => {
     if (isValidDate(value)) {
       setFieldValue(name, value);
-      const data_formatada = formatDate(value);
+        const dataFormatada = formatDate(value);
       try {
-        const lista_cargos_composicao = await getCargosComposicaoData(
-          data_formatada,
-          associacaoUuid
+
+        const lista_cargos_composicao = await getCargosComposicaoVacanciaPorDataEAssociacao(
+            dataFormatada || stateFormEditarAta.data_reuniao,
+            associacaoUuid
         );
+
         const listaFormatada =
-          formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
-            lista_cargos_composicao
-          );
+            formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes(
+                lista_cargos_composicao
+            );
+
+        const participantesNaoMembros = obterParticipanteAdicionado()
+
         // Remove professor da lista se precisaProfessorGremio for false
         let listaFiltrada = listaFormatada.filter(p => !p.professor_gremio);
-        
+
         const listaComProfessor = precisaProfessorGremio
           ? adicionaProfessorGremioNaLista(
               listaFiltrada,
@@ -991,6 +1010,9 @@ export const NovoFormularioEditaAta = ({
               precisaProfessorGremio
             )
           : listaFiltrada;
+
+        listaComProfessor.push(...participantesNaoMembros);
+
         setListaParticipantes(listaComProfessor);
         sincronizaListaParticipantes(listaComProfessor);
       } catch (error) {
@@ -1068,7 +1090,9 @@ export const NovoFormularioEditaAta = ({
     if (participanteSelecionado) {
       participanteSelecionado.presidente_da_reuniao = false;
       participanteSelecionado.secretario_da_reuniao = false;
-      participanteSelecionado.presente = !participanteSelecionado.presente;
+      participanteSelecionado.presente = participanteSelecionado.vago
+        ? false
+        : !participanteSelecionado.presente;
       if (participanteSelecionado.professor_gremio) {
         setProfessorDefaults((prev) => ({
           ...prev,
@@ -1206,6 +1230,8 @@ export const NovoFormularioEditaAta = ({
                         id="stateFormEditarAta.data_reuniao"
                         name="stateFormEditarAta.data_reuniao"
                         value={values.stateFormEditarAta.data_reuniao}
+                        maxDate={new Date()}
+                        autoComplete="off"
                         onChange={(name, value) => {
                           handleChangeDate(value, name, setFieldValue);
                         }}
@@ -1329,9 +1355,9 @@ export const NovoFormularioEditaAta = ({
                                 ehEdicaoPresente[index]
                               );
 
-                              /*                              
-                                const estaEmModoAdicao = Boolean(membro.adicao);                             
-                                const estaEditavel = Boolean(membro.editavel); 
+                              /*
+                                const estaEmModoAdicao = Boolean(membro.adicao);
+                                const estaEditavel = Boolean(membro.editavel);
                                 const linhaPersistida =
                                 !estaEmModoAdicao && !estaEditavel;
                               */
@@ -1429,20 +1455,13 @@ export const NovoFormularioEditaAta = ({
                                       />
                                       <p className="mt-1 mb-0">
                                         <span className="text-danger">
-                                          {errors &&
-                                          errors.listaParticipantes &&
-                                          errors.listaParticipantes[index] &&
-                                          errors.listaParticipantes[index].nome
-                                            ? errors.listaParticipantes[index]
-                                                .nome
-                                            : ""}
+                                          {!membro.vago ? errors?.listaParticipantes?.[index]?.nome || "" : ""}
                                         </span>
                                       </p>
                                       <p className="mt-1 mb-0">
                                         <span className="text-danger">
-                                          {formErrors && formErrors[index]
-                                            ? formErrors[index]
-                                            : null}
+                                          {!membro.vago ? formErrors?.[index] : ""}
+                                          {membro.vago && `Cargo vago desde ${formataDataInicioNoCargo(membro.data_inicio_no_cargo)}`}
                                         </span>
                                       </p>
                                     </div>
@@ -1641,16 +1660,17 @@ export const NovoFormularioEditaAta = ({
                                                       values.listaParticipantes
                                                     )
                                                   }
-                                                  checked={membro.presente}
+                                                  checked={!membro.vago ? membro.presente : false}
                                                   name="statusPresencaSwitch"
                                                   checkedChildren="Presente"
                                                   unCheckedChildren="Ausente"
                                                   className={`mt-2 switch-status-presidente ${
-                                                    membro.presente
+                                                    !membro.vago && membro.presente
                                                       ? "switch-status-presidente-checked"
                                                       : ""
                                                   }`}
                                                   disabled={
+                                                    membro.vago ||
                                                     ehAdicaoPresente ||
                                                     !podeEditarAta
                                                   }
@@ -1697,6 +1717,7 @@ export const NovoFormularioEditaAta = ({
                                                       ehAdicaoPresente ||
                                                       membro.secretario_da_reuniao ||
                                                       !podeEditarAta ||
+                                                      membro.vago ||
                                                       !membro.presente
                                                     }
                                                   />
@@ -1743,6 +1764,7 @@ export const NovoFormularioEditaAta = ({
                                                       ehAdicaoPresente ||
                                                       membro.presidente_da_reuniao ||
                                                       !podeEditarAta ||
+                                                      membro.vago ||
                                                       !membro.presente
                                                     }
                                                   />
