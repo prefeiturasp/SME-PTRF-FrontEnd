@@ -330,7 +330,7 @@ export const EdicaoAta = () => {
         </div>
 
         <div className="col-12">
-          {visoesService.featureFlagAtiva("historico-de-membros") ? (
+          {visoesService.featureFlagAtiva("historico-de-membros-v2") ? (
             <NovoFormularioEditaAta
               stateFormEditarAta={stateFormEditarAta}
               tabelas={tabelas}
