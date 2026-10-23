@@ -5,6 +5,7 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import "./assets/css/styles.scss";
+import { useAlertaPagina } from "./hooks/Globais/useAlertaPagina";
 import { Cabecalho } from "./componentes/Globais/Cabecalho";
 import { SidebarLeft } from "./componentes/Globais/SidebarLeft";
 import { ToastContainer } from "react-toastify";
@@ -24,6 +25,8 @@ export const App = () => {
       setTheme(recursoSelecionado.cor);
     }
   }, [recursoSelecionado, theme]);
+
+  useAlertaPagina();
 
   return (
     <>
