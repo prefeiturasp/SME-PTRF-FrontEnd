@@ -21,6 +21,8 @@ jest.mock('./componentes/Globais/Modal/Modal', () => ({
     default: () => <div data-testid="modal" />
 }));
 
+jest.mock('./hooks/Globais/useAlertaPagina', () => ({ useAlertaPagina: jest.fn() }));
+
 jest.mock('./context/Tema', () => ({
     useTheme: () => ({ theme: '#01585e', setTheme: jest.fn() }),
 }));
