@@ -253,6 +253,16 @@ describe("removeOcupantesDaListaDeNaoMembros", () => {
     expect(resultado).toHaveLength(1);
   });
 
+  test("remove não membro com o mesmo nome do ocupante ignorando maiúsculas e minúsculas", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [ocupante],
+      [naoMembro({ nome: "MARIA silva" })],
+    );
+
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0].id).toBe(1);
+  });
+
   test("mantém não membros que não ocupam cargo", () => {
     const outro = naoMembro({ identificacao: "7654321", nome: "João Souza" });
 

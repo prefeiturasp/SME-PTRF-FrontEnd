@@ -138,7 +138,7 @@ export const removeOcupantesDaListaDeNaoMembros = (
 
   const naoMembrosRestantes = (naoMembros || []).filter((naoMembro) => {
     const identificacaoNaoMembro = naoMembro?.identificacao?.trim();
-    const nomeNaoMembro = naoMembro?.nome?.trim();
+    const nomeNaoMembro = naoMembro?.nome?.trim().toLowerCase();
 
     const ocupante = membros.find((membro) => {
       if (!membro.membro || membro.vago || membro.professor_gremio) {
@@ -152,7 +152,8 @@ export const removeOcupantesDaListaDeNaoMembros = (
       const mesmaIdentificacao =
         identificacaoNaoMembro &&
         identificacoes.includes(identificacaoNaoMembro);
-      const mesmoNome = nomeNaoMembro && nomeNaoMembro === membro.nome?.trim();
+      const mesmoNome =
+        nomeNaoMembro && nomeNaoMembro === membro.nome?.trim().toLowerCase();
 
       return mesmaIdentificacao || mesmoNome;
     });
