@@ -1,0 +1,2087 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { DatePickerField } from "../../../../../Globais/DatePickerField";
+import { toastCustom } from "../../../../../Globais/ToastCustom";
+import { visoesService } from "../../../../../../services/visoes.service";
+import { FieldArray, Formik } from "formik";
+import { Spin } from "antd";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faTimesCircle,
+  faCheckCircle,
+  faEdit,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  getListaPresentesPadraoPaa,
+  getMembroPorIdentificadorPaa,
+  getParticipantesOrdenadosPorCargoPaa,
+  getProfessorGremioInfo,
+} from "../../../../../../services/escolas/PresentesAtaPaa.service";
+import { YupSignupSchemaAta } from "./YupSignupSchemaAta";
+import { valida_cpf_exportado } from "../../../../../../utils/ValidacoesAdicionaisFormularios";
+import TabelaRepassesPendentes from "../../TabelaRepassesPendentes";
+import { Switch } from "antd";
+import { BarraAvisoPreencerData } from "../../../BarraAvisoPreencerData";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip as ReactTooltip } from "react-tooltip";
+import { ASSOCIACAO_UUID } from "../../../../../../services/auth.service";
+import { getCargosComposicaoData } from "../../../../../../services/Mandatos.service";
+import { ModalAntDesignConfirmacao } from "../../../../../Globais/ModalAntDesign";
+import { ModalNotificarRegeracaoAta } from "./ModalNotificarRegeracaoAta";
+import {
+  getParecerSelecionado,
+  isParecerReprovado,
+  adicionaProfessorGremioNaLista,
+  extraiProfessorDefaults,
+  listaPossuiParticipantesAssociacao,
+  marcaParticipantesComoMembrosDaAssociacao,
+  formatarListaCargoComposicaoParaFormatoDaListaParticipantes,
+  normalizaParaData,
+} from "../utils";
+
+export const NovoFormularioEditaAtaV1 = ({
+  stateFormEditarAta,
+  tabelas,
+  formRef,
+  onSubmitFormEdicaoAta,
+  uuid_ata,
+  setDisableBtnSalvar,
+  repassesPendentes,
+  erros,
+  showModalAvisoRegeracaoAta,
+  setShowModalAvisoRegeracaoAta,
+  precisaProfessorGremio = false,
+}) => {
+  const podeEditarAta = [["change_ata_prestacao_contas"]].some(
+    visoesService.getPermissoes,
+  );
+  const [initialValues, setInitialValues] = useState({
+    stateFormEditarAta: {
+      justificativa_retificacao: "",
+      hora_reuniao: "",
+      local_reuniao: "",
+      comentarios: "",
+      justificativa: "",
+      justificativa_repasses_pendentes: "",
+      data_reuniao: null,
+    },
+    listaParticipantes: [],
+  });
+  const [disableBtnAdicionarPresente, setDisableBtnAdicionarPresente] =
+    useState(false);
+  const [disableBtnEditarPresente, setDisableBtnEditarPresente] =
+    useState(false);
+  const [disableBtnApagarPresente, setDisableBtnApagarPresente] =
+    useState(false);
+  const [disableBtnConfirmarEdicao] = useState(false);
+  const [isLoadingParticipantes, setIsLoadingParticipantes] = useState(false);
+  const [disableBtnCancelarEdicao] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [ehAdicaoPresente, setEhAdicaoPresente] = useState(false);
+  const [ehEdicaoPresente, setEhEdicaoPresente] = useState([]);
+  const [linhaEditada, setLinhaEditada] = useState({});
+  const identificadoresAnteriores = useRef({});
+  const professorLookupTimeouts = useRef({});
+
+  const notificarErroComposicaoPorData = (error) => {
+    const mensagemErro =
+      error?.response?.data?.erro ||
+      "Não foi possível carregar a composição por data.";
+    toastCustom.ToastCustomError(
+      "Erro ao carregar participantes",
+      mensagemErro,
+    );
+  };
+
+  const [professorDefaults, setProfessorDefaults] = useState({
+    nome: "",
+    cargo: "",
+    identificacao: "",
+    presente: true,
+  });
+
+  const [dataModalApagarParticipantesAta, setDataModalApagarParticipantesAta] =
+    useState({
+      show: false,
+      name: null,
+      value: null,
+      setFieldValue: null,
+    });
+
+  const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID);
+
+  const montarListaPorData = async (dataFormatada) => {
+
+    let composicao_formatada;
+
+    const lista_cargos_composicao = await getCargosComposicaoData(
+        dataFormatada || stateFormEditarAta.data_reuniao,
+        associacaoUuid,
+    );
+
+    composicao_formatada =
+        formatarListaCargoComposicaoParaFormatoDaListaParticipantes(
+            lista_cargos_composicao,
+        );
+
+    const professorDefaultValues =
+      professorDefaults &&
+      (professorDefaults.nome || professorDefaults.cargo || professorDefaults.identificacao)
+        ? professorDefaults
+        : {
+            nome: "",
+            cargo: "",
+            identificacao: "",
+            presente: true,
+          };
+
+    setProfessorDefaults(professorDefaultValues);
+
+    const listaComProfessor = adicionaProfessorGremioNaLista(
+      composicao_formatada,
+      uuid_ata,
+      professorDefaultValues,
+      precisaProfessorGremio,
+    );
+
+    carregarIdentificadoresAnteriores(listaComProfessor);
+
+    return listaComProfessor;
+  };
+
+  useEffect(() => {
+    if (
+      (!initialValues ||
+        Object.keys(initialValues.stateFormEditarAta).length === 0 ||
+        !initialValues.stateFormEditarAta?.data_reuniao) &&
+      stateFormEditarAta &&
+      stateFormEditarAta?.data_reuniao
+    ) {
+      setInitialValues({
+        stateFormEditarAta,
+        listaParticipantes: initialValues?.listaParticipantes || [],
+      });
+     }
+  }, [initialValues, stateFormEditarAta]);
+
+  useEffect(() => {
+    if (
+      stateFormEditarAta &&
+      !stateFormEditarAta?.data_reuniao
+    ) {
+      setInitialValues(prev => {
+        if (
+          prev?.stateFormEditarAta?.justificativa_retificacao ===
+          stateFormEditarAta.justificativa_retificacao
+        ) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          stateFormEditarAta: {
+            ...prev?.stateFormEditarAta,
+            justificativa_retificacao:
+              stateFormEditarAta.justificativa_retificacao ?? "",
+            comentarios: stateFormEditarAta.comentarios ?? "",
+          },
+        };
+      });
+    }
+  }, [stateFormEditarAta]);
+
+  const sincronizaListaParticipantes = useCallback(
+    (novaLista, { reinicializar = false, formValuesToSync = {} } = {}) => {
+      const professorInfo = extraiProfessorDefaults(novaLista);
+      if (professorInfo) {
+        setProfessorDefaults(professorInfo);
+      }
+      if (
+        formRef &&
+        formRef.current &&
+        typeof formRef.current.setFieldValue === "function"
+      ) {
+        formRef.current.setFieldValue("listaParticipantes", novaLista, false);
+      }
+
+      // Só atualiza initialValues se FOR origem externa
+      if (reinicializar) {
+        setInitialValues((prev) => ({
+          ...prev,
+          stateFormEditarAta: {
+            ...prev?.stateFormEditarAta,
+            ...formValuesToSync,
+          },
+          listaParticipantes: novaLista,
+        }));
+      }
+    },
+    [formRef, initialValues],
+  );
+
+  useEffect(() => {
+    return () => {
+      Object.values(professorLookupTimeouts.current || {}).forEach(
+        (timeoutId) => {
+          if (timeoutId) {
+            clearTimeout(timeoutId);
+          }
+        },
+      );
+      professorLookupTimeouts.current = {};
+    };
+  }, []);
+
+  useEffect(() => {
+    let precisaCarregarComposicao = false;
+
+    const carregarComposicao = async () => {
+      try {
+        const listaComProfessor = await montarListaPorData();
+
+        precisaCarregarComposicao =
+          !listaComProfessor ||
+          listaComProfessor.length === 0 ||
+          !listaPossuiParticipantesAssociacao(listaComProfessor);
+
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+        });
+      } catch (error) {
+        notificarErroComposicaoPorData(error);
+        sincronizaListaParticipantes([], {
+          reinicializar: true,
+        });
+      }
+    };
+
+    if (
+      precisaCarregarComposicao &&
+      stateFormEditarAta &&
+      stateFormEditarAta.data_reuniao &&
+      isValidDateOrDateString(stateFormEditarAta.data_reuniao)
+    ) {
+      carregarComposicao();
+    }
+  }, [
+    associacaoUuid,
+    stateFormEditarAta,
+    uuid_ata,
+    professorDefaults,
+    precisaProfessorGremio,
+  ]);
+
+  useEffect(() => {
+    if (!uuid_ata) return;
+
+    const firstFetchData = async (uuidAta) => {
+      try {
+        const [listaPresentesAtaResponse, listaPadraoResponse] =
+          await Promise.all([
+            getParticipantesOrdenadosPorCargoPaa(uuidAta),
+            getListaPresentesPadraoPaa(uuidAta).catch(() => []),
+          ]);
+
+        const listaPresentesAta = marcaParticipantesComoMembrosDaAssociacao(
+          listaPresentesAtaResponse,
+          listaPadraoResponse,
+        );
+
+        const professorInfo =
+          extraiProfessorDefaults(listaPresentesAta) ||
+          extraiProfessorDefaults(listaPadraoResponse);
+
+        if (professorInfo) {
+          setProfessorDefaults(professorInfo);
+        }
+
+        const listaComProfessor = adicionaProfessorGremioNaLista(
+          listaPresentesAta,
+          uuidAta,
+          professorInfo || professorDefaults,
+          precisaProfessorGremio,
+        );
+
+        carregarIdentificadoresAnteriores(listaComProfessor);
+
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+        });
+      } catch (error) {
+        console.error("Erro ao carregar participantes da ata PAA", error);
+      }
+    };
+
+    firstFetchData(uuid_ata);
+  }, [uuid_ata, precisaProfessorGremio]);
+
+  const onClickCancelarAdicao = (remove, lista) => {
+    if (lista.length > 0) {
+      let index = lista.length - 1;
+      setEhAdicaoPresente(false);
+      setDisableBtnAdicionarPresente(false);
+      setDisableBtnSalvar(false);
+      setDisableBtnApagarPresente(false);
+      setDisableBtnEditarPresente(false);
+      remove(index);
+    }
+  };
+
+  const onClickEditar = (index, values, membro, presente) => {
+    setLinhaEditada(presente);
+
+    // bloqueando botoes de apagar e editar das demais linhas
+    // bloqueando botões de adicionar presente e salvar alterações durante edição
+    setDisableBtnEditarPresente(true);
+    setDisableBtnAdicionarPresente(true);
+    setDisableBtnApagarPresente(true);
+    setDisableBtnSalvar(true);
+
+    // iniciando modo edição do index
+    setEhEdicaoPresente((prevState) => ({ ...prevState, [index]: true }));
+
+    let identificador = values.listaParticipantes[index].identificacao;
+
+    if (membro) {
+      // Na edição, em caso de participante membro da associação, apenas o identificador pode ser alterado.
+      // O nome e o cargo devem ser trazidos do cadastro de membros da Associação
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        true;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        true;
+      document.getElementById(
+        `listaParticipantes.identificacao_[${index}]`,
+      ).disabled = false;
+    } else {
+      // Quando não for membro da associação
+      if (identificador.length === 7 && isNumber(identificador)) {
+        // identificador é de servidor = editar somente identificador
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = true;
+        document.getElementById(
+          `listaParticipantes.identificacao_[${index}]`,
+        ).disabled = false;
+      } else {
+        // Não é servidor, todos os campos editaveis
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          false;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = false;
+        document.getElementById(
+          `listaParticipantes.identificacao_[${index}]`,
+        ).disabled = false;
+      }
+    }
+  };
+
+  const onClickConfirmar = (index, values, setFieldValue) => {
+    const participanteAtual = values.listaParticipantes
+      ? values.listaParticipantes[index]
+      : null;
+    if (ehEdicaoPresente[index]) {
+      let presentes = values.listaParticipantes;
+      const nome = presentes[index].nome?.trim();
+      const identificacao = presentes[index].identificacao?.trim();
+      let podeCadastrar = true;
+
+      for (let i = 0; i <= presentes.length - 1; i++) {
+        if (i !== index) {
+            const nomePresente = presentes[i].nome?.trim();
+            const identificacaoPresente = presentes[i].identificacao?.trim();
+
+            const mesmoNome =
+                nome && nome === nomePresente;
+
+            const mesmaIdentificacao =
+                identificacao && identificacao === identificacaoPresente;
+
+            const jaEstaPresente =
+                mesmoNome || mesmaIdentificacao;
+
+            const ehProfessorDoGremio =
+                presentes[i].professor_gremio;
+
+            if (jaEstaPresente && !ehProfessorDoGremio) {
+                podeCadastrar = false;
+                break;
+            }
+        }
+      }
+
+      if (podeCadastrar) {
+        setFieldValue(`listaParticipantes[${index}].editavel`, false);
+
+        // liberando botoes de apagar e editar das demais linhas
+        // liberando botões de adicionar presente e salvar alterações após edição
+        setDisableBtnEditarPresente(false);
+        setDisableBtnAdicionarPresente(false);
+        setDisableBtnApagarPresente(false);
+        setDisableBtnSalvar(false);
+
+        // retirando o index do modo edição
+        setEhEdicaoPresente((prevState) => ({ ...prevState, [index]: false }));
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = true;
+        document.getElementById(
+          `listaParticipantes.identificacao_[${index}]`,
+        ).disabled = true;
+
+        erros = {
+          ...erros,
+          [index]: null,
+        };
+        setFormErrors(erros);
+
+        setFieldValue(`listaParticipantes[${index}].adicao`, false);
+        setEhAdicaoPresente(false);
+      } else {
+        setFieldValue(`listaParticipantes[${index}].editavel`, true);
+        erros = {
+          ...erros,
+          [index]: "Esta pessoa já está na lista de presentes",
+        };
+        setFormErrors(erros);
+      }
+    } else {
+      let presentes = values.listaParticipantes;
+      const nome = presentes[index].nome?.trim();
+      const identificacao = presentes[index].identificacao?.trim();
+      let podeCadastrar = true;
+
+      for (let i = 0; i <= presentes.length - 1; i++) {
+        if (i !== index) {
+            const nomePresente = presentes[i].nome?.trim();
+            const identificacaoPresente = presentes[i].identificacao?.trim();
+
+            const mesmoNome =
+                nome && nome === nomePresente;
+
+            const mesmaIdentificacao =
+                identificacao && identificacao === identificacaoPresente;
+
+            const jaEstaPresente =
+                mesmoNome || mesmaIdentificacao;
+
+            const ehProfessorDoGremio =
+                presentes[i].professor_gremio;
+
+            if (jaEstaPresente && !ehProfessorDoGremio) {
+                podeCadastrar = false;
+                break;
+            }
+        }
+      }
+
+      if (podeCadastrar) {
+        setFieldValue(`listaParticipantes[${index}].editavel`, false);
+
+        // liberando botoes de apagar e editar das demais linhas
+        // liberando botões de adicionar presente e salvar alterações após edição
+        setDisableBtnEditarPresente(false);
+        setDisableBtnAdicionarPresente(false);
+        setDisableBtnApagarPresente(false);
+        setDisableBtnSalvar(false);
+
+        erros = {
+          ...erros,
+          [index]: null,
+        };
+        setFormErrors(erros);
+        setFieldValue(`listaParticipantes[${index}].adicao`, false);
+        setEhAdicaoPresente(false);
+        if (participanteAtual && participanteAtual.adicao) {
+          toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
+        }
+      } else {
+        setFieldValue(`listaParticipantes[${index}].editavel`, true);
+        setDisableBtnSalvar(true);
+        erros = {
+          ...erros,
+          [index]: "Esta pessoa já está na lista de presentes",
+        };
+        setFormErrors(erros);
+      }
+    }
+  };
+
+  const onClickCancelarEdicao = (index, setFieldValue) => {
+    setFieldValue(`listaParticipantes[${index}].editavel`, false);
+    setFieldValue(
+      `listaParticipantes[${index}].identificacao`,
+      linhaEditada.identificacao ? linhaEditada.identificacao : "",
+    );
+    setFieldValue(
+      `listaParticipantes[${index}].nome`,
+      linhaEditada.nome ? linhaEditada.nome : "",
+    );
+    setFieldValue(
+      `listaParticipantes[${index}].cargo`,
+      linhaEditada.cargo ? linhaEditada.cargo : "",
+    );
+    setFieldValue(
+      `listaParticipantes[${index}].membro`,
+      linhaEditada.membro ? linhaEditada.membro : false,
+    );
+
+    // retirando o index do modo edição
+    setEhEdicaoPresente((prevState) => ({ ...prevState, [index]: false }));
+    document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+      true;
+    document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+      true;
+    document.getElementById(
+      `listaParticipantes.identificacao_[${index}]`,
+    ).disabled = true;
+
+    erros = {
+      ...erros,
+      [index]: null,
+    };
+    setFormErrors(erros);
+
+    setDisableBtnEditarPresente(false);
+    setDisableBtnAdicionarPresente(false);
+    setDisableBtnApagarPresente(false);
+    setDisableBtnSalvar(false);
+  };
+
+  const onClickRemoverAdicionar = async (
+    remove,
+    index,
+    editavel,
+    values,
+    setFieldValue,
+  ) => {
+    let erros = {};
+
+    if (editavel) {
+      let presentes = values.listaParticipantes;
+      const nome = presentes[index].nome?.trim();
+      let podeCadastrar = true;
+
+      for (let i = 0; i <= presentes.length - 1; i++) {
+        if (i !== index) {
+           const nomePresente = presentes[i].nome?.trim();
+           const mesmoNome = nome && nome === nomePresente;
+
+          if (mesmoNome) {
+            podeCadastrar = false;
+            break;
+          }
+        }
+      }
+
+      if (podeCadastrar) {
+        setFieldValue(`listaParticipantes[${index}].editavel`, false);
+        setDisableBtnAdicionarPresente(false);
+        setDisableBtnSalvar(false);
+        erros = {
+          ...erros,
+          [index]: null,
+        };
+        setFormErrors(erros);
+        setFieldValue(`listaParticipantes[${index}].adicao`, false);
+        setEhAdicaoPresente(false);
+      } else {
+        setFieldValue(`listaParticipantes[${index}].editavel`, true);
+        setDisableBtnSalvar(true);
+        erros = {
+          ...erros,
+          [index]: "Esta pessoa já está na lista de presentes",
+        };
+        setFormErrors(erros);
+      }
+    } else {
+      remove(index);
+    }
+  };
+
+  const obterParticipanteAtual = (index) => {
+    if (
+      !formRef.current ||
+      !formRef.current.values ||
+      !formRef.current.values.listaParticipantes
+    ) {
+      return null;
+    }
+    return formRef.current.values.listaParticipantes[index];
+  };
+
+  const atualizarCamposProfessorGremio = (
+    index,
+    setFieldValue,
+    nome = "",
+    cargo = "",
+    bloquearCampos = false,
+    identificacao,
+  ) => {
+    setFieldValue(`listaParticipantes[${index}].nome`, nome);
+    setFieldValue(`listaParticipantes[${index}].cargo`, cargo);
+    setFieldValue(`listaParticipantes[${index}].membro`, false);
+    setFieldValue(`listaParticipantes[${index}].editavel`, false);
+    setFieldValue(`listaParticipantes[${index}].professor_gremio`, true);
+    if (identificacao !== undefined) {
+      setFieldValue(
+        `listaParticipantes[${index}].identificacao`,
+        identificacao,
+      );
+    }
+
+    setProfessorDefaults({
+      nome,
+      cargo,
+      identificacao: identificacao || "",
+      presente: true,
+    });
+
+    const campoNome = document.getElementById(
+      `listaParticipantes.nome_[${index}]`,
+    );
+    const campoCargo = document.getElementById(
+      `listaParticipantes.cargo_[${index}]`,
+    );
+    if (campoNome) campoNome.disabled = true;
+    if (campoCargo) campoCargo.disabled = true;
+  };
+
+  const debouncedBuscarProfessorGremio = (
+    identificador,
+    index,
+    setFieldValue,
+  ) => {
+    if (professorLookupTimeouts.current[index]) {
+      clearTimeout(professorLookupTimeouts.current[index]);
+    }
+
+    if (
+      !identificador ||
+      identificador.length !== 7 ||
+      !isNumber(identificador)
+    ) {
+      atualizarCamposProfessorGremio(
+        index,
+        setFieldValue,
+        "",
+        "",
+        false,
+        identificador,
+      );
+      return;
+    }
+
+    professorLookupTimeouts.current[index] = setTimeout(async () => {
+      try {
+        const professor = await getProfessorGremioInfo(identificador);
+        if (professor && professor.mensagem !== "servidor-nao-encontrado") {
+          atualizarCamposProfessorGremio(
+            index,
+            setFieldValue,
+            professor.nome || "",
+            professor.cargo || "",
+            true,
+            identificador,
+          );
+        } else {
+          atualizarCamposProfessorGremio(
+            index,
+            setFieldValue,
+            professor?.nome || "",
+            professor?.cargo || "",
+            false,
+            identificador,
+          );
+        }
+      } catch (error) {
+        console.error("Erro ao buscar professor do grêmio", error);
+        atualizarCamposProfessorGremio(
+          index,
+          setFieldValue,
+          "",
+          "",
+          false,
+          identificador,
+        );
+      }
+    }, 500);
+  };
+
+  const handleChangeIdentificador = async (e, setFieldValue, index) => {
+    erros = {
+        ...erros,
+        [index]: null,
+    };
+
+    setFormErrors(erros);
+
+    const participanteAtual = obterParticipanteAtual(index);
+    const ehProfessorGremio =
+      participanteAtual && participanteAtual.professor_gremio;
+
+    if (ehProfessorGremio) {
+      debouncedBuscarProfessorGremio(e.target.value, index, setFieldValue);
+      return;
+    }
+
+    setFieldValue(`listaParticipantes[${index}].nome`, "");
+    setFieldValue(`listaParticipantes[${index}].cargo`, "");
+
+    document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+      false;
+    document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+      false;
+  };
+
+  const isNumber = (n) => {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  };
+
+
+  const handleBlurIdentificador = async (e, setFieldValue, index) => {
+
+    let identificador = e.target.value;
+    let identificadorAnterior = identificadoresAnteriores.current[index];
+
+    if (identificador === identificadorAnterior) {
+        return;
+    }
+
+    identificadoresAnteriores.current[index] = identificador;
+
+    if(identificador === '') return;
+
+    let data_reuniao = null;
+    if (initialValues?.stateFormEditarAta?.data_reuniao) {
+      data_reuniao = initialValues.stateFormEditarAta.data_reuniao;
+    }
+    const participanteAtual = formRef?.current?.values?.listaParticipantes?.[index] ?? null;
+    const ehProfessorGremio = participanteAtual?.professor_gremio;
+
+    if (ehProfessorGremio) {
+      if (identificador.length === 7 && isNumber(identificador)) {
+        try {
+          const professor = await getProfessorGremioInfo(identificador);
+          const encontrou =
+            professor && professor.mensagem !== "servidor-nao-encontrado";
+          atualizarCamposProfessorGremio(
+            index,
+            setFieldValue,
+            professor?.nome || "",
+            professor?.cargo || "",
+            !!encontrou,
+            identificador,
+          );
+          if (encontrou) {
+            toastCustom.ToastCustomSuccess("Participante inserido com sucesso");
+          }
+        } catch (error) {
+          identificadoresAnteriores.current[index] = '';
+
+          const status = error?.response?.status;
+
+          if (status === 400) {
+            toastCustom.ToastCustomWarning(
+              "Professor Orientador do Grêmio não encontrado",
+            );
+          } else {
+            toastCustom.ToastCustomError(
+              "Erro ao buscar professor do grêmio",
+            );
+          }
+
+          console.error(
+            "Erro ao buscar professor do grêmio",
+            status,
+          );
+
+          atualizarCamposProfessorGremio(
+            index,
+            setFieldValue,
+            "",
+            "",
+            false,
+            "",
+          );
+        }
+      } else {
+        atualizarCamposProfessorGremio(
+          index,
+          setFieldValue,
+          "",
+          "",
+          false,
+          identificador,
+        );
+
+        toastCustom.ToastCustomWarning(
+          "RF do Professor Orientador do Grêmio inválido",
+        );
+      }
+
+      return;
+    }
+
+    const dataFormatada = formatDate(data_reuniao);
+
+    if (identificador.length === 7 && isNumber(identificador)) {
+      try {
+        let membro = await getMembroPorIdentificadorPaa(
+          uuid_ata,
+          identificador,
+          dataFormatada,
+        );
+
+        if (membro.mensagem !== "servidor-nao-encontrado") {
+            setFieldValue(
+            `listaParticipantes[${index}].nome`,
+            membro.nome ? membro.nome : "",
+          );
+          setFieldValue(
+            `listaParticipantes[${index}].cargo`,
+            membro.cargo ? membro.cargo : "",
+          );
+          setFieldValue(`listaParticipantes[${index}].membro`, true);
+        } else {
+
+          toastCustom.ToastCustomWarning(
+            "Membro não encontrado",
+          );
+
+          setFieldValue(
+            `listaParticipantes[${index}].nome`,
+            membro.nome ? membro.nome : "",
+          );
+          setFieldValue(
+            `listaParticipantes[${index}].cargo`,
+            membro.cargo ? membro.cargo : "",
+          );
+          setFieldValue(`listaParticipantes[${index}].membro`, false);
+        }
+
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          true;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = true;
+      } catch (error) {
+        const status = error?.response?.status;
+
+        if (status === 400) {
+          toastCustom.ToastCustomWarning(
+            "Membro não encontrado",
+          );
+        } else {
+          toastCustom.ToastCustomWarning(
+            "Erro ao buscar o membro",
+          );
+        }
+
+        console.error(error);
+      }
+    } else if (identificador.length === 5 && isNumber(identificador)) {
+      let membro = await getMembroPorIdentificadorPaa(
+        uuid_ata,
+        identificador,
+        dataFormatada,
+      );
+
+      if (membro.mensagem !== "servidor-nao-encontrado") {
+        setFieldValue(
+          `listaParticipantes[${index}].nome`,
+          membro.nome ? membro.nome : "",
+        );
+        setFieldValue(
+          `listaParticipantes[${index}].cargo`,
+          membro.cargo ? membro.cargo : "",
+        );
+        setFieldValue(`listaParticipantes[${index}].membro`, true);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            true;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            true;
+      } else {
+        setFieldValue(
+          `listaParticipantes[${index}].nome`,
+          membro.nome ? membro.nome : "",
+        );
+        setFieldValue(
+          `listaParticipantes[${index}].cargo`,
+          membro.cargo ? membro.cargo : "",
+        );
+        setFieldValue(`listaParticipantes[${index}].membro`, false);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+          false;
+        document.getElementById(
+          `listaParticipantes.cargo_[${index}]`,
+        ).disabled = false;
+      }
+    } else if (
+      identificador.length === 14 &&
+      valida_cpf_exportado(identificador)
+    ) {
+      let membro = await getMembroPorIdentificadorPaa(
+        uuid_ata,
+        identificador,
+        dataFormatada,
+      );
+
+      if (membro.mensagem === "membro-encontrado") {
+        setFieldValue(
+          `listaParticipantes[${index}].nome`,
+          membro.nome ? membro.nome : "",
+        );
+        setFieldValue(
+          `listaParticipantes[${index}].cargo`,
+          membro.cargo ? membro.cargo : "",
+        );
+        setFieldValue(`listaParticipantes[${index}].membro`, true);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            true;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            true;
+      } else {
+        setFieldValue(
+          `listaParticipantes[${index}].nome`,
+          membro.nome ? membro.nome : "",
+        );
+        setFieldValue(
+          `listaParticipantes[${index}].cargo`,
+          membro.cargo ? membro.cargo : "",
+        );
+        setFieldValue(`listaParticipantes[${index}].membro`, false);
+        document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+            false;
+        document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+            false;
+      }
+    } else {
+      setFieldValue(`listaParticipantes[${index}].nome`, "");
+      setFieldValue(`listaParticipantes[${index}].cargo`, "");
+      setFieldValue(`listaParticipantes[${index}].membro`, false);
+
+      document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
+        false;
+      document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
+        false;
+    }
+  };
+
+  const nomeCampoIdentificador = (identificador) => {
+    if (
+      identificador &&
+      identificador.length === 7 &&
+      isNumber(identificador)
+    ) {
+      return "RF";
+    } else if (
+      identificador &&
+      identificador.length === 5 &&
+      isNumber(identificador)
+    ) {
+      return "Código EOL do aluno";
+    } else if (
+      identificador &&
+      identificador.length === 14 &&
+      valida_cpf_exportado(identificador)
+    ) {
+      return "CPF";
+    } else {
+      return "Identificador (opcional)";
+    }
+  };
+
+  const nomeCampoCargo = (identificador, professor = false) => {
+    if (professor) {
+      return "Cargo";
+    }
+    if (
+      identificador &&
+      identificador.length === 7 &&
+      isNumber(identificador)
+    ) {
+      return "Cargo";
+    } else if (
+      identificador &&
+      identificador.length === 5 &&
+      isNumber(identificador)
+    ) {
+      return "Cargo";
+    } else if (
+      identificador &&
+      identificador.length === 14 &&
+      valida_cpf_exportado(identificador)
+    ) {
+      return "Cargo";
+    } else {
+      return "Cargo (opcional)";
+    }
+  };
+
+  const isValidDate = (date) => {
+    return date instanceof Date && !isNaN(date);
+  };
+
+  const isValidDateString = (dateString) => {
+    if (!dateString) {
+      return false;
+    }
+    const parsedDate = new Date(dateString);
+    return !isNaN(parsedDate.getTime());
+  };
+
+  const isValidDateOrDateString = (value) => {
+    return isValidDate(value) || isValidDateString(value);
+  };
+
+  const formatDate = (date) => {
+    const dataNormalizada = normalizaParaData(date);
+    if (!dataNormalizada) {
+      return null;
+    }
+    const ano = dataNormalizada.getFullYear();
+    const mes = String(dataNormalizada.getMonth() + 1).padStart(2, "0");
+    const dia = String(dataNormalizada.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+  };
+
+  const handleChangeDate = async (value, name, setFieldValue) => {
+    if (isValidDate(value)) {
+      setFieldValue(name, value);
+
+      const data_formatada = formatDate(value);
+      try {
+        setIsLoadingParticipantes(true);
+        const listaComProfessor = await montarListaPorData(data_formatada);
+
+        sincronizaListaParticipantes(listaComProfessor, {
+          reinicializar: true,
+          formValuesToSync: { data_reuniao: value },
+        });
+      } catch (error) {
+        sincronizaListaParticipantes([], { reinicializar: true });
+        notificarErroComposicaoPorData(error);
+      } finally {
+        setIsLoadingParticipantes(false);
+      }
+      return;
+    }
+
+    return setDataModalApagarParticipantesAta({
+      show: true,
+      value: value,
+      name: name,
+      setFieldValue: setFieldValue,
+    });
+  };
+
+  const handleCancelarRemocaoParticipantes = () => {
+    return setDataModalApagarParticipantesAta({
+      show: false,
+      name: null,
+      value: null,
+      setFieldValue: null,
+    });
+  };
+
+  const carregarIdentificadoresAnteriores = (listaParticipantes) => {
+    identificadoresAnteriores.current = {};
+
+    listaParticipantes.forEach((participante, index) => {
+      identificadoresAnteriores.current[index] =
+        participante?.identificacao || "";
+    });
+  };
+
+  const handleConfirmarRemocaoParticipantes = () => {
+    const { name, value, setFieldValue } = dataModalApagarParticipantesAta;
+    setFieldValue(name, value);
+    const listaComProfessor = adicionaProfessorGremioNaLista(
+      [],
+      uuid_ata,
+      professorDefaults,
+      precisaProfessorGremio,
+    );
+    sincronizaListaParticipantes(listaComProfessor);
+
+    carregarIdentificadoresAnteriores(listaComProfessor);
+
+    return setDataModalApagarParticipantesAta({
+      show: false,
+      name: null,
+      value: null,
+      setFieldValue: null,
+    });
+  };
+
+  const formataDataInicioNoCargo = (data) => {
+    if (typeof data === "string" && /^\d{4}-\d{2}-\d{2}$/.test(data)) {
+      return data.split("-").reverse().join("/");
+    }
+    return data;
+  };
+
+  const editaStatusDePresencaParticipante = (index, listaAtual) => {
+    let copiaListaParticipantes = listaAtual.map((participante) => ({
+      ...participante,
+    }));
+
+    const participanteSelecionado = copiaListaParticipantes[index];
+
+    if (participanteSelecionado) {
+      participanteSelecionado.presidente_da_reuniao = false;
+      participanteSelecionado.secretario_da_reuniao = false;
+      participanteSelecionado.presente = participanteSelecionado.vago
+        ? false
+        : !participanteSelecionado.presente;
+      if (participanteSelecionado.professor_gremio) {
+        setProfessorDefaults((prev) => ({
+          ...prev,
+          presente: participanteSelecionado.presente,
+        }));
+      }
+    }
+
+    sincronizaListaParticipantes(copiaListaParticipantes);
+  };
+
+  const editaStatusDePresidenteDaReuniao = (index, listaAtual) => {
+    const novaLista = listaAtual.map((p, idx) => ({
+      ...p,
+      presidente_da_reuniao: idx === index ? !p.presidente_da_reuniao : false,
+    }));
+
+    sincronizaListaParticipantes(novaLista);
+  };
+
+  const editaStatusDeSecretarioDaReuniao = (index, listaAtual) => {
+    const copiaListaParticipantes = listaAtual.map((participante) => ({
+      ...participante,
+    }));
+    const participanteSelecionado = copiaListaParticipantes[index];
+
+    if (participanteSelecionado) {
+      const novoValor = !participanteSelecionado.secretario_da_reuniao;
+      copiaListaParticipantes.forEach((membro, idx) => {
+        membro.secretario_da_reuniao = idx === index ? novoValor : false;
+      });
+    }
+
+    sincronizaListaParticipantes(copiaListaParticipantes);
+  };
+  return (
+    <div>
+      {initialValues && initialValues.stateFormEditarAta ? (
+        <Formik
+          initialValues={initialValues}
+          enableReinitialize={true}
+          validateOnBlur={true}
+          validateOnChange={true}
+          validationSchema={YupSignupSchemaAta}
+          onSubmit={onSubmitFormEdicaoAta}
+          innerRef={formRef}
+        >
+          {(props) => {
+            const { values, errors, setFieldValue } = props;
+            const listaValores = values.listaParticipantes || [];
+            const todosIndices = listaValores.map((_, idx) => idx);
+            const indiceProfessorGremio = listaValores.findIndex(
+              (participante) => participante.professor_gremio,
+            );
+            const indicesOrdenados =
+              indiceProfessorGremio >= 0
+                ? [
+                    ...todosIndices.filter(
+                      (idx) => idx !== indiceProfessorGremio,
+                    ),
+                    indiceProfessorGremio,
+                  ]
+                : todosIndices;
+            const parecerSelecionado = getParecerSelecionado(
+              tabelas?.pareceres,
+              values.stateFormEditarAta.parecer_conselho,
+            );
+            const deveExibirCampoMotivo =
+              isParecerReprovado(parecerSelecionado);
+
+            return (
+              <>
+                <form onSubmit={props.handleSubmit}>
+                  <p className="titulo">
+                    <strong>Informações da reunião</strong>
+                  </p>
+                  <div className="form-row mt-4">
+                    <div className="col-3">
+                      <label htmlFor="stateFormEditarAta.tipo_reuniao">
+                        Tipo de Reunião
+                      </label>
+                      <select
+                        value={values.stateFormEditarAta.tipo_reuniao}
+                        onChange={props.handleChange}
+                        name="stateFormEditarAta.tipo_reuniao"
+                        className="form-control"
+                        disabled={!podeEditarAta}
+                      >
+                        {tabelas &&
+                          tabelas.tipos_reuniao &&
+                          tabelas.tipos_reuniao.map((tipo) => (
+                            <option key={tipo.id} value={tipo.id}>
+                              {tipo.nome}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="form-row mt-4">
+                    <div className="col">
+                      <label htmlFor="stateFormEditarAta.data_reuniao">
+                        Data
+                        <span
+                          data-tooltip-id="data-reuniao"
+                          className="font-weight-normal"
+                          data-tooltip-content={
+                            "Preencha a data da reunião para visualização dos participantes."
+                          }
+                        >
+                          <FontAwesomeIcon
+                            style={{ marginLeft: "4px" }}
+                            icon={faInfoCircle}
+                          />
+                          <ReactTooltip id="data-reuniao"/>
+                        </span>
+                      </label>
+                      <DatePickerField
+                        id="stateFormEditarAta.data_reuniao"
+                        name="stateFormEditarAta.data_reuniao"
+                        maxDate={new Date()}
+                        value={values.stateFormEditarAta.data_reuniao}
+                        onChange={(name, value) => {
+                          handleChangeDate(value, name, setFieldValue);
+                        }}
+                        disabled={!podeEditarAta}
+                      />
+                    </div>
+
+                    <div className="col">
+                      <label htmlFor="stateFormEditarAta.hora_reuniao">
+                        Hora
+                      </label>
+                      <input
+                        value={values.stateFormEditarAta.hora_reuniao}
+                        onChange={props.handleChange}
+                        name="stateFormEditarAta.hora_reuniao"
+                        className="form-control"
+                        disabled={!podeEditarAta}
+                        type="time"
+                      />
+                    </div>
+
+                    <div className="col">
+                      <label htmlFor="stateFormEditarAta.local_reuniao">
+                        Local da reunião
+                      </label>
+                      <input
+                        value={values.stateFormEditarAta.local_reuniao}
+                        onChange={props.handleChange}
+                        name="stateFormEditarAta.local_reuniao"
+                        className="form-control"
+                        disabled={!podeEditarAta}
+                      />
+                    </div>
+
+                    <div className="col">
+                      <label htmlFor="stateFormEditarAta.convocacao">
+                        Abertura da reunião
+                      </label>
+                      <select
+                        value={values.stateFormEditarAta.convocacao}
+                        onChange={props.handleChange}
+                        name="stateFormEditarAta.convocacao"
+                        className="form-control"
+                        disabled={!podeEditarAta}
+                      >
+                        {tabelas &&
+                          tabelas.convocacoes &&
+                          tabelas.convocacoes.map((tipo) => (
+                            <option key={tipo.id} value={tipo.id}>
+                              {tipo.nome}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {repassesPendentes && repassesPendentes.length > 0 && (
+                    <>
+                      <div className="row">
+                        <div className="col">
+                          <p className="titulo mt-4">
+                            <strong>
+                              Valores repassados pendentes de crédito
+                            </strong>
+                          </p>
+                          <TabelaRepassesPendentes
+                            repassesPendentes={repassesPendentes}
+                          />
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <label
+                            htmlFor="stateFormEditarAta.cargo_secretaria_reuniao"
+                            className="mt-3"
+                          >
+                            Justificativa
+                          </label>
+                          <textarea
+                            value={
+                              values.stateFormEditarAta
+                                .justificativa_repasses_pendentes
+                            }
+                            onChange={props.handleChange}
+                            name="stateFormEditarAta.justificativa_repasses_pendentes"
+                            className="form-control"
+                          />
+                          {erros && erros.justificativa_repasses_pendentes && (
+                            <span className="text-danger">
+                              {erros.justificativa_repasses_pendentes}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+
+                  <p className="titulo mt-4">
+                    <strong>Participantes</strong>
+                  </p>
+
+                  <Spin size="large" spinning={isLoadingParticipantes}>
+                  {values.listaParticipantes &&
+                  values.listaParticipantes.length > 0 &&
+                  values.stateFormEditarAta &&
+                  values.stateFormEditarAta.data_reuniao &&
+                  isValidDateOrDateString(
+                    values.stateFormEditarAta.data_reuniao,
+                  ) ? (
+                    <FieldArray
+                      name={"listaParticipantes"}
+                      render={({ remove, push }) => (
+                        <>
+                          {listaValores &&
+                            listaValores.length > 0 &&
+                            indicesOrdenados.map((index) => {
+                              const membro = listaValores[index];
+
+                              const isProfessorGremio = Boolean(
+                                membro.professor_gremio,
+                              );
+                              const estaEmModoEdicao = Boolean(
+                                ehEdicaoPresente[index],
+                              );
+
+                              /* const estaEmModoAdicao = Boolean(membro.adicao);
+                              const estaEditavel = Boolean(membro.editavel);
+                              const linhaPersistida =
+                                !estaEmModoAdicao && !estaEditavel; */
+
+                              const possuiIdentificadorPersistencia = Boolean(
+                                membro?.id ||
+                                membro?.uuid ||
+                                membro?.participante_uuid,
+                              );
+
+                              /* const registroSincronizado =
+                                linhaPersistida &&
+                                possuiIdentificadorPersistencia; */
+
+                              const registroSincronizado =
+                                possuiIdentificadorPersistencia;
+
+                              const deveMostrarAcoesEdicao =
+                                !estaEmModoEdicao &&
+                                !isProfessorGremio &&
+                                !membro.membro;
+
+                              const deveMostrarControlesPresenca =
+                                !estaEmModoEdicao &&
+                                (membro.membro || isProfessorGremio);
+
+                              const ehParticipanteManualPersistido =
+                                registroSincronizado &&
+                                !membro.membro &&
+                                !isProfessorGremio;
+
+                              if (
+                                isProfessorGremio &&
+                                !precisaProfessorGremio
+                              ) {
+                                return null;
+                              }
+
+                              return (
+                                <div key={index}>
+                                  <div
+                                    className={`form-row ${
+                                      membro.adicao ? "adicao-presente" : ""
+                                    }`}
+                                  >
+                                    <div className="col-3">
+                                      <label
+                                        htmlFor={`listaParticipantes.identificacao_[${index}]`}
+                                        className="mt-3"
+                                      >
+                                        {isProfessorGremio
+                                          ? "RF Professor Orientador do Grêmio"
+                                          : nomeCampoIdentificador(
+                                              membro.identificacao,
+                                            )}
+                                      </label>
+                                      <input
+                                        name={`listaParticipantes[${index}].identificacao`}
+                                        id={`listaParticipantes.identificacao_[${index}]`}
+                                        className="form-control"
+                                        value={membro.identificacao ?? ""}
+                                        onChange={(e) => {
+                                          props.handleChange(e);
+                                          handleChangeIdentificador(
+                                            e,
+                                            setFieldValue,
+                                            index,
+                                          );
+                                        }}
+                                        onBlur={(e) => {
+                                          handleBlurIdentificador(
+                                            e,
+                                            setFieldValue,
+                                            index,
+                                          );
+                                        }}
+                                        disabled={
+                                          !membro.editavel && !isProfessorGremio
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="col-3">
+                                      <label
+                                        htmlFor={`listaParticipantes.nome_[${index}]`}
+                                        className="mt-3"
+                                      >
+                                        Nome
+                                      </label>
+                                      <input
+                                        name={`listaParticipantes[${index}].nome`}
+                                        id={`listaParticipantes.nome_[${index}]`}
+                                        className="form-control"
+                                        value={membro.nome ?? ""}
+                                        onChange={(e) => {
+                                          props.handleChange(e);
+                                        }}
+                                        disabled={
+                                          isProfessorGremio
+                                            ? true
+                                            : !membro.editavel
+                                        }
+                                      />
+
+                                      <p className="mt-1 mb-0">
+                                        <span className="text-danger">
+                                            {!membro.vago ? errors?.listaParticipantes?.[index]?.nome || "" : ""}
+                                        </span>
+                                      </p>
+
+                                      <p className="mt-1 mb-0">
+                                        <span className="text-danger">
+                                          {!membro.vago ? formErrors?.[index] : ''}
+                                          {membro.vago && `Cargo vago desde ${formataDataInicioNoCargo(membro.data_inicio_no_cargo)}`}
+                                        </span>
+                                      </p>
+                                    </div>
+
+                                    <div className="col-3">
+                                      <label
+                                        htmlFor={`listaParticipantes.cargo_[${index}]`}
+                                        className="mt-3"
+                                      >
+                                        {nomeCampoCargo(
+                                          membro.identificacao,
+                                          isProfessorGremio,
+                                        )}
+                                      </label>
+                                      <input
+                                        name={`listaParticipantes[${index}].cargo`}
+                                        id={`listaParticipantes.cargo_[${index}]`}
+                                        className="form-control"
+                                        value={
+                                          isProfessorGremio
+                                            ? membro.cargo
+                                              ? `${membro.cargo} / Professor Orientador`
+                                              : ""
+                                            : membro.cargo
+                                              ? membro.cargo
+                                              : ""
+                                        }
+                                        onChange={(e) => {
+                                          props.handleChange(e);
+                                        }}
+                                        disabled={
+                                          isProfessorGremio
+                                            ? true
+                                            : !membro.editavel
+                                        }
+                                      />
+                                    </div>
+
+                                    <div className="col-3">
+                                      {ehAdicaoPresente && membro.editavel && (
+                                        <button
+                                          id={`listaParticipantes.btn_[${index}]`}
+                                          type="button"
+                                          className={`btn btn-outline-success btn-confirmar mt-5`}
+                                          disabled={
+                                            errors &&
+                                            errors.listaParticipantes &&
+                                            errors.listaParticipantes[index] &&
+                                            errors.listaParticipantes[index]
+                                              .nome
+                                              ? errors.listaParticipantes[index]
+                                                  .nome
+                                              : ""
+                                          }
+                                          onClick={() => {
+                                            onClickConfirmar(
+                                              index,
+                                              values,
+                                              setFieldValue,
+                                            );
+                                          }}
+                                        >
+                                          <strong>
+                                            <FontAwesomeIcon
+                                              style={{
+                                                fontSize: "12px",
+                                                marginRight: "4px",
+                                                color: "#00585E",
+                                              }}
+                                              icon={faCheckCircle}
+                                            />
+                                            Confirmar
+                                          </strong>
+                                        </button>
+                                      )}
+
+                                      {deveMostrarAcoesEdicao && (
+                                          <div className="row">
+                                            <div className="col-6 mt-5 d-flex justify-content-end">
+                                              <button
+                                                id={`listaParticipantes.btn_[${index}]`}
+                                                type="button"
+                                                className="btn btn-outline-danger btn-base-vermelho-outline"
+                                                disabled={
+                                                  (errors &&
+                                                  errors.listaParticipantes &&
+                                                  errors.listaParticipantes[
+                                                    index
+                                                  ] &&
+                                                  errors.listaParticipantes[
+                                                    index
+                                                  ].nome
+                                                    ? errors.listaParticipantes[
+                                                        index
+                                                      ].nome
+                                                    : "") ||
+                                                  disableBtnApagarPresente
+                                                }
+                                                hidden={
+                                                  disableBtnApagarPresente
+                                                }
+                                                onClick={() => {
+                                                  onClickRemoverAdicionar(
+                                                    remove,
+                                                    index,
+                                                    membro.editavel,
+                                                    values,
+                                                    setFieldValue,
+                                                  );
+                                                }}
+                                              >
+                                                <FontAwesomeIcon
+                                                  className="icon-btn-base-vermelho-outline"
+                                                  icon={faTimesCircle}
+                                                />
+                                                <strong className="text-btn-base-vermelho-outline">
+                                                  Remover
+                                                </strong>
+                                              </button>
+                                            </div>
+                                            <div className="col-6 mt-5 d-flex justify-content-start">
+                                              <button
+                                                id={`listaParticipantes.btn_[${index}]`}
+                                                type="button"
+                                                className="btn btn-outline-success btn-base-verde-outline"
+                                                disabled={
+                                                  (errors &&
+                                                  errors.listaParticipantes &&
+                                                  errors.listaParticipantes[
+                                                    index
+                                                  ] &&
+                                                  errors.listaParticipantes[
+                                                    index
+                                                  ].nome
+                                                    ? errors.listaParticipantes[
+                                                        index
+                                                      ].nome
+                                                    : "") ||
+                                                  disableBtnEditarPresente
+                                                }
+                                                hidden={
+                                                  disableBtnEditarPresente
+                                                }
+                                                onClick={() => {
+                                                  onClickEditar(
+                                                    index,
+                                                    values,
+                                                    membro.membro,
+                                                    membro,
+                                                  );
+                                                }}
+                                              >
+                                                <FontAwesomeIcon
+                                                  className="icon-btn-base-verde-outline"
+                                                  icon={faEdit}
+                                                />
+                                                <strong className="text-btn-base-verde-outline">
+                                                  Editar
+                                                </strong>
+                                              </button>
+                                            </div>
+                                          </div>
+                                      )}
+
+                                      {deveMostrarControlesPresenca && (
+                                          <div className="row">
+                                            <div
+                                              className="col-3 mt-4 ml-4"
+                                              style={{
+                                                opacity: `${
+                                                  ehAdicaoPresente ||
+                                                  !podeEditarAta
+                                                    ? "30%"
+                                                    : "100%"
+                                                }`,
+                                              }}
+                                            >
+                                              <div className="row">
+                                                <span
+                                                  className="mr-3"
+                                                  style={{
+                                                    whiteSpace: "nowrap",
+                                                  }}
+                                                >
+                                                  Membro estava:{" "}
+                                                </span>
+                                              </div>
+                                              <div className="row">
+                                                <Switch
+                                                  style={{ width: "100%" }}
+                                                  onChange={() =>
+                                                    editaStatusDePresencaParticipante(
+                                                      index,
+                                                      values.listaParticipantes,
+                                                    )
+                                                  }
+                                                  checked={!membro.vago ? membro.presente : false}
+                                                  name="statusPresencaSwitch"
+                                                  checkedChildren="Presente"
+                                                  unCheckedChildren="Ausente"
+                                                  className={`mt-2 switch-status-presidente ${
+                                                    !membro.vago && membro.presente
+                                                        ? "switch-status-presidente-checked"
+                                                        : ""
+                                                  }`}
+                                                  disabled={
+                                                    membro.vago ||
+                                                    ehAdicaoPresente ||
+                                                    !podeEditarAta
+                                                  }
+                                                />
+                                              </div>
+                                            </div>
+
+                                            {!ehParticipanteManualPersistido && (
+                                              <div
+                                                className="col-3 mt-4 ml-4"
+                                                style={{
+                                                  opacity: `${
+                                                    ehAdicaoPresente ||
+                                                    !podeEditarAta
+                                                      ? "30%"
+                                                      : "100%"
+                                                  }`,
+                                                }}
+                                              >
+                                                <div className="row">
+                                                  <span className="mr-2">
+                                                    Presidente:{" "}
+                                                  </span>
+                                                </div>
+                                                <div className="row">
+                                                  <Switch
+                                                    style={{ width: "100%" }}
+                                                    onChange={() =>
+                                                      editaStatusDePresidenteDaReuniao(
+                                                        index,
+                                                        values.listaParticipantes,
+                                                      )
+                                                    }
+                                                    checked={
+                                                      membro.presidente_da_reuniao
+                                                    }
+                                                    name="statusPresidenteSwitch"
+                                                    className={`mt-2 switch-status-presidente ${
+                                                      membro.presidente_da_reuniao
+                                                        ? "switch-status-presidente-checked"
+                                                        : ""
+                                                    }`}
+                                                    disabled={
+                                                      ehAdicaoPresente ||
+                                                      membro.secretario_da_reuniao ||
+                                                      !podeEditarAta ||
+                                                      membro.vago ||
+                                                      !membro.presente
+                                                    }
+                                                  />
+                                                </div>
+                                              </div>
+                                            )}
+
+                                            {!ehParticipanteManualPersistido && (
+                                              <div
+                                                className="col-3 mt-4 ml-3"
+                                                style={{
+                                                  opacity: `${
+                                                    ehAdicaoPresente ||
+                                                    !podeEditarAta
+                                                      ? "30%"
+                                                      : "100%"
+                                                  }`,
+                                                }}
+                                              >
+                                                <div className="row">
+                                                  <span className="mr-2">
+                                                    Secretário:{" "}
+                                                  </span>
+                                                </div>
+                                                <div className="row">
+                                                  <Switch
+                                                    style={{ width: "100%" }}
+                                                    onChange={() =>
+                                                      editaStatusDeSecretarioDaReuniao(
+                                                        index,
+                                                        values.listaParticipantes,
+                                                      )
+                                                    }
+                                                    checked={
+                                                      membro.secretario_da_reuniao
+                                                    }
+                                                    name="statusSecretarioSwitch"
+                                                    className={`mt-2 switch-status-presidente ${
+                                                      membro.secretario_da_reuniao
+                                                        ? "switch-status-presidente-checked"
+                                                        : ""
+                                                    }`}
+                                                    disabled={
+                                                      ehAdicaoPresente ||
+                                                      membro.presidente_da_reuniao ||
+                                                      !podeEditarAta ||
+                                                      membro.vago ||
+                                                      !membro.presente
+                                                    }
+                                                  />
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                      )}
+
+                                      {ehEdicaoPresente[index] && (
+                                        <>
+                                          <button
+                                            id={`listaParticipantes.btn_[${index}]`}
+                                            type="button"
+                                            className="link-btn-ata btn-cancelar-edicao pb-0 mb-0"
+                                            disabled={disableBtnCancelarEdicao}
+                                            onClick={() => {
+                                              onClickCancelarEdicao(
+                                                index,
+                                                setFieldValue,
+                                              );
+                                            }}
+                                          >
+                                            <strong>
+                                              <FontAwesomeIcon
+                                                style={{
+                                                  fontSize: "12px",
+                                                  marginRight: "4px",
+                                                  color: "#B40C02",
+                                                }}
+                                                icon={faTimesCircle}
+                                              />
+                                              Cancelar
+                                            </strong>
+                                          </button>
+                                          <br />
+                                          <button
+                                            id={`listaParticipantes.btn_[${index}]`}
+                                            type="button"
+                                            className="link-btn-ata btn-confirmar-edicao-presente mt-0 pt-0"
+                                            disabled={
+                                              (errors &&
+                                              errors.listaParticipantes &&
+                                              errors.listaParticipantes[
+                                                index
+                                              ] &&
+                                              errors.listaParticipantes[index]
+                                                .nome
+                                                ? errors.listaParticipantes[
+                                                    index
+                                                  ].nome
+                                                : "") ||
+                                              disableBtnConfirmarEdicao
+                                            }
+                                            onClick={() => {
+                                              onClickConfirmar(
+                                                index,
+                                                values,
+                                                setFieldValue,
+                                              );
+                                            }}
+                                          >
+                                            <strong>
+                                              <FontAwesomeIcon
+                                                style={{
+                                                  fontSize: "12px",
+                                                  marginRight: "4px",
+                                                  color: "#00585E",
+                                                }}
+                                                icon={faCheckCircle}
+                                              />
+                                              Confirmar
+                                            </strong>
+                                          </button>
+                                        </>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+
+                          <div
+                            className={`form-row ${
+                              ehAdicaoPresente ? "adicao-presente" : ""
+                            }`}
+                          >
+                            <div className="col-12">
+                              <div
+                                className={`d-flex  justify-content-start mt-3 mb-3`}
+                              >
+                                <button
+                                  disabled={
+                                    disableBtnAdicionarPresente ||
+                                    !podeEditarAta
+                                  }
+                                  type="button"
+                                  className="btn btn-outline-success mt-1 mr-2"
+                                  onClick={() => {
+                                    setDisableBtnAdicionarPresente(true);
+                                    setDisableBtnSalvar(true);
+                                    setEhAdicaoPresente(true);
+                                    setDisableBtnApagarPresente(true);
+                                    setDisableBtnEditarPresente(true);
+                                    push({
+                                      ata: uuid_ata,
+                                      cargo: "",
+                                      identificacao: "",
+                                      editavel: true,
+                                      nome: "",
+                                      membro: false,
+                                      presente: true,
+                                      adicao: true,
+                                      professor_gremio: false,
+                                    });
+                                  }}
+                                >
+                                  + Adicionar presente
+                                </button>
+
+                                {ehAdicaoPresente && (
+                                  <button
+                                    type="button"
+                                    className="btn btn btn-outline-success mt-1 mr-2"
+                                    onClick={() => {
+                                      onClickCancelarAdicao(
+                                        remove,
+                                        values.listaParticipantes,
+                                      );
+                                    }}
+                                  >
+                                    Cancelar
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    ></FieldArray>
+                  ) : (
+                    <BarraAvisoPreencerData />
+                  )}
+                  </Spin>
+
+                  {/*So exibe o campo retificações em atas de retificação*/}
+                  {stateFormEditarAta &&
+                    stateFormEditarAta.tipo_ata === "RETIFICACAO" && (
+                        <div>
+                          <p className="titulo mt-4">
+                            <strong>Justificativa da retificação <span style={{color: '#b40c02'}}>*</span></strong>
+                          </p>
+                          <div className="form-row">
+                            <div className="col-12">
+                              <textarea
+                                required
+                                rows="3"
+                                placeholder="Escreva seu texto aqui"
+                                value={values.stateFormEditarAta.justificativa_retificacao}
+                                onChange={props.handleChange}
+                                name="stateFormEditarAta.justificativa_retificacao"
+                                className="form-control mt-2"
+                                disabled={!podeEditarAta}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                    )}
+
+                  <p className="titulo mt-4">
+                    <strong>Manifestações, Comentários e Justificativas</strong>
+                  </p>
+                  <div className="form-row">
+                    <div className="col-12">
+                      <label
+                        htmlFor="stateFormEditarAta.comentarios"
+                        className="mb-0"
+                      >
+                        Utilize o campo abaixo para registro de manifestações,
+                        comentários e justificativas que eventualmente ocorram
+                        durante a reunião
+                      </label>
+                      <textarea
+                        rows="3"
+                        placeholder="Escreva seu texto aqui"
+                        value={values.stateFormEditarAta.comentarios}
+                        onChange={props.handleChange}
+                        name="stateFormEditarAta.comentarios"
+                        className="form-control mt-2"
+                        disabled={!podeEditarAta}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-row mt-4">
+                    <div className="col-12">
+                      <p className="titulo mb-2">
+                        <strong>
+                          Como os presentes se posicionam ao PAA {stateFormEditarAta && stateFormEditarAta.tipo_ata === "RETIFICACAO" ? 'retificado' : 'apresentado'}?
+                        </strong>
+                      </p>
+                    </div>
+                    <div className="col-12 col-md-6">
+                      <select
+                        value={values.stateFormEditarAta.parecer_conselho}
+                        onChange={(event) => {
+                          setFieldValue(
+                            "stateFormEditarAta.parecer_conselho",
+                            event.target.value,
+                          );
+                          const selecionado = getParecerSelecionado(
+                            tabelas?.pareceres,
+                            event.target.value,
+                          );
+                          if (!isParecerReprovado(selecionado)) {
+                            setFieldValue(
+                              "stateFormEditarAta.justificativa",
+                              "",
+                            );
+                          }
+                        }}
+                        name="stateFormEditarAta.parecer_conselho"
+                        className="form-control"
+                        disabled={!podeEditarAta}
+                      >
+                        {tabelas &&
+                          tabelas.pareceres &&
+                          tabelas.pareceres.map((tipo) => (
+                            <option key={tipo.id} value={tipo.id}>
+                              {tipo.nome}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+                    {deveExibirCampoMotivo && (
+                      <div className="col-12 mt-3">
+                        <textarea
+                          rows="3"
+                          placeholder="Insira o motivo da reprovação"
+                          value={values.stateFormEditarAta.justificativa}
+                          onChange={props.handleChange}
+                          name="stateFormEditarAta.justificativa"
+                          className="form-control mt-2"
+                          disabled={!podeEditarAta}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </form>
+
+                <section>
+                  <ModalAntDesignConfirmacao
+                    handleShow={dataModalApagarParticipantesAta.show}
+                    titulo={"Confirmar exclusão de participantes"}
+                    bodyText={
+                      "Ao remover a data da ata de apresentação os participantes atuais serão removidos da ata."
+                    }
+                    handleOk={() => handleConfirmarRemocaoParticipantes()}
+                    okText="Confirmar"
+                    handleCancel={() => handleCancelarRemocaoParticipantes()}
+                    cancelText="Cancelar"
+                  />
+                </section>
+                <section>
+                  <ModalNotificarRegeracaoAta
+                    handleShow={showModalAvisoRegeracaoAta}
+                    titulo={"Edição da ata"}
+                    bodyText={
+                      "A ata foi editada e é necessário gerar novo documento de ata."
+                    }
+                    handleOk={() => setShowModalAvisoRegeracaoAta(false)}
+                    handleCancel={() => setShowModalAvisoRegeracaoAta(false)}
+                    okText="OK"
+                    cancelButtonProps={{ style: { display: "none" } }}
+                  />
+                </section>
+              </>
+            );
+          }}
+        </Formik>
+      ) : null}
+    </div>
+  );
+};
