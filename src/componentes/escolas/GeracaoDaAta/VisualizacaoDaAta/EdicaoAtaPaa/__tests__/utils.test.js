@@ -1,6 +1,7 @@
 import {
   adicionaProfessorGremioNaLista,
   formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
+  removeOcupantesDaListaDeNaoMembros,
 } from "../utils";
 
 describe("adicionaProfessorGremioNaLista", () => {
@@ -120,6 +121,7 @@ describe("formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes", 
         cargo: "Presidente da diretoria executiva",
         data_inicio_no_cargo: "10/01/2026",
         identificacao: "1234567",
+        cpf_responsavel: "",
         membro: true,
         nome: "Maria Silva",
         presente: true,
@@ -180,4 +182,133 @@ describe("formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes", 
       ).toEqual([]);
     },
   );
+});
+
+describe("removeOcupantesDaListaDeNaoMembros", () => {
+  const ocupante = {
+    id: 1,
+    cargo: "Presidente da diretoria executiva",
+    identificacao: "1234567",
+    cpf_responsavel: "123.456.789-09",
+    nome: "Maria Silva",
+    membro: true,
+    vago: false,
+    presente: true,
+    presidente_da_reuniao: false,
+    secretario_da_reuniao: false,
+    professor_gremio: false,
+  };
+
+  const cargoVago = {
+    id: 2,
+    cargo: "Vice-presidente da diretoria executiva",
+    identificacao: "",
+    cpf_responsavel: "",
+    nome: "",
+    membro: true,
+    vago: true,
+    presente: false,
+    presidente_da_reuniao: false,
+    secretario_da_reuniao: false,
+    professor_gremio: false,
+  };
+
+  const naoMembro = (dados) => ({
+    identificacao: "",
+    nome: "",
+    cargo: "",
+    membro: false,
+    presente: true,
+    presidente_da_reuniao: false,
+    secretario_da_reuniao: false,
+    professor_gremio: false,
+    ...dados,
+  });
+
+  test("remove não membro com a mesma identificação do ocupante", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [ocupante],
+      [naoMembro({ identificacao: "1234567", nome: "Outro nome" })],
+    );
+
+    expect(resultado).toHaveLength(1);
+    expect(resultado[0].id).toBe(1);
+  });
+
+  test("remove não membro com o CPF do responsável ocupante", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [ocupante],
+      [naoMembro({ identificacao: "123.456.789-09", nome: "Outro nome" })],
+    );
+
+    expect(resultado).toHaveLength(1);
+  });
+
+  test("remove não membro com o mesmo nome do ocupante", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [ocupante],
+      [naoMembro({ nome: " Maria Silva " })],
+    );
+
+    expect(resultado).toHaveLength(1);
+  });
+
+  test("mantém não membros que não ocupam cargo", () => {
+    const outro = naoMembro({ identificacao: "7654321", nome: "João Souza" });
+
+    const resultado = removeOcupantesDaListaDeNaoMembros([ocupante], [outro]);
+
+    expect(resultado).toEqual([ocupante, outro]);
+  });
+
+  test("não considera cargos vagos como ocupantes", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [cargoVago],
+      [naoMembro({ nome: "João Souza" })],
+    );
+
+    expect(resultado).toHaveLength(2);
+  });
+
+  test("transfere presidente e secretário do não membro removido para o ocupante", () => {
+    const resultado = removeOcupantesDaListaDeNaoMembros(
+      [ocupante, { ...ocupante, id: 3, identificacao: "1111111", cpf_responsavel: "", nome: "Ana" }],
+      [
+        naoMembro({
+          identificacao: "1234567",
+          presidente_da_reuniao: true,
+          secretario_da_reuniao: true,
+        }),
+      ],
+    );
+
+    expect(resultado).toHaveLength(2);
+    expect(resultado[0]).toMatchObject({
+      id: 1,
+      presidente_da_reuniao: true,
+      secretario_da_reuniao: true,
+    });
+    expect(resultado[1]).toMatchObject({
+      id: 3,
+      presidente_da_reuniao: false,
+      secretario_da_reuniao: false,
+    });
+  });
+
+  test("não altera a lista de membros recebida", () => {
+    const listaMembros = [ocupante];
+
+    removeOcupantesDaListaDeNaoMembros(listaMembros, [
+      naoMembro({ identificacao: "1234567", presidente_da_reuniao: true }),
+    ]);
+
+    expect(listaMembros[0].presidente_da_reuniao).toBe(false);
+  });
+
+  test.each([
+    [undefined, undefined],
+    [null, null],
+  ])("retorna lista vazia quando as listas são %p e %p", (membros, naoMembros) => {
+    expect(removeOcupantesDaListaDeNaoMembros(membros, naoMembros)).toEqual([]);
+  });
 });
