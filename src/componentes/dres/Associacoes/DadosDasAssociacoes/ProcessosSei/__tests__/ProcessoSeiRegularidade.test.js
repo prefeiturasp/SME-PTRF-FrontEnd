@@ -165,7 +165,7 @@ describe('ProcessoSeiRegularidade Testes', () => {
     });
   });
 
-  test.skip('11. Erro (rejeição da promise) é tratado sem crash', async () => {
+  test('11. Erro (rejeição da promise) é tratado sem crash', async () => {
     updateAssociacao.mockRejectedValue(new Error('Erro de rede'));
     render(<ProcessoSeiRegularidade dadosDaAssociacao={baseDadosDaAssociacao} />);
 
