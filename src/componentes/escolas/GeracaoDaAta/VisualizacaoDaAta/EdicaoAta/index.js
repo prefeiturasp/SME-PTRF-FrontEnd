@@ -3,6 +3,7 @@ import "../../geracao-da-ata.scss";
 import { TopoComBotoes } from "./TopoComBotoes";
 import { FormularioEditaAta } from "./FormularioEditaAta";
 import { NovoFormularioEditaAta } from "./NovoFormularioEditaAta";
+import { NovoFormularioEditaAtaV1 } from "./NovoFormularioEditaAtaV1";
 import { visoesService } from "../../../../../services/visoes.service";
 import { useParams } from "react-router-dom";
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -81,6 +82,8 @@ export const EdicaoAta = () => {
   const [erros, setErros] = useState({});
   const [showModalAvisoRegeracaoAta, setShowModalAvisoRegeracaoAta] =
     useState(false);
+  const v1Ativa = visoesService.featureFlagAtiva("historico-de-membros");
+  const v2Ativa = visoesService.featureFlagAtiva("historico-de-membros-v2");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -247,7 +250,7 @@ export const EdicaoAta = () => {
 
     const listaParticipantes = dadosForm.listaParticipantes || [];
 
-    if (visoesService.featureFlagAtiva("historico-de-membros")) {
+    if (v1Ativa || v2Ativa) {
       let result = getPresidenteAndSecretario(dadosForm.listaParticipantes);
 
       let listaParticipantes = adicionaAtaUuidAosParticipantes(
@@ -315,8 +318,63 @@ export const EdicaoAta = () => {
       toastCustom.ToastCustomError("Erro ao salvar ata", mensagemErro);
     }
   };
+
+  const renderFormulario = () => {
+    if (v2Ativa) {
+      return (
+        <NovoFormularioEditaAta
+          stateFormEditarAta={stateFormEditarAta}
+          tabelas={tabelas}
+          formRef={formRef}
+          onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
+          uuid_ata={uuid_ata}
+          setDisableBtnSalvar={setDisableBtnSalvar}
+          repassesPendentes={repassesPendentes}
+          erros={erros}
+          showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
+          setShowModalAvisoRegeracaoAta={setShowModalAvisoRegeracaoAta}
+          precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
+        />
+      );
+    }
+
+    if (v1Ativa) {
+      return (
+        <NovoFormularioEditaAtaV1
+          stateFormEditarAta={stateFormEditarAta}
+          tabelas={tabelas}
+          formRef={formRef}
+          onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
+          uuid_ata={uuid_ata}
+          setDisableBtnSalvar={setDisableBtnSalvar}
+          repassesPendentes={repassesPendentes}
+          erros={erros}
+          showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
+          setShowModalAvisoRegeracaoAta={setShowModalAvisoRegeracaoAta}
+          precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
+        />
+      );
+    }
+
+    return (
+      <FormularioEditaAta
+        listaPresentesPadrao={listaPresentesPadrao}
+        stateFormEditarAta={stateFormEditarAta}
+        tabelas={tabelas}
+        membrosCargos={membrosCargos}
+        formRef={formRef}
+        onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
+        uuid_ata={uuid_ata}
+        setDisableBtnSalvar={setDisableBtnSalvar}
+        repassesPendentes={repassesPendentes}
+        erros={erros}
+        editaStatusDePresencaMembro={editaStatusDePresencaMembro}
+        precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
+      />
+    );
+  };
+
   return (
-    <>
       <div className="col-12 container-visualizacao-da-ata mb-5">
         <div className="col-12 mt-4">
           {dadosAta && Object.entries(dadosAta).length > 0 && (
@@ -330,38 +388,8 @@ export const EdicaoAta = () => {
         </div>
 
         <div className="col-12">
-          {visoesService.featureFlagAtiva("historico-de-membros-v2") ? (
-            <NovoFormularioEditaAta
-              stateFormEditarAta={stateFormEditarAta}
-              tabelas={tabelas}
-              formRef={formRef}
-              onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
-              uuid_ata={uuid_ata}
-              setDisableBtnSalvar={setDisableBtnSalvar}
-              repassesPendentes={repassesPendentes}
-              erros={erros}
-              showModalAvisoRegeracaoAta={showModalAvisoRegeracaoAta}
-              setShowModalAvisoRegeracaoAta={setShowModalAvisoRegeracaoAta}
-              precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
-            ></NovoFormularioEditaAta>
-          ) : (
-            <FormularioEditaAta
-              listaPresentesPadrao={listaPresentesPadrao}
-              stateFormEditarAta={stateFormEditarAta}
-              tabelas={tabelas}
-              membrosCargos={membrosCargos}
-              formRef={formRef}
-              onSubmitFormEdicaoAta={onSubmitFormEdicaoAta}
-              uuid_ata={uuid_ata}
-              setDisableBtnSalvar={setDisableBtnSalvar}
-              repassesPendentes={repassesPendentes}
-              erros={erros}
-              editaStatusDePresencaMembro={editaStatusDePresencaMembro}
-              precisaProfessorGremio={dadosAta?.precisa_professor_gremio ?? false}
-            ></FormularioEditaAta>
-          )}
+          {renderFormulario()}
         </div>
       </div>
-    </>
   );
 };

@@ -1,0 +1,297 @@
+import React from "react";
+
+import { render, screen, waitFor } from "@testing-library/react";
+import { NovoFormularioEditaAtaV1 as NovoFormularioEditaAta } from "../index";
+
+import {
+    getParticipantesOrdenadosPorCargoPaa,
+    getListaPresentesPadraoPaa,
+} from "../../../../../../../services/escolas/PresentesAtaPaa.service";
+
+import { getCargosComposicaoData } from "../../../../../../../services/Mandatos.service";
+
+import { visoesService } from "../../../../../../../services/visoes.service";
+import { ASSOCIACAO_UUID } from "../../../../../../../services/auth.service";
+
+import * as utils from "../../utils";
+
+jest.mock(
+    "../../../../../../../services/escolas/PresentesAtaPaa.service",
+    () => ({
+        getParticipantesOrdenadosPorCargoPaa: jest.fn(),
+        getListaPresentesPadraoPaa: jest.fn(),
+        getMembroPorIdentificadorPaa: jest.fn(),
+        getProfessorGremioInfo: jest.fn(),
+    }),
+);
+
+jest.mock("../../../../../../../services/Mandatos.service", () => ({
+    getCargosComposicaoData: jest.fn(),
+}));
+
+jest.mock("../../utils", () => ({
+    ...jest.requireActual("../../utils"),
+    adicionaProfessorGremioNaLista: jest.fn(),
+    extraiProfessorDefaults: jest.fn(),
+    listaPossuiParticipantesAssociacao: jest.fn(),
+    marcaParticipantesComoMembrosDaAssociacao: jest.fn((lista) => lista),
+}));
+
+jest.mock("../../../../../../../services/visoes.service", () => ({
+    visoesService: {
+        getPermissoes: jest.fn(() => true),
+        featureFlagAtiva: jest.fn(() => false),
+    },
+}));
+
+const mockDatePickerField = jest.fn();
+
+jest.mock("../../../../../../Globais/DatePickerField", () => ({
+    DatePickerField: (props) => {
+        mockDatePickerField(props);
+
+        return (
+            <input
+                aria-label="Data"
+                value={props.value || ""}
+                onChange={(e) => props.onChange(props.name, e.target.value)}
+                disabled={props.disabled}
+            />
+        );
+    },
+}));
+
+const propsBase = {
+    stateFormEditarAta: {
+        tipo_ata: "APRESENTACAO",
+        data_reuniao: "2025-01-01",
+        comentarios: "Comentário carregado da API",
+        justificativa_retificacao: "",
+    },
+    tabelas: {
+        pareceres: [],
+        tipos_reuniao: [],
+        convocacoes: [],
+    },
+    formRef: {
+        current: {
+            setFieldValue: jest.fn(),
+            values: {
+                listaParticipantes: [],
+            },
+        },
+    },
+    onSubmitFormEdicaoAta: jest.fn(),
+    uuid_ata: "uuid-123",
+    setDisableBtnSalvar: jest.fn(),
+    repassesPendentes: [],
+    erros: {},
+    showModalAvisoRegeracaoAta: false,
+    setShowModalAvisoRegeracaoAta: jest.fn(),
+};
+
+describe("NovoFormularioEditaAta - alterações do PR", () => {
+    const dataFixaAtual = new Date(2026, 5, 15, 10, 0, 0);
+
+    beforeEach(() => {
+        jest.useFakeTimers();
+        jest.setSystemTime(dataFixaAtual);
+        jest.clearAllMocks();
+
+        localStorage.setItem(ASSOCIACAO_UUID, "assoc-1");
+
+        getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([]);
+        getListaPresentesPadraoPaa.mockResolvedValue([]);
+        getCargosComposicaoData.mockResolvedValue({});
+
+        utils.listaPossuiParticipantesAssociacao.mockReturnValue(true);
+
+        utils.adicionaProfessorGremioNaLista.mockImplementation(
+            (lista) => lista,
+        );
+
+        utils.extraiProfessorDefaults.mockReturnValue(null);
+
+        utils.marcaParticipantesComoMembrosDaAssociacao.mockImplementation(
+            (lista) => lista,
+        );
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+    });
+
+    describe("recarregamento quando precisaProfessorGremio mudar", () => {
+        it("deve executar novo carregamento ao alterar precisaProfessorGremio", async () => {
+            const { rerender } = render(
+                <NovoFormularioEditaAta
+                    {...propsBase}
+                    precisaProfessorGremio={false}
+                />,
+            );
+
+            await waitFor(() => {
+                expect(
+                    getParticipantesOrdenadosPorCargoPaa,
+                ).toHaveBeenCalledTimes(1);
+            });
+
+            rerender(
+                <NovoFormularioEditaAta
+                    {...propsBase}
+                    precisaProfessorGremio={true}
+                />,
+            );
+
+            await waitFor(() => {
+                expect(
+                    getParticipantesOrdenadosPorCargoPaa,
+                ).toHaveBeenCalledTimes(2);
+            });
+        });
+    });
+
+    describe("preservação dos dados do professor orientador", () => {
+        it("deve reutilizar professorDefaults quando já existir professor preenchido", async () => {
+            const professorInfo = {
+                nome: "Professor João",
+                cargo: "Professor",
+                identificacao: "1234567",
+                presente: true,
+            };
+
+            utils.extraiProfessorDefaults.mockReturnValue(professorInfo);
+
+            render(
+                <NovoFormularioEditaAta
+                    {...propsBase}
+                    precisaProfessorGremio={true}
+                />,
+        );
+
+            await waitFor(() => {
+                expect(
+                    utils.adicionaProfessorGremioNaLista,
+                ).toHaveBeenCalled();
+            });
+
+            const chamadas =
+                utils.adicionaProfessorGremioNaLista.mock.calls;
+
+            expect(
+                chamadas.some(
+                    (call) =>
+                        call[2]?.nome === "Professor João" &&
+                        call[2]?.identificacao === "1234567",
+                ),
+            ).toBeTruthy();
+        });
+    });
+
+    describe("sincronização dos comentários", () => {
+        it("deve renderizar comentários recebidos do stateFormEditarAta", async () => {
+            const { container } = render(
+                <NovoFormularioEditaAta
+                    {...propsBase}
+                />
+            );
+
+            await waitFor(() => {
+                const textarea = container.querySelector(
+                    'textarea[name="stateFormEditarAta.comentarios"]'
+                );
+
+                expect(textarea).toBeInTheDocument();
+                expect(textarea.value).toBe("Comentário carregado da API");
+            });
+        });
+
+        it("deve aceitar comentários vazios quando vier null", async () => {
+            const { container } = render(
+                <NovoFormularioEditaAta
+                    {...propsBase}
+                    stateFormEditarAta={{
+                        ...propsBase.stateFormEditarAta,
+                        data_reuniao: null,
+                        comentarios: null,
+                    }}
+                />,
+            );
+
+            await waitFor(() => {
+                const textarea = container.querySelector(
+                    'textarea[name="stateFormEditarAta.comentarios"]',
+                );
+
+                expect(textarea.value).toBe("");
+            });
+        });
+    });
+
+    it("não deve permitir selecionar uma data de reunião posterior à data atual", async () => {
+        render(
+            <NovoFormularioEditaAta
+                {...propsBase}
+                precisaProfessorGremio={false}
+            />,
+        );
+
+        await waitFor(() => {
+            expect(mockDatePickerField).toHaveBeenCalled();
+        });
+
+        const propsDoCampoData = mockDatePickerField.mock.calls
+            .map(([props]) => props)
+            .find(
+                (props) => props.name === "stateFormEditarAta.data_reuniao",
+            );
+
+        expect(propsDoCampoData).toBeDefined();
+        expect(propsDoCampoData.maxDate).toEqual(dataFixaAtual);
+    });
+
+    describe("permissões de edição da ata", () => {
+        const membroOcupado = {
+            id: 1,
+            cargo: "Presidente",
+            identificacao: "1234567",
+            nome: "Maria Silva",
+            membro: true,
+            presente: true,
+            vago: false,
+        };
+
+        it("deve bloquear presença, presidente, secretário e data sem permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(false);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeDisabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeDisabled();
+            expect(visoesService.getPermissoes).toHaveBeenCalledWith(
+                ["change_ata_prestacao_contas"],
+                0,
+                [["change_ata_prestacao_contas"]],
+            );
+        });
+
+        it("deve liberar presença, presidente, secretário e data com permissão de edição", async () => {
+            visoesService.getPermissoes.mockReturnValue(true);
+            getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([membroOcupado]);
+
+            render(<NovoFormularioEditaAta {...propsBase} />);
+
+            await screen.findByDisplayValue("Maria Silva");
+
+            screen.getAllByRole("switch").forEach((switchMembro) => {
+                expect(switchMembro).toBeEnabled();
+            });
+            expect(screen.getByLabelText("Data")).toBeEnabled();
+        });
+    });
+});

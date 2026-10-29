@@ -37,6 +37,7 @@ import {
   marcaParticipantesComoMembrosDaAssociacao,
   formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
   normalizaParaData,
+  removeOcupantesDaListaDeNaoMembros,
 } from "../utils";
 
 export const NovoFormularioEditaAta = ({
@@ -602,6 +603,17 @@ export const NovoFormularioEditaAta = ({
     }
   };
 
+  const obterParticipanteAdicionado = () => {
+    if (!formRef?.current?.values?.listaParticipantes) return [];
+
+    return formRef.current.values.listaParticipantes
+      .flat()
+      .filter(
+        (participante) =>
+          !participante.membro && !participante.professor_gremio,
+      );
+  };
+
   const obterParticipanteAtual = (index) => {
     if (
       !formRef.current ||
@@ -845,7 +857,10 @@ export const NovoFormularioEditaAta = ({
             `listaParticipantes[${index}].cargo`,
             membro.cargo ? membro.cargo : "",
           );
-          setFieldValue(`listaParticipantes[${index}].membro`, true);
+          setFieldValue(
+            `listaParticipantes[${index}].membro`,
+            membro.mensagem === "membro-encontrado",
+          );
         } else {
 
           toastCustom.ToastCustomWarning(
@@ -899,7 +914,10 @@ export const NovoFormularioEditaAta = ({
           `listaParticipantes[${index}].cargo`,
           membro.cargo ? membro.cargo : "",
         );
-        setFieldValue(`listaParticipantes[${index}].membro`, true);
+        setFieldValue(
+          `listaParticipantes[${index}].membro`,
+          membro.mensagem === "membro-encontrado",
+        );
         document.getElementById(`listaParticipantes.nome_[${index}]`).disabled =
             true;
         document.getElementById(`listaParticipantes.cargo_[${index}]`).disabled =
@@ -1056,9 +1074,17 @@ export const NovoFormularioEditaAta = ({
       const data_formatada = formatDate(value);
       try {
         setIsLoadingParticipantes(true);
+        const participantesNaoMembros = obterParticipanteAdicionado();
         const listaComProfessor = await montarListaPorData(data_formatada);
 
-        sincronizaListaParticipantes(listaComProfessor, {
+        const listaParticipantes = removeOcupantesDaListaDeNaoMembros(
+          listaComProfessor,
+          participantesNaoMembros,
+        );
+
+        carregarIdentificadoresAnteriores(listaParticipantes);
+
+        sincronizaListaParticipantes(listaParticipantes, {
           reinicializar: true,
           formValuesToSync: { data_reuniao: value },
         });
