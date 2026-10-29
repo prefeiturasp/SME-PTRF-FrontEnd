@@ -115,7 +115,7 @@ export const formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes
         id: membro?.id,
         cargo: membro?.cargo_associacao_label,
         data_inicio_no_cargo: membro?.data_inicio_no_cargo?.split("-").reverse().join("/"),
-        identificacao: membro?.ocupante_do_cargo?.codigo_identificacao ?? "",
+        identificacao: membro?.ocupante_do_cargo?.codigo_identificacao || membro?.ocupante_do_cargo?.cpf_responsavel || "",
         cpf_responsavel: membro?.ocupante_do_cargo?.cpf_responsavel ?? "",
         membro: true,
         nome: membro?.ocupante_do_cargo?.nome ?? "",
