@@ -1,6 +1,7 @@
 import {
     formatarListaCargoComposicaoVacanciaParaFormatoDaListaParticipantes,
     formataDataInicioNoCargo,
+    removeOcupantesDaListaDeNaoMembros,
 } from "../utils";
 
 const membroOcupado = {
@@ -140,6 +141,51 @@ describe("NovoFormularioEditaAta - utils", () => {
             ["numérica", 20250115],
         ])("deve retornar o valor sem alteração quando a data for %s", (_, data) => {
             expect(formataDataInicioNoCargo(data)).toBe(data);
+        });
+    });
+
+    describe("removeOcupantesDaListaDeNaoMembros", () => {
+        const ocupante = {
+            id: 1,
+            cargo: "Presidente da Diretoria Executiva",
+            identificacao: "1234567",
+            nome: "Maria da Silva",
+            membro: true,
+            vago: false,
+            presente: true,
+            presidente_da_reuniao: false,
+            secretario_da_reuniao: false,
+            professor_gremio: false,
+        };
+
+        const naoMembro = (dados) => ({
+            identificacao: "",
+            nome: "",
+            cargo: "",
+            membro: false,
+            presente: true,
+            presidente_da_reuniao: false,
+            secretario_da_reuniao: false,
+            professor_gremio: false,
+            ...dados,
+        });
+
+        it("deve remover o não membro com a mesma identificação do ocupante do cargo", () => {
+            const resultado = removeOcupantesDaListaDeNaoMembros(
+                [ocupante],
+                [naoMembro({ identificacao: "1234567"})],
+            );
+
+            expect(resultado).toEqual([ocupante]);
+        });
+
+        it("deve remover o não membro com o mesmo nome do ocupante do cargo", () => {
+            const resultado = removeOcupantesDaListaDeNaoMembros(
+                [ocupante],
+                [naoMembro({ nome: "Maria da Silva" })],
+            );
+
+            expect(resultado).toEqual([ocupante]);
         });
     });
 });
