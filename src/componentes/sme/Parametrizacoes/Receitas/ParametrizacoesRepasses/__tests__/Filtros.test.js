@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { Filtros } from "../components/Filtros";
 import { RepassesContext } from "../context/Repasse";
 import { useGetTabelasRepasse } from "../hooks/useGetTabelasRepasse";
@@ -27,7 +28,7 @@ describe("Filtros Componentes", () => {
         status: ''
     };
 
-    const renderComponent = () => {
+    const renderComponent = ({ isLoading = false } = {}) => {
         return render(
             <RepassesContext.Provider value={{
                 setFilter: mockSetFilter,
@@ -35,7 +36,7 @@ describe("Filtros Componentes", () => {
                 setFirstPage: mockSetFirstPage,
                 initialFilter: mockInitialFilter,
                 tabelas: mockTabela,
-                isLoading: false
+                isLoading
             }}>
                 <Filtros />
             </RepassesContext.Provider>
@@ -127,6 +128,55 @@ describe("Filtros Componentes", () => {
             acao: '',
             status: ''
         });
+    });
+
+    it("deve aplicar a associação e o status informados ao filtrar", async () => {
+        const user = userEvent.setup();
+        renderComponent();
+
+        await user.type(
+            screen.getByLabelText(/Filtrar por associação/i),
+            "EMEI"
+        );
+        await user.selectOptions(
+            screen.getByLabelText(/Filtrar por status/i),
+            "PENDENTE"
+        );
+        await user.click(screen.getByRole("button", { name: "Filtrar" }));
+
+        const atualizarFiltro = mockSetFilter.mock.calls[0][0];
+        expect(atualizarFiltro({ recurso_uuid: "recurso-1" })).toMatchObject({
+            search: "EMEI",
+            status: "PENDENTE",
+            recurso_uuid: "recurso-1",
+        });
+    });
+
+    it("deve limpar os campos preenchidos", async () => {
+        const user = userEvent.setup();
+        renderComponent();
+
+        const busca = screen.getByLabelText(/Filtrar por associação/i);
+        const status = screen.getByLabelText(/Filtrar por status/i);
+
+        await user.type(busca, "CEI");
+        await user.selectOptions(status, "REALIZADO");
+        await user.click(screen.getByRole("button", { name: "Limpar" }));
+
+        expect(busca).toHaveValue("");
+        expect(status).toHaveValue("");
+    });
+
+    it("deve exibir o carregamento no lugar dos filtros", () => {
+        renderComponent({ isLoading: true });
+
+        expect(screen.getByText("Carregando...")).toBeInTheDocument();
+        expect(
+            screen.queryByLabelText(/Filtrar por associação/i)
+        ).not.toBeInTheDocument();
+        expect(
+            screen.queryByRole("button", { name: "Filtrar" })
+        ).not.toBeInTheDocument();
     });
 
 });
