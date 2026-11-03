@@ -30,3 +30,52 @@ export const formataDataInicioNoCargo = (data) => {
     }
     return data;
 };
+
+export const removeOcupantesDaListaDeNaoMembros = (
+  listaMembros = [],
+  naoMembros = [],
+) => {
+  const membros = (listaMembros || []).map((membro) => ({ ...membro }));
+
+  const naoMembrosRestantes = (naoMembros || []).filter((naoMembro) => {
+    const identificacaoNaoMembro = naoMembro?.identificacao?.trim();
+    const nomeNaoMembro = naoMembro?.nome?.trim().toLowerCase();
+
+    const ocupante = membros.find((membro) => {
+      if (!membro.membro || membro.vago || membro.professor_gremio) {
+        return false;
+      }
+
+      const identificacoes = [membro.identificacao, membro.cpf_responsavel]
+        .map((identificacao) => identificacao?.trim())
+        .filter(Boolean);
+
+      const mesmaIdentificacao =
+        identificacaoNaoMembro &&
+        identificacoes.includes(identificacaoNaoMembro);
+      const mesmoNome =
+        nomeNaoMembro && nomeNaoMembro === membro.nome?.trim().toLowerCase();
+
+      return mesmaIdentificacao || mesmoNome;
+    });
+
+    if (!ocupante) {
+      return true;
+    }
+
+    if (naoMembro.presidente_da_reuniao) {
+      membros.forEach((membro) => {
+        membro.presidente_da_reuniao = membro === ocupante;
+      });
+    }
+    if (naoMembro.secretario_da_reuniao) {
+      membros.forEach((membro) => {
+        membro.secretario_da_reuniao = membro === ocupante;
+      });
+    }
+
+    return false;
+  });
+
+  return [...membros, ...naoMembrosRestantes];
+};

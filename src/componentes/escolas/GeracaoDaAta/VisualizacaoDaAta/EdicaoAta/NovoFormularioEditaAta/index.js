@@ -36,6 +36,7 @@ import {
   listaPossuiParticipantesAssociacao,
   marcaParticipantesComoMembrosDaAssociacao,
   normalizaParaData,
+  removeOcupantesDaListaDeNaoMembros,
 } from "../../EdicaoAtaPaa/utils";
 
 export const NovoFormularioEditaAta = ({
@@ -1011,10 +1012,13 @@ export const NovoFormularioEditaAta = ({
             )
           : listaFiltrada;
 
-        listaComProfessor.push(...participantesNaoMembros);
+        const listaParticipantes = removeOcupantesDaListaDeNaoMembros(
+          listaComProfessor,
+          participantesNaoMembros,
+        );
 
-        setListaParticipantes(listaComProfessor);
-        sincronizaListaParticipantes(listaComProfessor);
+        setListaParticipantes(listaParticipantes);
+        sincronizaListaParticipantes(listaParticipantes);
       } catch (error) {
         // Se a composição não existir (404), mostra erro
         // Se a composição existir mas estiver vazia, não mostra erro (permite selecionar a data)
