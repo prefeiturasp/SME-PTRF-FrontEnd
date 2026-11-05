@@ -16,6 +16,8 @@ function ModalDialog() {
         centered
         show={open}
         onHide={handleClose}
+        backdrop={options.backdrop ?? true}
+        keyboard={options.keyboard ?? true}
     >
       {options.children}
     </Modal>

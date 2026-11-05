@@ -1,5 +1,6 @@
 import React from "react";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
 import { ModalForm } from "../components/ModalForm";
@@ -30,7 +31,7 @@ jest.mock("../../../../../Globais/ReactNumberFormatInput", () => ({
     ReactNumberFormatInput: ({ value, onChangeEvent, ...props }) => (
         <input
             {...props}
-            value={value || ""}
+            value={value ?? ""}
             onChange={onChangeEvent}
         />
     ),
@@ -51,12 +52,6 @@ jest.mock("../components/AutoCompleteAssociacoes", () => ({
 
 jest.mock("../../../../../../context/RecursoSelecionado", () => ({
     useRecursoSelecionadoContext: jest.fn(),
-}));
-
-jest.mock("../YupSchemaRepasse", () => ({
-    YupSchemaRepasse: {
-        validate: jest.fn(),
-    },
 }));
 
 jest.mock("../../../../../../assets/img/spinner.gif", () => "spinner.gif");
@@ -157,18 +152,21 @@ const renderComponent = ({
     bloquearBtnSalvarForm = false,
     loadingAssociacoes = false,
     tabelasAssociacao = tabelasPorAssociacao,
+    isFetching = false,
+    tabelasContext = tabelas,
+    recursosDisponiveis = recursos,
 } = {}) => {
     RetornaSeTemPermissaoEdicaoPainelParametrizacoes.mockReturnValue(
         permission
     );
 
     useRecursoSelecionadoContext.mockReturnValue({
-        recursos,
+        recursos: recursosDisponiveis,
     });
 
     useGetTabelasPorAssociacao.mockReturnValue({
         data: tabelasAssociacao,
-        isFetching: false,
+        isFetching,
     });
 
     return render(
@@ -184,7 +182,7 @@ const renderComponent = ({
                 setShowModalConfirmacaoExclusao:
                     mockSetShowModalConfirmacaoExclusao,
                 setStateFormModal: mockSetStateFormModal,
-                tabelas,
+                tabelas: tabelasContext,
             }}
         >
             <ModalForm
@@ -661,6 +659,316 @@ describe("ModalForm", () => {
             renderComponent();
 
             expect(screen.getByLabelText("Status")).toBeDisabled();
+        });
+    });
+
+    describe("carregamento", () => {
+        it("deve desabilitar conta e ação enquanto as tabelas da associação carregam", () => {
+            renderComponent({ isFetching: true });
+
+            expect(screen.getByLabelText("Conta *")).toBeDisabled();
+            expect(screen.getByLabelText("Ação *")).toBeDisabled();
+            expect(screen.getByLabelText("Período *")).toBeEnabled();
+        });
+
+        it("deve exibir o indicador de carregamento das unidades ao adicionar", () => {
+            renderComponent({ loadingAssociacoes: true });
+
+            const rotulo = screen.getByText(/Unidade Educacional/);
+
+            expect(rotulo.querySelector("img")).toHaveAttribute(
+                "src",
+                "spinner.gif"
+            );
+        });
+
+        it("não deve exibir o indicador de carregamento quando as unidades já foram carregadas", () => {
+            renderComponent({ loadingAssociacoes: false });
+
+            expect(
+                screen.getByText(/Unidade Educacional/).querySelector("img")
+            ).toBeNull();
+        });
+    });
+
+    describe("recurso selecionado", () => {
+        it("deve preencher o recurso selecionado e mantê-lo indisponível para alteração", () => {
+            renderComponent();
+
+            const recurso = screen.getByLabelText("Recurso *");
+
+            expect(recurso).toHaveValue("recurso-1");
+            expect(recurso).toBeDisabled();
+            expect(
+                screen.getByRole("option", { name: "Recurso 1" })
+            ).toBeInTheDocument();
+        });
+
+        it("deve exibir a unidade educacional do registro ao editar", () => {
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    uuid: "repasse-1",
+                    nome_unidade: "EMEF Escola Teste",
+                },
+            });
+
+            expect(screen.getByLabelText("Unidade Educacional *")).toHaveValue(
+                "EMEF Escola Teste"
+            );
+        });
+    });
+
+    describe("valores", () => {
+        it("deve permitir preencher capital, custeio e livre aplicação", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    valor_capital: "",
+                    valor_custeio: "",
+                    valor_livre: "",
+                },
+            });
+
+            await user.type(screen.getByLabelText("Valor capital *"), "1500");
+            await user.type(screen.getByLabelText("Valor custeio *"), "2500");
+            await user.type(
+                screen.getByLabelText("Valor livre aplicação *"),
+                "3500"
+            );
+
+            expect(screen.getByLabelText("Valor capital *")).toHaveValue("1500");
+            expect(screen.getByLabelText("Valor custeio *")).toHaveValue("2500");
+            expect(
+                screen.getByLabelText("Valor livre aplicação *")
+            ).toHaveValue("3500");
+        });
+
+        it("deve permitir alterar um valor já informado", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    valor_capital: "",
+                },
+            });
+
+            const capital = screen.getByLabelText("Valor capital *");
+            await user.type(capital, "99");
+            await user.clear(capital);
+            await user.type(capital, "40");
+
+            expect(capital).toHaveValue("40");
+        });
+
+        it("deve aceitar valor zero", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    valor_custeio: "",
+                },
+            });
+
+            const custeio = screen.getByLabelText("Valor custeio *");
+            await user.type(custeio, "0");
+
+            expect(custeio).toHaveValue("0");
+        });
+    });
+
+    describe("identificação do repasse", () => {
+        it("deve desabilitar conta, ação e período quando a identificação não pode ser editada", () => {
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    campos_editaveis: {
+                        ...stateFormModal.campos_editaveis,
+                        campos_identificacao: false,
+                    },
+                },
+            });
+
+            expect(screen.getByLabelText("Conta *")).toBeDisabled();
+            expect(screen.getByLabelText("Ação *")).toBeDisabled();
+            expect(screen.getByLabelText("Período *")).toBeDisabled();
+        });
+
+        it("deve permitir escolher conta, ação e período", async () => {
+            const user = userEvent.setup();
+            renderComponent();
+
+            await user.selectOptions(screen.getByLabelText("Conta *"), "conta-2");
+            await user.selectOptions(screen.getByLabelText("Ação *"), "acao-2");
+            await user.selectOptions(
+                screen.getByLabelText("Período *"),
+                "periodo-2"
+            );
+
+            expect(screen.getByLabelText("Conta *")).toHaveValue("conta-2");
+            expect(screen.getByLabelText("Ação *")).toHaveValue("acao-2");
+            expect(screen.getByLabelText("Período *")).toHaveValue("periodo-2");
+        });
+
+        it("deve exibir somente a opção vazia quando não há contas, ações ou períodos", () => {
+            renderComponent({
+                tabelasAssociacao: null,
+                tabelasContext: null,
+            });
+
+            expect(
+                screen.getAllByRole("option", { name: "Selecione" })
+            ).toHaveLength(3);
+            expect(
+                screen.queryByRole("option", { name: "Conta Capital" })
+            ).not.toBeInTheDocument();
+            expect(
+                screen.queryByRole("option", { name: "2025" })
+            ).not.toBeInTheDocument();
+        });
+    });
+
+    describe("realização", () => {
+        it("deve desabilitar as opções de realização quando esses campos não podem ser editados", () => {
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    campos_editaveis: {
+                        ...stateFormModal.campos_editaveis,
+                        campos_de_realizacao: false,
+                    },
+                },
+            });
+
+            screen.getAllByRole("radio", { name: "Sim" }).forEach((radio) => {
+                expect(radio).toBeDisabled();
+            });
+            screen.getAllByRole("radio", { name: "Não" }).forEach((radio) => {
+                expect(radio).toBeDisabled();
+            });
+        });
+
+        it("deve permitir marcar realizado custeio e livre aplicação", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    realizado_custeio: false,
+                    realizado_livre: false,
+                },
+            });
+
+            const opcoesSim = screen.getAllByRole("radio", { name: "Sim" });
+
+            await user.click(opcoesSim[1]);
+            await user.click(opcoesSim[2]);
+
+            expect(opcoesSim[1]).toBeChecked();
+            expect(opcoesSim[2]).toBeChecked();
+        });
+    });
+
+    describe("salvamento", () => {
+        it("deve adicionar o repasse com os valores preenchidos", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    valor_capital: "",
+                    valor_custeio: "",
+                    valor_livre: "",
+                },
+            });
+
+            await user.type(screen.getByLabelText("Valor capital *"), "10");
+            await user.type(screen.getByLabelText("Valor custeio *"), "20");
+            await user.type(
+                screen.getByLabelText("Valor livre aplicação *"),
+                "30"
+            );
+            await user.click(screen.getByRole("button", { name: "Adicionar" }));
+
+            expect(mockHandleSubmitFormModal).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    associacao: "associacao-1",
+                    conta_associacao: "conta-1",
+                    acao_associacao: "acao-1",
+                    periodo: "periodo-1",
+                    recurso: "recurso-1",
+                    valor_capital: 10,
+                    valor_custeio: 20,
+                    valor_livre: 30,
+                }),
+                expect.anything()
+            );
+            expect(
+                screen.queryByText("Unidade é obrigatório.")
+            ).not.toBeInTheDocument();
+        });
+
+        it("deve salvar as alterações de um repasse existente", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    uuid: "repasse-1",
+                },
+            });
+
+            await user.click(screen.getByRole("button", { name: "Salvar" }));
+
+            expect(mockHandleSubmitFormModal).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    uuid: "repasse-1",
+                    valor_capital: 1000,
+                    valor_custeio: 2000,
+                    valor_livre: 3000,
+                }),
+                expect.anything()
+            );
+        });
+    });
+
+    describe("validação", () => {
+        it("deve informar os campos obrigatórios e manter o formulário disponível", async () => {
+            const user = userEvent.setup();
+
+            renderComponent({
+                state: {
+                    ...stateFormModal,
+                    associacao: "",
+                    conta_associacao: "",
+                    acao_associacao: "",
+                    periodo: "",
+                },
+            });
+
+            await user.click(screen.getByRole("button", { name: "Adicionar" }));
+
+            expect(
+                await screen.findByText("Unidade é obrigatório.")
+            ).toBeInTheDocument();
+            expect(screen.getByText("Conta é obrigatório.")).toBeInTheDocument();
+            expect(screen.getByText("Ação é obrigatório.")).toBeInTheDocument();
+            expect(
+                screen.getByText("Período é obrigatório.")
+            ).toBeInTheDocument();
+            expect(mockHandleSubmitFormModal).not.toHaveBeenCalled();
+            expect(
+                screen.getByRole("button", { name: "Adicionar" })
+            ).toBeEnabled();
+            expect(
+                screen.getByRole("heading", {
+                    name: "Adicionar repasse previsto",
+                })
+            ).toBeInTheDocument();
         });
     });
 });
