@@ -40,11 +40,9 @@ export const ProcessoSeiRegularidade = ({dadosDaAssociacao}) => {
                 console.log("Operação realizada com sucesso!");
             } else {
                 console.log(response);
-                return
             }
         } catch (error) {
             console.log(error);
-            return
         }
         setLoading(false)
     };

@@ -38,8 +38,8 @@ export const Filtros = () => {
         <>
             <form onSubmit={handleSubmitFormFilter} onKeyDown={onKeyDown}>
                 <div className="d-flex bd-highlight align-items-end mt-2">
-                    <div className="p-2 flex-grow-1 bd-highlight">
-                        <span className='mr-5'><label htmlFor="nome">Filtrar por nome do objetivo</label></span>
+                    <div className="p-2 flex-grow-1 bd-highlight" style={{minWidth: 0}}>
+                        <label htmlFor="nome" className="d-block">Filtrar por nome do objetivo</label>
                         <input
                             data-qa="input-filtro-nome"
                             data-testid="input-filtro-nome"
@@ -49,13 +49,12 @@ export const Filtros = () => {
                             id="nome"
                             type="text"
                             maxLength={150}
-                            className="form-control w-100"
+                            className="form-control"
                             placeholder='Digite o nome do objetivo'
-                            style={{display: 'inline-block'}}
                         />
                     </div>
                     <div className="pt-2 pb-2 pr-0 pl-2 bd-highlight">
-                        <button onClick={clearFilter} className="btn btn-outline-success">
+                        <button onClick={clearFilter} className="btn btn-outline-success" type="button">
                             Limpar
                         </button>
                     </div>

@@ -529,6 +529,218 @@ describe("NovoFormularioEditaAta - alterações do PR", () => {
 
             toastErroSpy.mockRestore();
         });
+
+        describe("remoção do ocupante do cargo da lista de não membros", () => {
+            const composicaoComOcupante = {
+                presidente: {
+                    id: 1,
+                    cargo_associacao_label: "Presidente",
+                    data_inicio_no_cargo: "2026-01-10",
+                    vago: false,
+                    ocupante_do_cargo: {
+                        nome: "Maria Silva",
+                        codigo_identificacao: "1234567",
+                        cpf_responsavel: "123.456.789-09",
+                    },
+                },
+            };
+
+            const naoMembro = (dados) => ({
+                cargo: "Convidado",
+                identificacao: "",
+                nome: "",
+                membro: false,
+                presente: true,
+                presidente_da_reuniao: false,
+                secretario_da_reuniao: false,
+                professor_gremio: false,
+                ...dados,
+            });
+
+            const obtemValorDoCampo = (container, index, campo) =>
+                container.querySelector(
+                    `input[name="listaParticipantes[${index}].${campo}"]`,
+                )?.value;
+
+            const renderizaComNaoMembros = async (naoMembros) => {
+                getParticipantesOrdenadosPorCargoPaa.mockResolvedValue(naoMembros);
+                getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue(
+                    composicaoComOcupante,
+                );
+
+                const renderizado = render(
+                    <NovoFormularioEditaAta {...propsBase} />,
+                );
+
+                await screen.findByDisplayValue(naoMembros[0].nome);
+
+                return renderizado;
+            };
+
+            it("deve remover o não membro com a mesma identificação do ocupante do cargo", async () => {
+                const { container } = await renderizaComNaoMembros([
+                    naoMembro({ id: 10, identificacao: "1234567", nome: "Maria S." }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(obtemValorDoCampo(container, 0, "nome")).toBe(
+                        "Maria Silva",
+                    );
+                });
+                expect(obtemValorDoCampo(container, 0, "identificacao")).toBe(
+                    "1234567",
+                );
+                expect(obtemValorDoCampo(container, 1, "nome")).toBeUndefined();
+                expect(screen.queryByDisplayValue("Maria S.")).not.toBeInTheDocument();
+            });
+
+            it("deve remover o não membro identificado pelo CPF do responsável ocupante do cargo", async () => {
+                const { container } = await renderizaComNaoMembros([
+                    naoMembro({
+                        id: 10,
+                        identificacao: "123.456.789-09",
+                        nome: "Responsável Maria",
+                    }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(obtemValorDoCampo(container, 0, "nome")).toBe(
+                        "Maria Silva",
+                    );
+                });
+                expect(obtemValorDoCampo(container, 1, "nome")).toBeUndefined();
+                expect(
+                    screen.queryByDisplayValue("Responsável Maria"),
+                ).not.toBeInTheDocument();
+            });
+
+            it("deve remover o não membro com o mesmo nome do ocupante do cargo", async () => {
+                const { container } = await renderizaComNaoMembros([
+                    naoMembro({ id: 10, nome: "Maria Silva" }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(obtemValorDoCampo(container, 0, "cargo")).toBe(
+                        "Presidente",
+                    );
+                });
+                expect(obtemValorDoCampo(container, 1, "nome")).toBeUndefined();
+                expect(screen.getAllByDisplayValue("Maria Silva")).toHaveLength(1);
+            });
+
+            it("deve manter os não membros que não ocupam cargo na composição", async () => {
+                const { container } = await renderizaComNaoMembros([
+                    naoMembro({ id: 10, identificacao: "1234567", nome: "Maria S." }),
+                    naoMembro({ id: 11, identificacao: "7654321", nome: "João Souza" }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(obtemValorDoCampo(container, 0, "nome")).toBe(
+                        "Maria Silva",
+                    );
+                });
+                expect(obtemValorDoCampo(container, 1, "nome")).toBe("João Souza");
+                expect(obtemValorDoCampo(container, 2, "nome")).toBeUndefined();
+            });
+
+            it("deve manter o não membro quando o cargo da composição estiver vago", async () => {
+                getCargosComposicaoVacanciaPorDataEAssociacao.mockResolvedValue({
+                    presidente: {
+                        id: 1,
+                        cargo_associacao_label: "Presidente",
+                        data_inicio_no_cargo: "2026-09-25",
+                        vago: true,
+                        ocupante_do_cargo: null,
+                    },
+                });
+                getParticipantesOrdenadosPorCargoPaa.mockResolvedValue([
+                    naoMembro({ id: 10, nome: "João Souza" }),
+                ]);
+
+                const { container } = render(
+                    <NovoFormularioEditaAta {...propsBase} />,
+                );
+
+                await screen.findByDisplayValue("João Souza");
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                expect(
+                    await screen.findByText("Cargo vago desde 25/09/2026"),
+                ).toBeInTheDocument();
+                expect(obtemValorDoCampo(container, 1, "nome")).toBe("João Souza");
+            });
+
+            it("deve transferir o presidente da reunião do não membro removido para o ocupante do cargo", async () => {
+                await renderizaComNaoMembros([
+                    naoMembro({
+                        id: 10,
+                        identificacao: "1234567",
+                        nome: "Maria S.",
+                        presidente_da_reuniao: true,
+                    }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(screen.getAllByRole("switch")).toHaveLength(3);
+                });
+
+                const [presenca, presidente, secretario] =
+                    screen.getAllByRole("switch");
+
+                expect(presenca).toHaveAttribute("aria-checked", "true");
+                expect(presidente).toHaveAttribute("aria-checked", "true");
+                expect(secretario).toHaveAttribute("aria-checked", "false");
+            });
+
+            it("deve transferir o secretário da reunião do não membro removido para o ocupante do cargo", async () => {
+                await renderizaComNaoMembros([
+                    naoMembro({
+                        id: 10,
+                        nome: "Maria Silva",
+                        secretario_da_reuniao: true,
+                    }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(screen.getAllByRole("switch")).toHaveLength(3);
+                });
+
+                const [, presidente, secretario] = screen.getAllByRole("switch");
+
+                expect(presidente).toHaveAttribute("aria-checked", "false");
+                expect(secretario).toHaveAttribute("aria-checked", "true");
+            });
+
+            it("não deve marcar presidente nem secretário quando o não membro removido não tinha esses vínculos", async () => {
+                await renderizaComNaoMembros([
+                    naoMembro({ id: 10, identificacao: "1234567", nome: "Maria S." }),
+                ]);
+
+                await alteraDataDaReuniao(new Date(2026, 8, 26));
+
+                await waitFor(() => {
+                    expect(screen.getAllByRole("switch")).toHaveLength(3);
+                });
+
+                const [, presidente, secretario] = screen.getAllByRole("switch");
+
+                expect(presidente).toHaveAttribute("aria-checked", "false");
+                expect(secretario).toHaveAttribute("aria-checked", "false");
+            });
+        });
     });
 
     describe("permissões de edição da ata", () => {
