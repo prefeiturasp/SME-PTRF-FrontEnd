@@ -70,8 +70,8 @@ export const postVerificarSePodeInformarValores = async (payload) => {
   ).data;
 };
 
-export const getBemProduzidosComAdquiridos = async (filters, page, visao_dre = false) => {
-  const uuid_associacao = getUuidAssociacao();
+export const getBemProduzidosComAdquiridos = async (filters, page, visao_dre = false, associacaoUuid = null) => {
+  const uuid_associacao = associacaoUuid || getUuidAssociacao();
 
   let queryString = `?associacao_uuid=${uuid_associacao}&page=${page}`;
   if (visao_dre) {
