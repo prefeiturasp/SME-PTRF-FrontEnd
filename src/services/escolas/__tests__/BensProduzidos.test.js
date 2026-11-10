@@ -152,6 +152,15 @@ describe("BensProduzidos.service", () => {
     expect(api.get.mock.calls[0][0]).not.toContain("visao_dre");
   });
 
+  test("getBemProduzidosComAdquiridos usa a associação informada em vez da do localStorage", async () => {
+    api.get.mockResolvedValue({ data: mockData });
+    await getBemProduzidosComAdquiridos({ periodos_uuid: "periodo-pc" }, 1, true, "assoc-da-pc");
+    const url = api.get.mock.calls[0][0];
+    expect(url).toContain("associacao_uuid=assoc-da-pc");
+    expect(url).not.toContain(`associacao_uuid=${associacaoUuid}`);
+    expect(url).toContain("periodos_uuid=periodo-pc");
+  });
+
   test("getTodosPeriodosComPC", async () => {
     api.get.mockResolvedValue({ data: mockData });
     const result = await getTodosPeriodosComPC("2024");
