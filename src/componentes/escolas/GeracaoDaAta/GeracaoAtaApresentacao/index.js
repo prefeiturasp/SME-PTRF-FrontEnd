@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import "../geracao-da-ata.scss"
 import {getGerarAtaPdf, getAtas, getDownloadAtaPdf} from "../../../../services/escolas/AtasAssociacao.service";
 import {ModalNaoPodeGerarAta} from "../ModalNaoPodeGerarAta";
+import {ModalAlteradoParticipantesHistorico} from "../../Modais/ModalAlteradoParticipantesHistorico"
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faDownload} from '@fortawesome/free-solid-svg-icons'
@@ -21,9 +22,13 @@ export const GeracaoAtaApresentacao = (
 
     const [dadosAta, setDadosAta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
+    const [showAlteradoParticipantesHistorico, setShowAlteradoParticipantesHistorico] = useState(false);
     const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
+    const [textoModalParticipantes, setTextoModalParticipantes] = useState('');
+
     const temPermissao = visoesService.getPermissoes(["change_ata_prestacao_contas"])
+    const v2Ativa = visoesService.featureFlagAtiva('historico-de-membros-v2')
     const btGerarDesabilitado =
         !(uuidPrestacaoConta && docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ||
         !temPermissao;
@@ -58,6 +63,11 @@ export const GeracaoAtaApresentacao = (
             await getDadosAta()
         }
         catch (e) {
+            if(v2Ativa && e.status === 409){
+                abriModalParticipantes(e)
+                return
+            }
+
             let mensagem = ''
             let camposInvalidos = e.response.data.campos_invalidos
             camposInvalidos.map((element) => {
@@ -68,6 +78,10 @@ export const GeracaoAtaApresentacao = (
         }
     }
 
+    const abriModalParticipantes = (e) => {
+        setTextoModalParticipantes(`${e?.response?.data?.mensagem}`)
+        setShowAlteradoParticipantesHistorico(true)
+    }
     const download_ata_pdf = async () =>{
         await getDownloadAtaPdf(uuidAtaApresentacao)
         await getDadosAta()
@@ -112,11 +126,30 @@ export const GeracaoAtaApresentacao = (
                             primeiroBotaoCss="outline-success"
                             dataQa="modal-nao-pode-gerar-ata-campos-incompletos"
                         />
+                        {v2Ativa &&
+                            <ModalAlteradoParticipantesHistorico
+                                show={showAlteradoParticipantesHistorico}
+                                handleClose={() => setShowAlteradoParticipantesHistorico(false)}
+                                texto={textoModalParticipantes}
+                                titulo={'Importante'}
+                                btGerarDesabilitado={btGerarDesabilitado}
+                                textoBotaoVisualizar={uuidPrestacaoConta ? "Visualizar ata" : "Visualizar prévia da ata"}
+                                onClickGerarAta={async () => {
+                                    setShowAlteradoParticipantesHistorico(false)
+                                    await gerarAta()
+                                }}
+                                onClickVisualizarAta={() => {
+                                    setShowAlteradoParticipantesHistorico(false)
+                                    onClickVisualizarAta()
+                                }}
+                                dataQa="modal-alterado-participantes-historico"
+                            />
+                        }
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button 
+                            <button
                                 onClick={()=>onClickVisualizarAta()}
-                                type="button" 
+                                type="button"
                                 className="btn btn-success float-right"
                                 data-qa="btn-visualizar-ata"
                             >
