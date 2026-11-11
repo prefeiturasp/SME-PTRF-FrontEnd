@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {getAtas, getDownloadAtaPdf, getGerarAtaPdf} from "../../../../services/escolas/AtasAssociacao.service";
 import {ModalNaoPodeGerarAta} from "../../GeracaoDaAta/ModalNaoPodeGerarAta";
+import {ModalAlteradoParticipantesHistorico} from "../../Modais/ModalAlteradoParticipantesHistorico";
 import Spinner from "../../../../assets/img/spinner.gif";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload} from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +21,10 @@ export const BoxAtaRetificadora = ({
     const [docPrestacaoConta, setDocPrestacaoConta] = useState({});
     const [showNaoPodeGerarAta, setShowNaoPodeGerarAta] = useState(false);
     const [textoModalAta, setTextoModalAta] = useState('<p>Você não pode gerar o PDF de uma ata incompleta.</p>');
+    const [showAlteradoParticipantesHistorico, setShowAlteradoParticipantesHistorico] = useState(false);
+    const [textoModalParticipantes, setTextoModalParticipantes] = useState('');
     const temPermissao = visoesService.getPermissoes(["change_ata_prestacao_contas"]);
+    const v2Ativa = visoesService.featureFlagAtiva('historico-de-membros-v2');
     const btGerarDesabilitado =
         !docPrestacaoConta?.gerar_ou_editar_ata_retificacao ||
         !temPermissao;
@@ -55,6 +59,11 @@ export const BoxAtaRetificadora = ({
             getDadosAta()
         }
         catch (e) {
+            if(v2Ativa && e.status === 409){
+                abrirModalParticipantes(e)
+                return
+            }
+
             let mensagem = ''
             let camposInvalidos = e.response.data.campos_invalidos
             camposInvalidos.map((element) => {
@@ -63,6 +72,11 @@ export const BoxAtaRetificadora = ({
             setTextoModalAta(`<p>Você não pode gerar o PDF de uma ata incompleta. Para completa-la ${camposInvalidos[0]['msg_presente'] ? mensagem :  `preencha os campo(s) ${mensagem}`}.</p>`.replace(/,(?=[^,]*$)/, '')) // Regex remove espaço em branco e virgula no final. ⮕ (/,(?=[^,]*$)/,) ''
             setShowNaoPodeGerarAta(true)
         }
+    }
+
+    const abrirModalParticipantes = (e) => {
+        setTextoModalParticipantes(`${e?.response?.data?.mensagem}`)
+        setShowAlteradoParticipantesHistorico(true)
     }
 
     const download_ata_pdf = async () => {
@@ -109,11 +123,30 @@ export const BoxAtaRetificadora = ({
                             primeiroBotaoCss="outline-success"
                             dataQa="modal-nao-pode-gerar-ata-retificacao-campos-incompletos"
                         />
+                        {v2Ativa &&
+                            <ModalAlteradoParticipantesHistorico
+                                show={showAlteradoParticipantesHistorico}
+                                handleClose={() => setShowAlteradoParticipantesHistorico(false)}
+                                texto={textoModalParticipantes}
+                                titulo={'Importante'}
+                                btGerarDesabilitado={btGerarDesabilitado}
+                                textoBotaoVisualizar={statusPc !== 'DEVOLVIDA' ? "Visualizar ata" : "Visualizar prévia da ata"}
+                                onClickGerarAta={async () => {
+                                    setShowAlteradoParticipantesHistorico(false)
+                                    await gerarAtaPDF()
+                                }}
+                                onClickVisualizarAta={() => {
+                                    setShowAlteradoParticipantesHistorico(false)
+                                    onClickVisualizarAta()
+                                }}
+                                dataQa="modal-alterado-participantes-historico-retificacao"
+                            />
+                        }
                         </section>
                         <div className="col-12 col-md-4 align-self-center">
-                            <button 
-                                onClick={()=>onClickVisualizarAta()}  
-                                type="button" 
+                            <button
+                                onClick={()=>onClickVisualizarAta()}
+                                type="button"
                                 className="btn btn-success float-right"
                                 data-qa="btn-visualizar-ata-retificacao"
                             >
