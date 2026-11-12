@@ -172,6 +172,24 @@ export const patchCancelarEntradaCargoComposicaoVacancia = async (uuid) => {
     return (await api.patch(`${BASE_COMPOSICAO_URL}/${uuid}/cancelar-entrada/`, {}, authHeader()))
 }
 
+export const getSubstitutosPresidenteVacancia = async (associacao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/substitutos-presidente/`, {
+        ...authHeader(),
+        params: {
+            associacao_uuid: associacao_uuid
+        }
+    })).data
+}
+
+export const getConselheirosAssinaturaVacancia = async (associacao_uuid) => {
+    return (await api.get(`${BASE_COMPOSICAO_URL}/conselheiros-assinatura/`, {
+        ...authHeader(),
+        params: {
+            associacao_uuid: associacao_uuid
+        }
+    })).data
+}
+
 
 // Endpoints - Ocupantes do Cargo
 

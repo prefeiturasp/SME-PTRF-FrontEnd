@@ -14,22 +14,33 @@ export const getStatusPeriodoPorData = async (uuid_associacao, data_incial_perio
   return(await api.get(`/api/associacoes/${uuid_associacao}/status-periodo/?data=${data_incial_periodo}`, authHeader())).data
 };
 
-export const postConcluirPeriodo = async (periodo_uuid, justificativaPendencia='') => {
+const payloadComStatusPresidente = (payLoad, dadosPresidente) => {
+  if (dadosPresidente && dadosPresidente.status_presidente) {
+    payLoad.status_presidente = dadosPresidente.status_presidente
+    payLoad.cargo_substituto_presidente_ausente = dadosPresidente.cargo_substituto_presidente_ausente ?? null
+    if (dadosPresidente.cargo_conselheiro_assinatura) {
+      payLoad.cargo_conselheiro_assinatura = dadosPresidente.cargo_conselheiro_assinatura
+    }
+  }
+  return payLoad
+}
+
+export const postConcluirPeriodo = async (periodo_uuid, justificativaPendencia='', dadosPresidente=null) => {
   if(visoesService.featureFlagAtiva('novo-processo-pc')){
     
-    const payLoad = {
+    const payLoad = payloadComStatusPresidente({
       justificativa_acertos_pendentes: justificativaPendencia,
       associacao_uuid: localStorage.getItem(ASSOCIACAO_UUID),
       periodo_uuid: periodo_uuid
-    }
+    }, dadosPresidente)
 
     return(await api.post(`/api/prestacoes-contas/concluir-v2/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader())).data
   }
   else{
   
-    const payLoad = {
+    const payLoad = payloadComStatusPresidente({
       justificativa_acertos_pendentes: justificativaPendencia,
-    }
+    }, dadosPresidente)
     
     return(await api.post(`/api/prestacoes-contas/concluir/?associacao_uuid=${localStorage.getItem(ASSOCIACAO_UUID)}&periodo_uuid=${periodo_uuid}`, payLoad, authHeader())).data
   }

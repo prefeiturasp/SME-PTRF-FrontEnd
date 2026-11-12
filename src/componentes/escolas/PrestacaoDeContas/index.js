@@ -25,6 +25,7 @@ import {getRegistrosFalhaGeracaoPc} from "../../../services/Notificacoes.service
 import {ModalNotificaErroConcluirPC} from "../../Globais/ModalAntDesign/ModalNotificaErroConcluirPC";
 import { ModalPendenciasCadastrais } from "./ModalPendenciasCadastrais";
 import { ModalAvisoAssinatura } from "./ModalAvisoAssinatura";
+import { CamposStatusPresidente } from "./CamposStatusPresidente";
 import { setPersistenteUrlVoltar } from "../../../store/reducers/componentes/escolas/PrestacaoDeContas/PendenciaCadastro/actions";
 import { CustomModalConfirm } from "../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../componentes/Globais/ToastCustom";
@@ -64,6 +65,10 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     const [mensagemDevolucaoNaoPermitida, setMensagemDevolucaoNaoPermitida] = useState('');
     const [concluindoPeriodo, setConcluindoPeriodo] = useState(false);
     const concluindoPeriodoRef = useRef(false);
+    const dadosPresidenteRef = useRef(null);
+    const [assinaturaValida, setAssinaturaValida] = useState(false);
+    const v2Ativa = visoesService.featureFlagAtiva('historico-de-membros-v2');
+    const v1Ativa = !v2Ativa && visoesService.featureFlagAtiva('historico-de-membros');
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -291,7 +296,11 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
             concluindoPeriodoRef.current = true;
             setConcluindoPeriodo(true);
             try {
-                let status_concluir_periodo = await postConcluirPeriodo(periodoPrestacaoDeConta.periodo_uuid, justificativaPendencia);
+                let status_concluir_periodo = await postConcluirPeriodo(
+                    periodoPrestacaoDeConta.periodo_uuid,
+                    justificativaPendencia,
+                    dadosPresidenteRef.current
+                );
                 setUuidPrestacaoConta(status_concluir_periodo.uuid);
                 let status = await getStatusPeriodoPorData(localStorage.getItem(ASSOCIACAO_UUID), periodoPrestacaoDeConta.data_inicial);
                 setStatusPrestacaoDeConta(status);
@@ -788,7 +797,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                     </section>
                     <section>
                         <ModalConcluirPeriodo
-                            show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluir}
+                            show={(v2Ativa || v1Ativa) ? showModalConcluirAcertosSemPendencias : showConcluir}
                             handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
                             confirmando={concluindoPeriodo}
@@ -811,18 +820,28 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                     </section>
                     <section>
                         <ModalAvisoAssinatura 
-                            show={(showConcluirAcertosSemPendencias || showConcluir) && visoesService.featureFlagAtiva('historico-de-membros') && !showModalConcluirAcertosSemPendencias}
+                            show={(showConcluirAcertosSemPendencias || showConcluir) && (v2Ativa || v1Ativa) && !showModalConcluirAcertosSemPendencias}
+                            handleClose={onHandleClose}
                             primeiroBotaoOnclick={goToMembrosAssociacao}
                             segundoBotaoOnclick={() => setShowModalConcluirAcertosSemPendencias(true)}
+                            segundoBotaoDisabled={v2Ativa && !assinaturaValida}
+                            bodyContent={v2Ativa && (showConcluirAcertosSemPendencias || showConcluir) && !showModalConcluirAcertosSemPendencias ? (
+                                <CamposStatusPresidente
+                                    onDefinir={(dados, valido) => {
+                                        dadosPresidenteRef.current = dados;
+                                        setAssinaturaValida(valido);
+                                    }}
+                                />
+                            ) : null}
                             titulo="Assinaturas do Demonstrativo e da Relação de bens"
-                            texto="<p>Os campos de assinatura do Demonstrativo e da Relação de Bens, se houver, serão exibidos conforme os membros ativos da Associação na presente data. Caso precise realizar alguma atualização nos membros, faço-o primeiro e depois conclua o período /acertos.</p>"
+                            texto="<p>Os campos de assinatura do Demonstrativo e da Relação de Bens, se houver, serão exibidos conforme os membros ativos da Associação na presente data. Caso precise realizar alguma atualização nos membros, faço-o primeiro e depois conclua o período/acertos.</p>"
                             dataQa="modal-aviso-assinatura-demonstrativo-relacao-bens"
                             segundoBotaoTexto={textoBotaoConcluir(statusPrestacaoDeConta)}
                         />
                     </section>
                     <section>
                         <ModalConcluirAcertoSemPendencias
-                            show={visoesService.featureFlagAtiva('historico-de-membros') ? showModalConcluirAcertosSemPendencias : showConcluirAcertosSemPendencias}
+                            show={(v2Ativa || v1Ativa) ? showModalConcluirAcertosSemPendencias : showConcluirAcertosSemPendencias}
                             handleClose={onHandleClose}
                             onConcluir={onConcluirSemPendencias}
                             confirmando={concluindoPeriodo}
