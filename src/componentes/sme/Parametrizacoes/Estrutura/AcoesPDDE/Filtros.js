@@ -1,11 +1,11 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 
 export const Filtros = ({
     stateFiltros,
     initialStateFiltros,
-    handleSubmitFiltros, 
+    handleSubmitFiltros,
     limpaFiltros,
-    categorias
+    programas
 }) => {
 
     const [formFilter, setFormFilter] = useState(stateFiltros);
@@ -44,16 +44,16 @@ export const Filtros = ({
 
                     </div>
                     <div className="form-group col-md-4">
-                        <label htmlFor="filtrar_por_categoria">Filtrar por programa</label>
+                        <label htmlFor="filtrar_por_programa">Filtrar por programa</label>
                             <select
-                                value={formFilter.filtrar_por_categoria}
+                                value={formFilter.filtrar_por_programa}
                                 onChange={(e) => handleChangeFormFilter(e.target.name, e.target.value)}
-                                name="filtrar_por_categoria"
-                                id="filtrar_por_categoria"
+                                name="filtrar_por_programa"
+                                id="filtrar_por_programa"
                                 className="form-control">
                                 <option value="">Selecione o programa</option>
-                                {categorias && categorias.results && categorias.results.map((categoria)=>
-                                    <option key={categoria.uuid} value={categoria.uuid}>{categoria.nome}</option>
+                                {programas && programas.results && programas.results.map((programa)=>
+                                    <option key={programa.uuid} value={programa.uuid}>{programa.nome}</option>
                                 )}
                             </select>
                     </div>

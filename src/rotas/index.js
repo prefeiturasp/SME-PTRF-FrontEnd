@@ -123,6 +123,7 @@ import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposRec
 import { EdicaoTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/EdicaoTipoReceita";
 import { TiposDeCredito } from "../componentes/sme/Parametrizacoes/Receitas/TiposDeCredito";
 import { AcoesPDDE } from "../componentes/sme/Parametrizacoes/Estrutura/AcoesPDDE";
+import { ProgramasPDDE } from "../componentes/sme/Parametrizacoes/Estrutura/ProgramasPDDE";
 import { PaginaCadastroHistoricoDeMembros } from "../componentes/escolas/MembrosDaAssociacao/pages/PaginaCadastroHistoricoDeMembros";
 import { ChamaTypescriptFirstComponent } from "../componentes/ChamaTypescriptFirstComponent";
 import { PaginaDetalhePrestacaoContaReprovadaNaoApresentacao } from "../componentes/dres/PrestacaoDeContas/DetalhePrestacaoDeContasNaoApresentada/pages/PaginaDetalhePrestacaoContaReprovadaNaoApresentacao";
@@ -700,6 +701,13 @@ const routesConfig = [
     exact: true,
     path: "/parametro-acoes-pdde",
     component: AcoesPDDE,
+    permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
+    featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/parametro-programas-pdde",
+    component: ProgramasPDDE,
     permissoes: ["access_painel_parametrizacoes", "change_painel_parametrizacoes"],
     featureFlag: "paa",
   },
