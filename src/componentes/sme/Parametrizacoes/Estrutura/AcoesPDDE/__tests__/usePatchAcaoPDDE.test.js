@@ -40,11 +40,11 @@ describe("usePatchtAcaoPDDE", () => {
         await act(async () => {
             result.current.mutationPatch.mutate({
                 UUID: "4d272c66-0d2a-4f77-9979-6afeaec39332",
-                payload: { nome: "Acao 1", categoria: 1 },
+                payload: { nome: "Acao 1", programa: "uuid-programa-1" },
             });
         });
 
-        expect(patchAcoesPDDE).toHaveBeenCalledWith("4d272c66-0d2a-4f77-9979-6afeaec39332", { nome: "Acao 1", categoria: 1 });
+        expect(patchAcoesPDDE).toHaveBeenCalledWith("4d272c66-0d2a-4f77-9979-6afeaec39332", { nome: "Acao 1", programa: "uuid-programa-1" });
         expect(setModalForm).toHaveBeenCalledWith({ open: false });
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Sucesso", "Edição da Ação PDDE realizado com sucesso."
@@ -59,7 +59,7 @@ describe("usePatchtAcaoPDDE", () => {
         await act(async () => {
             result.current.mutationPatch.mutate({
                 UUID: "4d272c66-0d2a-4f77-9979-6afeaec39332",
-                payload: { nome: "Acao 1", categoria: 1 },
+                payload: { nome: "Acao 1", programa: "uuid-programa-1" },
             });
         });
 

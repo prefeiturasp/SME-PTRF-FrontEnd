@@ -4,14 +4,14 @@ import { useAcoesPDDE } from "../hooks/useAcoesPDDE";
 import { usePatchAcaoPDDE } from "../hooks/usePatchAcaoPDDE";
 import { usePostAcaoPDDE } from "../hooks/usePostAcaoPDDE";
 import { useGetAcoesPDDE } from "../hooks/useGetAcoesPDDE";
-import { useGetCategorias } from "../hooks/useGetCategorias";
+import { useGetProgramasSelect } from "../hooks/useGetProgramasSelect";
 import { useDeleteAcao } from "../hooks/useDeleteAcaoPDDE";
 
 
 jest.mock("../hooks/usePatchAcaoPDDE");
 jest.mock("../hooks/usePostAcaoPDDE");
 jest.mock("../hooks/useGetAcoesPDDE");
-jest.mock("../hooks/useGetCategorias");
+jest.mock("../hooks/useGetProgramasSelect");
 jest.mock("../hooks/useDeleteAcaoPDDE");
 
 
@@ -25,7 +25,7 @@ describe("useAcoesPDDE", () => {
         usePostAcaoPDDE.mockReturnValue({ mutationPost: mockPostAcaoMutation });
         useDeleteAcao.mockReturnValue({ mutationDelete: mockDeleteAcaoMutation });
         useGetAcoesPDDE.mockReturnValue({ isLoading: false, isError: false, data: [], error: "", refetch: jest.fn() });
-        useGetCategorias.mockReturnValue({ isLoading: false, isError: false, data: [], error: "", refetch: jest.fn() });
+        useGetProgramasSelect.mockReturnValue({ isLoading: false, isError: false, data: [], error: "", refetch: jest.fn() });
     })
 
     it("deve abrir e fechar o modal de criar corretamente", () => {
@@ -46,7 +46,7 @@ describe("useAcoesPDDE", () => {
         const { result } = renderHook(() => useAcoesPDDE());
         
         act(() => {
-            result.current.handleOpenModalForm({categoria: ""});
+            result.current.handleOpenModalForm({programa: ""});
         });
         expect(result.current.modalForm.open).toBe(true);
         expect(result.current.modalForm.operacao).toBe("edit");
@@ -88,7 +88,7 @@ describe("useAcoesPDDE", () => {
         await act(async () => {
             await result.current.handleSubmitFormModal({
                 nome: "Acao pdde 1",
-                categoria: "Categoria pdde 1",
+                programa: "uuid-programa-1",
                 aceita_capital: true,
                 aceita_custeio: true,
                 aceita_livre_aplicacao: true,
@@ -106,7 +106,7 @@ describe("useAcoesPDDE", () => {
         await act(async () => {
             await result.current.handleSubmitFormModal({
                 nome: "Acao pdde 2",
-                categoria: "Categoria pdde 1",
+                programa: "uuid-programa-1",
                 aceita_capital: true,
                 aceita_custeio: true,
                 aceita_livre_aplicacao: true,

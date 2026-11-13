@@ -1039,19 +1039,25 @@ export const deleteTipoDeTransacao = async (tag_uuid) => {
   return await api.delete(`/api/tipos-transacao/${tag_uuid}/`, authHeader());
 };
 
-// Ações PDDE
-export const getAcoesPDDECategorias = async () => {
-    return (await api.get(`/api/programas-pdde/?page1&page_size=100`, authHeader())).data
+// Programas PDDE
+export const getProgramasPDDESelect = async () => {
+    return (await api.get(`/api/programas-pdde/?page=1&page_size=100`, authHeader())).data
 };
-export const postAcoesPDDECategorias = async (payload) => {
+export const getProgramasPDDE = async (filtros = {}, page = 1, page_size = 20) => {
+    return (await api.get(`/api/programas-pdde/`, {...authHeader(), params: {...filtros, page, page_size}})).data
+};
+export const postProgramaPDDE = async (payload) => {
     return (await api.post(`/api/programas-pdde/`, payload, authHeader())).data
 };
-export const patchAcoesPDDECategorias = async (uuid, payload) => {
+export const patchProgramaPDDE = async (uuid, payload) => {
     return (await api.patch(`/api/programas-pdde/${uuid}/`, payload, authHeader())).data
 };
-export const deleteAcoesPDDECategorias = async (categoriaUuid) => {
-    return (await api.delete(`/api/programas-pdde/${categoriaUuid}/`, authHeader())).data
+export const deleteProgramaPDDE = async (uuid) => {
+    return (await api.delete(`/api/programas-pdde/${uuid}/`, authHeader())).data
 };
+// Fim Programas PDDE
+
+// Ações PDDE
 export const deleteAcoesPDDE = async (uuid) => {
     return (await api.delete(`/api/acoes-pdde/${uuid}/`, authHeader())).data
 };
