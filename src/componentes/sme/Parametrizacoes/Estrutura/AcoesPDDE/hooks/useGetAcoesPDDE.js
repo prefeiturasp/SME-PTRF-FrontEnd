@@ -3,9 +3,8 @@ import { getAcoesPDDE } from "../../../../../../services/sme/Parametrizacoes.ser
 
 export const useGetAcoesPDDE = (filtros, currentPage, rowsPerPage) => {
     const { isFetching, isError, data = [], error, refetch } = useQuery({
-        queryKey: ['acoes', filtros, currentPage],
-        queryFn: ()=> getAcoesPDDE(filtros.filtrar_por_nome, filtros.filtrar_por_categoria, currentPage, rowsPerPage),
-        keepPreviousData: true,
+        queryKey: ['acoes-pdde', filtros, currentPage],
+        queryFn: ()=> getAcoesPDDE(filtros.filtrar_por_nome, filtros.filtrar_por_programa, currentPage, rowsPerPage),
         staleTime: 5000, // 5 segundos
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
     });

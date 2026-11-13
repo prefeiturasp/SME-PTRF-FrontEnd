@@ -1,9 +1,8 @@
-import { useState, useCallback } from "react";
-import moment from "moment";
+import { useState } from "react";
 import { usePatchAcaoPDDE } from "./usePatchAcaoPDDE";
 import { usePostAcaoPDDE } from "./usePostAcaoPDDE";
 import { useGetAcoesPDDE } from "./useGetAcoesPDDE";
-import { useGetCategorias } from "./useGetCategorias";
+import { useGetProgramasSelect } from "./useGetProgramasSelect";
 import { useDeleteAcao } from "./useDeleteAcaoPDDE";
 import { RetornaSeTemPermissaoEdicaoPainelParametrizacoes } from "../../../RetornaSeTemPermissaoEdicaoPainelParametrizacoes";
 
@@ -19,7 +18,7 @@ const initialStateFormModal = {
     operacao: 'create',
     open: false
 };
-const initialStateFiltros = { filtrar_por_nome: "", filtrar_por_categoria: "" };
+const initialStateFiltros = { filtrar_por_nome: "", filtrar_por_programa: "" };
 const rowsPerPage = 20;
 
 export const useAcoesPDDE = () => {
@@ -36,7 +35,7 @@ export const useAcoesPDDE = () => {
     const { mutationPost } = usePostAcaoPDDE(setModalForm);
     const { mutationDelete } = useDeleteAcao(setModalForm, setErroExclusaoNaoPermitida, setShowModalInfoExclusaoNaoPermitida);
     const { isLoading, isError, data: acoes, error, refetch, count } = useGetAcoesPDDE(stateFiltros, currentPage, rowsPerPage);
-    const { isLoading: isLoadingCategoria, isError: isErrorCategoria, data: categorias, error: errorCategoria, refetch: refetchCategoria } = useGetCategorias();
+    const { data: programas } = useGetProgramasSelect();
     const handleOpenCreateModal = () => setModalForm({ ...initialStateFormModal, open: true });
 
     const handleClose = () => setModalForm(initialStateFormModal);
@@ -95,7 +94,7 @@ export const useAcoesPDDE = () => {
         isLoading,
         refetch,
         count,
-        categorias,
+        programas,
         acoes,
         currentPage,
         firstPage,

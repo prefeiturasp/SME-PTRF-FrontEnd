@@ -39,11 +39,11 @@ describe("usePostAcaoPDDE", () => {
 
         await act(async () => {
             result.current.mutationPost.mutate({
-                payload: { nome: "Acao 1", categoria: 1 },
+                payload: { nome: "Acao 1", programa: "uuid-programa-1" },
             });
         });
 
-        expect(postAcoesPDDE).toHaveBeenCalledWith({ nome: "Acao 1", categoria: 1 });
+        expect(postAcoesPDDE).toHaveBeenCalledWith({ nome: "Acao 1", programa: "uuid-programa-1" });
         expect(setModalForm).toHaveBeenCalledWith({ open: false });
         expect(toastCustom.ToastCustomSuccess).toHaveBeenCalledWith(
             "Sucesso.",
@@ -58,7 +58,7 @@ describe("usePostAcaoPDDE", () => {
 
         await act(async () => {
             result.current.mutationPost.mutate({
-                payload: { nome: "Acao 1", categoria: 1 },
+                payload: { nome: "Acao 1", programa: "uuid-programa-1" },
             });
         });
 
