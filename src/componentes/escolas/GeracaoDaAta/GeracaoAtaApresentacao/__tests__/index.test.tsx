@@ -98,10 +98,10 @@ describe('GeracaoAtaApresentacao - habilitação do botão "gerar ata"', () => {
         render(<GeracaoAtaApresentacao {...defaultProps} />);
 
         await waitFor(() => {
-            expect(screen.getByRole('button', { name: 'gerar ata' })).toBeEnabled();
+            expect(screen.getByRole('button', { name: 'Gerar ata' })).toBeEnabled();
         });
 
-        await userEvent.click(screen.getByRole('button', { name: 'gerar ata' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Gerar ata' }));
 
         return screen.findByRole('dialog');
     }
@@ -210,11 +210,11 @@ describe('GeracaoAtaApresentacao - habilitação do botão "gerar ata"', () => {
         render(<GeracaoAtaApresentacao {...defaultProps} />);
 
         await waitFor(() => {
-            expect(screen.getByRole('button', { name: 'gerar ata' })).toBeEnabled();
+            expect(screen.getByRole('button', { name: 'Gerar ata' })).toBeEnabled();
         });
         expect(getAtas).toHaveBeenCalledTimes(1);
 
-        await userEvent.click(screen.getByRole('button', { name: 'gerar ata' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Gerar ata' }));
 
         await waitFor(() => {
             expect(getAtas).toHaveBeenCalledTimes(2);
@@ -287,10 +287,10 @@ describe('GeracaoAtaApresentacao - habilitação do botão "gerar ata"', () => {
         render(<GeracaoAtaApresentacao {...defaultProps} />);
 
         await waitFor(() => {
-            expect(screen.getByRole('button', { name: 'gerar ata' })).toBeEnabled();
+            expect(screen.getByRole('button', { name: 'Gerar ata' })).toBeEnabled();
         });
 
-        await userEvent.click(screen.getByRole('button', { name: 'gerar ata' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Gerar ata' }));
 
         expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith('historico-de-membros-v2');
         expect(getGerarAtaPdf).toHaveBeenCalledTimes(1);
@@ -307,10 +307,10 @@ describe('GeracaoAtaApresentacao - habilitação do botão "gerar ata"', () => {
         render(<GeracaoAtaApresentacao {...defaultProps} />);
 
         await waitFor(() => {
-            expect(screen.getByRole('button', { name: 'gerar ata' })).toBeEnabled();
+            expect(screen.getByRole('button', { name: 'Gerar ata' })).toBeEnabled();
         });
 
-        await userEvent.click(screen.getByRole('button', { name: 'gerar ata' }));
+        await userEvent.click(screen.getByRole('button', { name: 'Gerar ata' }));
 
         expect(getGerarAtaPdf).toHaveBeenCalledTimes(1);
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
