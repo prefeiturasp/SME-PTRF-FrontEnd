@@ -86,7 +86,7 @@ export function Form() {
                         setFieldValue,
                     } = props;
 
-                    let nome_dre_tratado = props.values?.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim() || '';
+                    const nome_dre_tratado = props.values?.nome_dre?.trim() || '';
 
                     return(
                         <>

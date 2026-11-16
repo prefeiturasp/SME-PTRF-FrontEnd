@@ -103,14 +103,13 @@ describe("Componente Form", () => {
     expect(screen.queryByLabelText(/Nome\*/i)).not.toBeInTheDocument();
   });
 
-  it("deve renderizar os campos do formulário preenchidos e tratar o nome da DRE", () => {
+  it("deve renderizar os campos do formulário preenchidos", () => {
     render(<Form />);
 
     expect(screen.getByLabelText(/Nome\*/i)).toHaveValue("Associação Teste");
     expect(screen.getByLabelText(/Código EOL\*/i)).toHaveValue("987654");
     expect(screen.getByLabelText(/Unidade educacional/i)).toHaveValue("EMEF Escola Exemplo");
-    // Verifica a remoção de "DIRETORIA REGIONAL DE EDUCACAO" via regex no componente
-    expect(screen.getByLabelText(/DRE/i)).toHaveValue("BUTANTA");
+    expect(screen.getByLabelText(/DRE/i)).toHaveValue("DIRETORIA REGIONAL DE EDUCACAO BUTANTA");
     expect(screen.getByText("ID: 123")).toBeInTheDocument();
   });
 

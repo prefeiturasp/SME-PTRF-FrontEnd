@@ -82,7 +82,7 @@ export const AssociacaoFormularioProvider = ({children}) => {
     const formatDataAssociacaoListagem = (data) => {
         if (!data) return {...initialStateForm};
 
-        const nome_dre = data.nome_dre?.replace(/DIRETORIA REGIONAL DE EDUCACAO\s*/i, '').trim()
+        const nome_dre = data?.unidade?.dre?.nome?.trim()
 
         return {
             ...initialStateForm,
