@@ -162,7 +162,7 @@ export const BoxAtaRetificadora = ({
                                     title={!(docPrestacaoConta?.gerar_ou_editar_ata_retificacao) ? 'A ata de retificação só pode ser gerada enquanto o status da PC for "Retornada após acertos".': ''}
                                     data-qa="btn-gerar-ata-retificacao"
                                 >
-                                    gerar ata
+                                    Gerar ata
                                 </button>
                             }
                         </div>

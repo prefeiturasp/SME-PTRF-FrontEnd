@@ -164,7 +164,7 @@ export const GeracaoAtaApresentacao = (
                                 title={!(docPrestacaoConta?.gerar_ou_editar_ata_apresentacao) ? 'A ata de apresentação só pode ser gerada enquanto o status da PC for "Não recebida".': ''}
                                 data-qa="btn-gerar-ata"
                             >
-                                gerar ata
+                                Gerar ata
                             </button>
 
                         </div>

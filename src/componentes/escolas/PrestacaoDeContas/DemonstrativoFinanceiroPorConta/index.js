@@ -232,21 +232,21 @@ export default class DemonstrativoFinanceiroPorConta extends Component {
                     </div>
                     <div className="actions">
                         {this.props.podeGerarPrevias && !mensagem.includes('Não houve') && this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.gerar_previas && this.props.statusPrestacaoDeConta.prestacao_contas_status && !this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados &&
-                            <button 
-                                onClick={(e) => this.showPrevia()} 
-                                type="button" 
-                                disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados} 
+                            <button
+                                onClick={(e) => this.showPrevia()}
+                                type="button"
+                                disabled={this.props.statusPrestacaoDeConta && this.props.statusPrestacaoDeConta.prestacao_contas_status && this.props.statusPrestacaoDeConta.prestacao_contas_status.documentos_gerados}
                                 className="btn btn-outline-success mr-2"
                                 data-qa='btn-abrir-modal-previa-demonstrativo-financeiro'
                             >
-                                prévia 
+                                Prévia
                             </button>
                         }
                     </div>
                 </article>
-                <ModalPrevia 
-                    show={this.state.show} 
-                    onHide={this.onHide} 
+                <ModalPrevia
+                    show={this.state.show}
+                    onHide={this.onHide}
                     titulo="Geração de documento prévio"
                     data_inicio={this.state.data_inicio}
                     data_fim={this.state.data_fim}
