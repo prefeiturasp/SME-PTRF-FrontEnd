@@ -11,7 +11,7 @@ interface IHeaderDocumentosProps {
     unidadeNome?: string;
     codigoEol?: number | string;
     referencia?: string;
-    estaEmRetificacao?: boolean;
+    status: string;
 }
 
 export const HeaderDocumentos: React.FC<IHeaderDocumentosProps> = ({
@@ -19,7 +19,7 @@ export const HeaderDocumentos: React.FC<IHeaderDocumentosProps> = ({
     unidadeNome,
     codigoEol,
     referencia,
-    estaEmRetificacao = false,
+    status
 }) => {
     const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ export const HeaderDocumentos: React.FC<IHeaderDocumentosProps> = ({
 
                     <div>
                         <strong>Status:</strong>
-                        <span>{estaEmRetificacao ? 'Em Retificação' : 'Gerado'}</span>
+                        <span>{status}</span>
                     </div>
                 </div>
             </div>
