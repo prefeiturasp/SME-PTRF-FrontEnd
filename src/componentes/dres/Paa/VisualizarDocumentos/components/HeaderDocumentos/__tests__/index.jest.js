@@ -28,6 +28,7 @@ describe('HeaderDocumentos', () => {
                     unidadeNome='Escola ABC'
                     codigoEol={123456}
                     referencia='01/2024'
+                    status='Em retificação'
                 />,
             );
 
@@ -44,34 +45,7 @@ describe('HeaderDocumentos', () => {
             expect(screen.getByText('01/2024')).toBeInTheDocument();
 
             expect(screen.getByText('Status:')).toBeInTheDocument();
-            expect(screen.getByText('Gerado')).toBeInTheDocument();
-        });
-
-        it('deve renderizar o status "Em Retificação" quando estaEmRetificacao for true', () => {
-            render(
-                <HeaderDocumentos
-                    unidadeTipo='CEI'
-                    unidadeNome='Unidade XPTO'
-                    codigoEol={999}
-                    referencia='02/2024'
-                    estaEmRetificacao
-                />,
-            );
-
-            expect(screen.getByText('Em Retificação')).toBeInTheDocument();
-        });
-
-        it('deve renderizar o status "Gerado" por padrão quando estaEmRetificacao não for informado', () => {
-            render(
-                <HeaderDocumentos
-                    unidadeTipo='DRE'
-                    unidadeNome='Diretoria Regional'
-                    codigoEol={111}
-                    referencia='03/2024'
-                />,
-            );
-
-            expect(screen.getByText('Gerado')).toBeInTheDocument();
+            expect(screen.getByText('Em retificação')).toBeInTheDocument();
         });
 
         it('deve renderizar o botão de voltar com ícone', () => {
@@ -95,7 +69,6 @@ describe('HeaderDocumentos', () => {
             expect(screen.getByText('Vigência:')).toBeInTheDocument();
             expect(screen.getByText('Status:')).toBeInTheDocument();
 
-            expect(screen.getByText('Gerado')).toBeInTheDocument();
         });
     });
 
@@ -117,18 +90,6 @@ describe('HeaderDocumentos', () => {
     });
 
     describe('cenários condicionais', () => {
-        it('deve alternar corretamente entre os status "Gerado" e "Em Retificação"', () => {
-            const { rerender } = render(<HeaderDocumentos estaEmRetificacao={false} />);
-
-            expect(screen.getByText('Gerado')).toBeInTheDocument();
-            expect(screen.queryByText('Em Retificação')).not.toBeInTheDocument();
-
-            rerender(<HeaderDocumentos estaEmRetificacao />);
-
-            expect(screen.getByText('Em Retificação')).toBeInTheDocument();
-            expect(screen.queryByText('Gerado')).not.toBeInTheDocument();
-        });
-
         it('deve aceitar codigoEol como string', () => {
             render(<HeaderDocumentos codigoEol='ABC123' referencia='04/2024' />);
 

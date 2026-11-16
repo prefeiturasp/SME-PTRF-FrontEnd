@@ -71,11 +71,8 @@ jest.mock('../components/PaaCard/PaaCard', () => ({
 describe('VisualizarDocumentos', () => {
     const vigenteMock = {
         uuid: 'vigente-123',
-
         referencia: '2024',
-
-        esta_em_retificacao: true,
-
+        status: "Retificado",
         unidade: {
             tipo: 'EMEF',
             nome: 'Escola Teste',
@@ -148,7 +145,7 @@ describe('VisualizarDocumentos', () => {
                     unidadeNome: 'Escola Teste',
                     codigoEol: '123456',
                     referencia: '2024',
-                    estaEmRetificacao: true,
+                    status: 'Retificado',
                 }),
             );
         });

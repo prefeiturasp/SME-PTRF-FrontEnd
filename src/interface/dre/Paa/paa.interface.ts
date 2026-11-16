@@ -131,6 +131,7 @@ export interface IUnidadeVisualizacaoPaa {
 }
 export interface IVigentePaa {
     uuid: string;
+    status: string;
     referencia: string;
     pode_retificar: boolean;
     esta_em_retificacao: boolean;
