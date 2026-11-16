@@ -1,13 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
 import {Switch} from "antd";
 import {ASSOCIACAO_UUID} from "../../../services/auth.service";
-import {getStatusPresidente} from "../../../services/escolas/PrestacaoDeContas.service";
 import {
     getConselheirosAssinaturaVacancia,
     getSubstitutosPresidenteVacancia,
 } from "../../../services/MandatosVacancia.service";
 
-export const CamposStatusPresidente = ({onDefinir}) => {
+export const CamposStatusPresidente = ({onDefinir, statusDoPeriodo, cargoDoPeriodo, conselheiroDoPeriodo}) => {
     const [status, setStatus] = useState("PRESENTE");
     const [cargo, setCargo] = useState("");
     const [cargos, setCargos] = useState([]);
@@ -22,8 +21,7 @@ export const CamposStatusPresidente = ({onDefinir}) => {
         const carregar = async () => {
             const uuid = localStorage.getItem(ASSOCIACAO_UUID);
             try {
-                const [statusAtual, lista, listaConselheiros] = await Promise.all([
-                    getStatusPresidente(uuid),
+                const [lista, listaConselheiros] = await Promise.all([
                     getSubstitutosPresidenteVacancia(uuid),
                     getConselheirosAssinaturaVacancia(uuid),
                 ]);
@@ -32,16 +30,12 @@ export const CamposStatusPresidente = ({onDefinir}) => {
                 }
                 const listaCargos = Array.isArray(lista) ? lista : [];
                 const listaConselho = Array.isArray(listaConselheiros) ? listaConselheiros : [];
-                const statusInicial = statusAtual && statusAtual.status_presidente === "AUSENTE" ? "AUSENTE" : "PRESENTE";
-                const cargoSalvo = statusAtual && statusAtual.cargo_substituto_presidente_ausente
-                    ? statusAtual.cargo_substituto_presidente_ausente
+                const statusInicial = statusDoPeriodo === "AUSENTE" ? "AUSENTE" : "PRESENTE";
+                const cargoValido = statusInicial === "AUSENTE" && listaCargos.some((item) => item.id === cargoDoPeriodo)
+                    ? cargoDoPeriodo
                     : "";
-                const cargoValido = listaCargos.some((item) => item.id === cargoSalvo) ? cargoSalvo : "";
-                const conselheiroSalvo = statusAtual && statusAtual.cargo_conselheiro_assinatura
-                    ? statusAtual.cargo_conselheiro_assinatura
-                    : "";
-                const conselheiroValido = listaConselho.some((item) => item.id === conselheiroSalvo)
-                    ? conselheiroSalvo
+                const conselheiroValido = listaConselho.some((item) => item.id === conselheiroDoPeriodo)
+                    ? conselheiroDoPeriodo
                     : "";
                 setCargos(listaCargos);
                 setConselheiros(listaConselho);
@@ -58,7 +52,7 @@ export const CamposStatusPresidente = ({onDefinir}) => {
         return () => {
             ativo = false;
         };
-    }, []);
+    }, [statusDoPeriodo, cargoDoPeriodo, conselheiroDoPeriodo]);
 
     useEffect(() => {
         const substitutoValido = status === "PRESENTE" || !!cargo;

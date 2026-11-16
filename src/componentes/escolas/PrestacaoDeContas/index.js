@@ -69,6 +69,7 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
     const [assinaturaValida, setAssinaturaValida] = useState(false);
     const v2Ativa = visoesService.featureFlagAtiva('historico-de-membros-v2');
     const v1Ativa = !v2Ativa && visoesService.featureFlagAtiva('historico-de-membros');
+    const statusPeriodo = statusPrestacaoDeConta && statusPrestacaoDeConta.prestacao_contas_status;
 
     const associacaoUuid = localStorage.getItem(ASSOCIACAO_UUID)
 
@@ -827,6 +828,9 @@ export const PrestacaoDeContas = ({setStatusPC, registroFalhaGeracaoPc, setRegis
                             segundoBotaoDisabled={v2Ativa && !assinaturaValida}
                             bodyContent={v2Ativa && (showConcluirAcertosSemPendencias || showConcluir) && !showModalConcluirAcertosSemPendencias ? (
                                 <CamposStatusPresidente
+                                    statusDoPeriodo={statusPeriodo && statusPeriodo.status_presidente}
+                                    cargoDoPeriodo={statusPeriodo && statusPeriodo.cargo_substituto_presidente_ausente}
+                                    conselheiroDoPeriodo={statusPeriodo && statusPeriodo.cargo_conselheiro_assinatura}
                                     onDefinir={(dados, valido) => {
                                         dadosPresidenteRef.current = dados;
                                         setAssinaturaValida(valido);
