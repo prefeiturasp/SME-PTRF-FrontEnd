@@ -3,6 +3,7 @@ import { PaginasContainer } from "../../../../../paginas/PaginasContainer";
 import { IconButton } from "../../../../Globais/UI/Button/IconButton";
 import Loading from "../../../../../utils/Loading";
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import "../AcoesPDDE/abas-acoes-pdde.scss";
 import { MenuInterno } from "../../../../Globais/MenuInterno";
 import { ModalConfirmarExclusao as ModalConfirmar } from "../../componentes/ModalConfirmarExclusao";
 import Img404 from "../../../../../assets/img/img-404.svg"
@@ -37,10 +38,8 @@ export const ProgramasPDDE = () => {
     return (
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Ações PDDE</h1>
-            <div className="page-content-inner pb-0">
+            <div className="page-content-inner abas-acoes-pdde">
                 <MenuInterno caminhos_menu_interno={UrlsMenuInterno}/>
-            </div>
-            <div className="page-content-inner">
                 <div className="d-flex justify-content-end pb-4 mt-2">
                     <IconButton
                         icon="faPlus"
