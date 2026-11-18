@@ -37,7 +37,7 @@ describe("usePostReceitaPrevistaPdde", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.setItem("PAA", "fake-uuid-paa");
+    sessionStorage.setItem("PAA", "fake-uuid-paa");
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },

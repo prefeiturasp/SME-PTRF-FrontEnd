@@ -9,6 +9,8 @@ jest.mock("../hooks/usePatchReceitaPrevistaPdde");
 jest.mock("../hooks/usePostReceitaPrevistaPdde");
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: () => true,
   },
 }));
@@ -42,7 +44,7 @@ describe("ModalEdicaoAcaoPdde", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    localStorage.setItem("PAA", "fake-uuid-paa");
+    sessionStorage.setItem("PAA", "fake-uuid-paa");
 
     queryClient = new QueryClient({
       defaultOptions: {

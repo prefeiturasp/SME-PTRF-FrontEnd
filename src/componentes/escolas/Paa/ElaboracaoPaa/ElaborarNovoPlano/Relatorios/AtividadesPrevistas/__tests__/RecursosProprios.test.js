@@ -22,6 +22,8 @@ jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
 
 jest.mock("../../../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: jest.fn(),
   },
 }));
@@ -468,7 +470,7 @@ describe("RecursosProprios", () => {
       await act(async () => {
         fireEvent.click(screen.getByText("Editar receitas de recursos próprios"));
       });
-      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa/paa-uuid-test", {
         state: {
           activeTab: "receitas",
           receitasDestino: "recursos-proprios",

@@ -39,14 +39,14 @@ describe("RelSecaoObjetivos", () => {
   });
 
   test("renderiza itens da API", async () => {
-    renderWithProviders(<RelSecaoObjetivos paaVigente={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
+    renderWithProviders(<RelSecaoObjetivos paaAtual={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
 
     expect(screen.getByText("Objetivo Existente 1")).toBeInTheDocument();
     expect(screen.getByText("Objetivo Existente 2")).toBeInTheDocument();
   });
 
   test("marca um objetivo quando checkbox é clicado", () => {
-    renderWithProviders(<RelSecaoObjetivos paaVigente={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
+    renderWithProviders(<RelSecaoObjetivos paaAtual={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
 
     const checkbox = screen.getAllByRole("checkbox")[0];
     fireEvent.click(checkbox);
@@ -56,7 +56,7 @@ describe("RelSecaoObjetivos", () => {
 
   test("altera, salva e remove objetivo existente", () => {
     renderWithProviders(
-      <RelSecaoObjetivos paaVigente={{ objetivos: [{ uuid: "3", paa: "uuid-paa" }] }} onSalvarObjetivos={jest.fn()} />
+      <RelSecaoObjetivos paaAtual={{ objetivos: [{ uuid: "3", paa: "uuid-paa" }] }} onSalvarObjetivos={jest.fn()} />
     );
 
     const editButton = screen.getAllByLabelText("Editar")[0];
@@ -80,7 +80,7 @@ describe("RelSecaoObjetivos", () => {
   test("adiciona, altera, salva e remove novo objetivo", () => {
     global.crypto = { randomUUID: () => "mocked-uuid" };
 
-    renderWithProviders(<RelSecaoObjetivos paaVigente={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
+    renderWithProviders(<RelSecaoObjetivos paaAtual={{ objetivos: [] }} onSalvarObjetivos={jest.fn()} />);
 
     fireEvent.click(screen.getByText("Adicionar mais objetivos"));
 
@@ -104,7 +104,7 @@ describe("RelSecaoObjetivos", () => {
   test("ao salvar, chama onSalvarObjetivos com payload correto", async () => {
     const mockSave = jest.fn();
 
-    renderWithProviders(<RelSecaoObjetivos paaVigente={{ objetivos: [] }} onSalvarObjetivos={mockSave} />);
+    renderWithProviders(<RelSecaoObjetivos paaAtual={{ objetivos: [] }} onSalvarObjetivos={mockSave} />);
 
     const checkboxObjetivoExistente = screen.getAllByRole("checkbox")[0];
     fireEvent.click(checkboxObjetivoExistente);

@@ -38,7 +38,9 @@ describe("VisualizarPlanoAplicacao", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         localStorage.clear();
-        localStorage.setItem("PAA", "paa-uuid-123");
+        sessionStorage.clear();
+        sessionStorage.setItem("PAA", "paa-uuid-123");
+        visoesService.featureFlagAtiva.mockImplementation((flag) => flag === "paa-proxima-vigencia");
 
         useNavigate.mockReturnValue(mockNavigate);
 
@@ -91,7 +93,7 @@ describe("VisualizarPlanoAplicacao", () => {
                 screen.getByRole("button", { name: /editar informações/i }),
             );
 
-            expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+            expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa/paa-uuid-123", {
                 state: {
                     activeTab: "prioridades-list",
                     fromPlanoAplicacao: true,
@@ -104,7 +106,7 @@ describe("VisualizarPlanoAplicacao", () => {
 
             fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
 
-            expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+            expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa/paa-uuid-123", {
                 state: {
                     activeTab: "relatorios",
                     expandedSections: { planoAnual: true, componentes: true },

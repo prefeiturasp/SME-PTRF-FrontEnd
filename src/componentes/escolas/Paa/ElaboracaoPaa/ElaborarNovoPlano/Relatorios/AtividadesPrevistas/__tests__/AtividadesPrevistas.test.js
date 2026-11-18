@@ -30,6 +30,8 @@ jest.mock("../../../../../../../../services/escolas/Paa.service", () => ({
 
 jest.mock("../../../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: jest.fn(() => true),
   },
 }));
@@ -168,14 +170,14 @@ describe("AtividadesPrevistas", () => {
     updateAtividadeEstatutariaPaa.mockResolvedValue({});
     deleteAtividadeEstatutariaPaa.mockResolvedValue({});
     linkAtividadeEstatutariaExistentePaa.mockResolvedValue({});
-    localStorage.setItem("PAA", PAA_UUID);
-    localStorage.removeItem("DADOS_PAA");
+    sessionStorage.setItem("PAA", PAA_UUID);
+    sessionStorage.removeItem("DADOS_PAA");
     setupDefaultMocks();
   });
 
   afterEach(() => {
-    localStorage.removeItem("PAA");
-    localStorage.removeItem("DADOS_PAA");
+    sessionStorage.removeItem("PAA");
+    sessionStorage.removeItem("DADOS_PAA");
   });
 
   describe("renderização básica", () => {
@@ -556,7 +558,7 @@ describe("AtividadesPrevistas", () => {
     });
 
     it("salvar sem paaUuid exibe toast de erro", async () => {
-      localStorage.removeItem("PAA");
+      sessionStorage.removeItem("PAA");
       renderComponent();
       fireEvent.click(screen.getByText("Adicionar Atividade Estatutária"));
 
@@ -870,7 +872,7 @@ describe("AtividadesPrevistas", () => {
     };
 
     it("retorna mesLabel+ano da data inicial para ano VIGENTE", async () => {
-      localStorage.setItem("DADOS_PAA", JSON.stringify(dadosPaa));
+      sessionStorage.setItem("DADOS_PAA", JSON.stringify(dadosPaa));
       const atividadeVigente = {
         ...DUMMY_ATIVIDADE,
         uuid: "vigente-uuid",
@@ -891,7 +893,7 @@ describe("AtividadesPrevistas", () => {
     });
 
     it("retorna mesLabel+ano da data final para ano POSTERIOR", async () => {
-      localStorage.setItem("DADOS_PAA", JSON.stringify(dadosPaa));
+      sessionStorage.setItem("DADOS_PAA", JSON.stringify(dadosPaa));
       const atividadePosterior = {
         ...DUMMY_ATIVIDADE,
         uuid: "posterior-uuid",

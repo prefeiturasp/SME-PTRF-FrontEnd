@@ -24,7 +24,8 @@ jest.mock("../../../../../componentes/PaaContext", () => ({
 
 jest.mock("../../../../../../../../services/visoes.service", () => ({
   visoesService: {
-    featureFlagAtiva: () => mockFeatureFlagAtiva,
+    // a flag paa-proxima-vigencia (rota e armazenamento do PAA ativo) fica ligada; a de receitas varia por teste
+    featureFlagAtiva: (flag) => flag === "paa-proxima-vigencia" || mockFeatureFlagAtiva,
   },
 }));
 
@@ -77,12 +78,12 @@ describe("VisualizarAtividadesPrevistas", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockFeatureFlagAtiva = false;
-    localStorage.setItem("PAA", PAA_UUID);
+    sessionStorage.setItem("PAA", PAA_UUID);
     setupDefaultMocks();
   });
 
   afterEach(() => {
-    localStorage.removeItem("PAA");
+    sessionStorage.removeItem("PAA");
   });
 
   describe("quando paa é nulo", () => {
@@ -126,12 +127,12 @@ describe("VisualizarAtividadesPrevistas", () => {
   });
 
   describe("handleVoltar", () => {
-    it("navega para /elaborar-novo-paa quando status não é EM_RETIFICACAO", async () => {
+    it("navega para a rota do PAA quando status não é EM_RETIFICACAO", async () => {
       renderComponent();
       await act(async () => {
         fireEvent.click(screen.getByTestId("btn-voltar"));
       });
-      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+      expect(mockNavigate).toHaveBeenCalledWith(`/elaborar-novo-paa/${PAA_UUID}`, {
         state: {
           activeTab: "relatorios",
           expandedSections: { planoAnual: true, componentes: true },
@@ -165,7 +166,7 @@ describe("VisualizarAtividadesPrevistas", () => {
         fireEvent.click(screen.getByTestId("btn-voltar"));
       });
 
-      expect(mockNavigate).toHaveBeenCalledWith("/elaborar-novo-paa", {
+      expect(mockNavigate).toHaveBeenCalledWith(`/elaborar-novo-paa/${PAA_UUID}`, {
         state: {
           activeTab: "relatorios",
           expandedSections: { planoAnual: true },

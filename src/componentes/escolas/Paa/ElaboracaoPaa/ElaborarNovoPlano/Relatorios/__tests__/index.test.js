@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import Relatorios from "../index";
+import Relatorios from "../index_novo";
 import "@testing-library/jest-dom";
 
 let mockStatusDocumento = {
@@ -13,7 +13,7 @@ const mockNavigate = jest.fn();
 const mockRefetchPaaContext = jest.fn();
 let mockFeatureFlagAtiva = false;
 let mockPaaContextValue = {
-  paa: { alteracoes: {}, status: "EM_ELABORACAO" },
+  paa: { uuid: "paa-uuid-1", alteracoes: {}, status: "EM_ELABORACAO" },
   refetch: mockRefetchPaaContext,
 };
 
@@ -47,14 +47,6 @@ jest.mock("../hooks/useGetTextosPaa", () => ({
     textosPaa: {},
     isLoading: false,
     isError: false,
-  }),
-}));
-
-let mockPaaVigenteValue = { uuid: "paa-uuid-1" };
-jest.mock("../hooks/useGetPaaVigente", () => ({
-  useGetPaaVigente: () => ({
-    paaVigente: mockPaaVigenteValue,
-    isLoading: false,
   }),
 }));
 
@@ -112,8 +104,8 @@ jest.mock("../../../../../../Globais/ToastCustom", () => ({
 
 // Componentes filhos
 jest.mock("../RenderSecao", () => ({
-  RenderSecao: ({ secaoKey, config }) => (
-    <div data-testid={`secao-${secaoKey}`}>
+  RenderSecao: ({ secaoKey, config, paaAtual }) => (
+    <div data-testid={`secao-${secaoKey}`} data-paa-uuid={paaAtual?.uuid}>
       <span>{config.titulo}</span>
       {config.tipo === "link" && <button onClick={() => mockNavigate(config.rota)}>{config.acao}</button>}
     </div>
@@ -168,10 +160,9 @@ beforeEach(() => {
   mockFeatureFlagAtiva = false;
   localStorage.setItem("ASSOCIACAO_UUID", "assoc-1");
   mockPaaContextValue = {
-    paa: { alteracoes: {}, status: "EM_ELABORACAO" },
+    paa: { uuid: "paa-uuid-1", alteracoes: {}, status: "EM_ELABORACAO" },
     refetch: mockRefetchPaaContext,
   };
-  mockPaaVigenteValue = { uuid: "paa-uuid-1" };
 });
 
 describe("Relatorios", () => {
@@ -223,6 +214,14 @@ describe("Relatorios", () => {
     fireEvent.click(dropdownBtn);
 
     expect(screen.getByTestId("secao-introducao")).toBeInTheDocument();
+  });
+
+  it("entrega o PAA da rota às seções pela prop paaAtual", () => {
+    render(<Relatorios />);
+
+    fireEvent.click(document.querySelector("button.btn-dropdown"));
+
+    expect(screen.getByTestId("secao-introducao")).toHaveAttribute("data-paa-uuid", "paa-uuid-1");
   });
 
   it("deve exibir Atividades Previstas antes da conclusão quando a flag está ativa", () => {
@@ -357,13 +356,16 @@ describe("Relatorios", () => {
   });
 
   test("exibe 'Ata de Retificação do PAA' quando status é EM_RETIFICACAO", () => {
-    mockPaaVigenteValue = { uuid: "paa-uuid-1", status: "EM_RETIFICACAO" };
+    mockPaaContextValue = {
+      ...mockPaaContextValue,
+      paa: { ...mockPaaContextValue.paa, status: "EM_RETIFICACAO" },
+    };
 
     render(<Relatorios />);
     expect(screen.getByText("Ata de Retificação do PAA")).toBeInTheDocument();
   });
 
-  test("chama refetch do contexto quando paaVigente tem uuid", async () => {
+  test("chama refetch do contexto quando o PAA do contexto tem uuid", async () => {
     render(<Relatorios />);
 
     await waitFor(() => {

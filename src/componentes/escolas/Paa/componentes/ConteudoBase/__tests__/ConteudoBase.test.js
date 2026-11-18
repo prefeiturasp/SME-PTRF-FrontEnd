@@ -15,6 +15,8 @@ jest.mock("../../CancelarRetificacao", () => () => (
 
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: jest.fn(),
   },
 }));
@@ -135,7 +137,8 @@ describe("ConteudoBase", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    localStorage.setItem("PAA", "paa-uuid-123");
+    sessionStorage.clear();
+    sessionStorage.setItem("PAA", "paa-uuid-123");
     mockUseLocation.mockReturnValue(defaultLocation);
     visoesService.getPermissoes.mockReturnValue(true);
     iniciarAtaPaa.mockResolvedValue();
@@ -421,7 +424,7 @@ describe("ConteudoBase", () => {
   describe("Redirecionamento por permissão", () => {
     it("redireciona para /paa quando sem permissão e sem PAA no localStorage", () => {
       visoesService.getPermissoes.mockReturnValue(null);
-      localStorage.removeItem("PAA");
+      sessionStorage.removeItem("PAA");
 
       renderConteudoBase();
 
@@ -430,7 +433,7 @@ describe("ConteudoBase", () => {
 
     it("não redireciona quando tem PAA no localStorage mesmo sem permissão", async () => {
       visoesService.getPermissoes.mockReturnValue(null);
-      localStorage.setItem("PAA", "paa-uuid-123");
+      sessionStorage.setItem("PAA", "paa-uuid-123");
 
       renderConteudoBase();
 
