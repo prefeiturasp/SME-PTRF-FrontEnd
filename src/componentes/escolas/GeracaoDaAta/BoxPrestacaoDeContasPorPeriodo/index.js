@@ -77,7 +77,7 @@ export const BoxPrestacaoDeContasPorPeriodo = ({gerarAta, uuidAtaApresentacao, u
                                 className="btn btn-outline-success float-right mr-2"
                                 disabled={!uuidAtaApresentacao || !gerarAta}
                             >
-                                gerar ata
+                                Gerar ata
                             </button>
 
                         </div>

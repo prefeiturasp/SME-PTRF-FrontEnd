@@ -1,8 +1,10 @@
 import React from "react";
-import { fireEvent, render, screen, renderHook } from "@testing-library/react";
-import { AcoesPDDE } from "../index"; 
-import { useAcoesPDDE } from "../hooks/useAcoesPDDE";
-import { acoesPDDE as mockAcoesPDDE, categoriasPDDE as mockCategoriasPDDE} from "../__fixtures__/mockData";
+import { fireEvent, render as rtlRender, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { AcoesPDDE } from "../index";
+import { acoesPDDE as mockAcoesPDDE, programasPDDE as mockProgramasPDDE} from "../__fixtures__/mockData";
+
+const render = (ui) => rtlRender(<MemoryRouter initialEntries={["/parametro-acoes-pdde"]}>{ui}</MemoryRouter>);
 
 jest.mock("../../../../../../paginas/PaginasContainer", () => ({
     PaginasContainer: (({ children }) => <div data-testid="paginas-container">{children}</div>)
@@ -37,7 +39,7 @@ jest.mock("../hooks/useAcoesPDDE", () => ({
     initialStateFiltros: {},
     isLoading: false,
     count: 3,
-    categorias: mockCategoriasPDDE,
+    programas: mockProgramasPDDE,
     acoes: mockAcoesPDDE,
     currentPage: 1,
     firstPage: 1,
@@ -62,10 +64,21 @@ describe("Ações PDDE", () => {
     render(<AcoesPDDE />);
     
     expect(screen.getByTestId("paginas-container")).toBeInTheDocument();
-    expect(screen.getByText("Ações PDDE")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Ações PDDE" })).toBeInTheDocument();
     expect(screen.getByTestId("filtros-component")).toBeInTheDocument();
     expect(screen.getByTestId("tabela-component")).toBeInTheDocument();
     expect(screen.getByTestId("modal-form-acoes-pdde")).toBeInTheDocument();
+  });
+
+  it("deve exibir as abas Ações PDDE e Programas", () => {
+    render(<AcoesPDDE />);
+
+    const abaAcoes = screen.getByRole("link", { name: "Ações PDDE" });
+    const abaProgramas = screen.getByRole("link", { name: "Programas" });
+    expect(abaAcoes).toHaveAttribute("href", "/parametro-acoes-pdde");
+    expect(abaAcoes).toHaveClass("active");
+    expect(abaProgramas).toHaveAttribute("href", "/parametro-programas-pdde");
+    expect(abaProgramas).not.toHaveClass("active");
   });
 
   describe("Ações PDDE", () => {

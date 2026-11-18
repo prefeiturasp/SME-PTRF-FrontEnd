@@ -168,6 +168,40 @@ describe("RelacaoDeBens", () => {
     expect(screen.getByTestId("modal-previa")).toBeInTheDocument();
   });
 
+  it("deve exibir o botão com o texto Prévia", async () => {
+    getRelacaoBensInfo.mockResolvedValue("Documento pendente");
+
+    render(<RelacaoDeBens {...propsPadrao} />);
+
+    expect(
+      await screen.findByRole("button", { name: "Prévia" }),
+    ).toBeInTheDocument();
+  });
+
+  it("não deve exibir o botão Prévia quando o usuário não puder gerar prévias", async () => {
+    getRelacaoBensInfo.mockResolvedValue("Documento pendente");
+
+    render(<RelacaoDeBens {...propsPadrao} podeGerarPrevias={false} />);
+
+    expect(await screen.findByText("Documento pendente")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Prévia" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("não deve exibir o botão Prévia quando não houver movimentação", async () => {
+    getRelacaoBensInfo.mockResolvedValue("Não houve aquisição de bens");
+
+    render(<RelacaoDeBens {...propsPadrao} />);
+
+    expect(
+      await screen.findByText("Não houve aquisição de bens"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Prévia" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("deve fechar modal de prévia ao clicar em fechar", async () => {
     getRelacaoBensInfo.mockResolvedValue("Documento pendente");
     render(<RelacaoDeBens {...propsPadrao} />);

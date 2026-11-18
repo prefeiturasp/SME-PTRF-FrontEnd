@@ -27,7 +27,7 @@ export const VisualizarDocumentos = (): JSX.Element => {
     };
 
     const vigente: IVigentePaa | undefined = data?.vigente;
-    const { unidade, referencia, esta_em_retificacao } = vigente || {};
+    const { unidade, status, referencia } = vigente || {};
 
     if (carregando) {
         return <Loading corGrafico='black' corFonte='dark' marginTop='0' marginBottom='0' />;
@@ -41,7 +41,7 @@ export const VisualizarDocumentos = (): JSX.Element => {
                     unidadeNome={unidade?.nome}
                     codigoEol={unidade?.codigo_eol}
                     referencia={referencia}
-                    estaEmRetificacao={esta_em_retificacao}
+                    status={status ?? ''}
                 />
                 <div className='mt-4'>
                     <PaaCardBarraTitulo titulo={`PAA ${referencia}`} />

@@ -26,6 +26,7 @@ export const ModalBootstrap = (propriedades) => {
                     <div dangerouslySetInnerHTML={
                         {__html: propriedades.bodyText}
                     }/>
+                    {propriedades.bodyContent}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button data-qa={propriedades && propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.primeiroBotaoTexto}` : ""} variant={
@@ -43,6 +44,8 @@ export const ModalBootstrap = (propriedades) => {
                         <Button data-qa={propriedades && propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.segundoBotaoTexto}` : ""} variant={
                                 propriedades.segundoBotaoCss ? propriedades.segundoBotaoCss : "primary"
                             }
+                            className={propriedades.segundoBotaoClassName}
+                            disabled={propriedades.segundoBotaoDisabled}
                             onClick={
                                 propriedades.segundoBotaoOnclick
                         }>
@@ -51,6 +54,18 @@ export const ModalBootstrap = (propriedades) => {
                         } </Button>
                     ) : null
                 } </Modal.Footer>
+                {propriedades.botaoCancelarTexto ? (
+                    <div className="modal-footer">
+                        <button
+                            type="button"
+                            className="btn btn-base-verde-outline"
+                            data-qa={propriedades.dataQa ? `${propriedades.dataQa}-btn-${propriedades.botaoCancelarTexto}` : ""}
+                            onClick={propriedades.botaoCancelarOnclick}
+                        >
+                            {propriedades.botaoCancelarTexto}
+                        </button>
+                    </div>
+                ) : null}
             </Modal>
         </Fragment>
     )

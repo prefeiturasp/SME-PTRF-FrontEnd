@@ -1,15 +1,15 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Filtros } from "../Filtros";
-import { categoriasPDDE } from "../__fixtures__/mockData";
+import { programasPDDE } from "../__fixtures__/mockData";
 
 
 describe("Filtros Componentes", () => {
     const mockSetFilter = jest.fn();
     const mockLimpaFiltros = jest.fn();
     const mockHandleSubmitFiltros = jest.fn();
-    const categorias = categoriasPDDE;
-    const mockInitialFilter = { filtrar_por_nome: "", filtrar_por_categoria: "" };
+    const programas = programasPDDE;
+    const mockInitialFilter = { filtrar_por_nome: "", filtrar_por_programa: "" };
 
     const renderComponent = () => {
         return render(
@@ -18,7 +18,7 @@ describe("Filtros Componentes", () => {
                 initialStateFiltros={mockInitialFilter}
                 handleSubmitFiltros={mockHandleSubmitFiltros}
                 limpaFiltros={mockLimpaFiltros}
-                categorias={categorias}
+                programas={programas}
             />
         );
     };
@@ -33,10 +33,10 @@ describe("Filtros Componentes", () => {
         const nomeInput = screen.getByLabelText(/Filtrar por nome da Ação PDDE/i);
         expect(nomeInput).toBeInTheDocument()
 
-        const categoriasInput = screen.getByLabelText(/Filtrar por programa/i);
-        expect(categoriasInput).toBeInTheDocument()
-        const opcoesCategorias = categoriasInput.querySelectorAll("option");
-        expect(opcoesCategorias).toHaveLength(5);
+        const programasInput = screen.getByLabelText(/Filtrar por programa/i);
+        expect(programasInput).toBeInTheDocument()
+        const opcoesProgramas = programasInput.querySelectorAll("option");
+        expect(opcoesProgramas).toHaveLength(5);
 
 
     });
@@ -46,9 +46,9 @@ describe("Filtros Componentes", () => {
         fireEvent.change(nomeInput, { target: { value: "Acao" } });
         expect(nomeInput.value).toBe("Acao");
 
-        const categoriasInput = screen.getByLabelText(/Filtrar por programa/i);
-        fireEvent.change(categoriasInput, { target: { value: "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2" } });
-        expect(categoriasInput.value).toBe("2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2");
+        const programasInput = screen.getByLabelText(/Filtrar por programa/i);
+        fireEvent.change(programasInput, { target: { value: "2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2" } });
+        expect(programasInput.value).toBe("2df33e5d-fbbf-4a4a-ab9a-d5fa49de4db2");
 
 
     });
