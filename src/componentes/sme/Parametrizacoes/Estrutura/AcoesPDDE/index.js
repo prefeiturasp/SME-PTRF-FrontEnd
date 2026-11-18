@@ -11,6 +11,9 @@ import { Paginacao } from "./Paginacao"
 import {ModalConfirmarExclusao as ModalConfirmar} from "../../componentes/ModalConfirmarExclusao";
 import Img404 from "../../../../../assets/img/img-404.svg"
 import { MsgImgCentralizada } from "../../../../Globais/Mensagens/MsgImgCentralizada";
+import "./abas-acoes-pdde.scss";
+import { MenuInterno } from "../../../../Globais/MenuInterno";
+import { UrlsMenuInterno } from "./UrlsMenuInterno";
 
 export const AcoesPDDE = ()=>{
     const {
@@ -22,7 +25,7 @@ export const AcoesPDDE = ()=>{
         stateFiltros,
         initialStateFiltros,
         isLoading,
-        categorias,
+        programas,
         acoes,
         currentPage,
         firstPage,
@@ -33,7 +36,6 @@ export const AcoesPDDE = ()=>{
         handleClose,
         handleOpenModalForm,
         handleDelete,
-        handleDeleteCategoria,
         handleSubmitFormModal,
         handleSubmitFiltros,
         limpaFiltros,
@@ -44,6 +46,8 @@ export const AcoesPDDE = ()=>{
     return(
         <PaginasContainer>
             <h1 className="titulo-itens-painel mt-5">Ações PDDE</h1>
+            <div className="page-content-inner abas-acoes-pdde">
+                <MenuInterno caminhos_menu_interno={UrlsMenuInterno}/>
             {isLoading ? (
                 <div className="mt-5">
                     <Loading
@@ -54,7 +58,7 @@ export const AcoesPDDE = ()=>{
                     />
                 </div>
             ) : (
-                <div className="page-content-inner">
+                <>
 
                 <div className="d-flex  justify-content-end pb-4 mt-2">
                     <IconButton
@@ -72,7 +76,7 @@ export const AcoesPDDE = ()=>{
                     initialStateFiltros={initialStateFiltros}
                     handleSubmitFiltros={handleSubmitFiltros}
                     limpaFiltros={limpaFiltros}
-                    categorias={categorias}
+                    programas={programas}
                 />
 
                 { acoes.count > 0 ?
@@ -97,9 +101,8 @@ export const AcoesPDDE = ()=>{
                     stateFormModal={modalForm}
                     onHandleClose={handleClose}
                     onSubmit={handleSubmitFormModal}
-                    categorias={categorias}
+                    programas={programas}
                     setShowModalConfirmDelete={setShowModalConfirmDelete}
-                    setModalForm={setModalForm}
                 />
 
                 {/* Modal de Exclusão de Ação PDDE */}
@@ -134,8 +137,9 @@ export const AcoesPDDE = ()=>{
                     setFirstPage={setFirstPage}
                     isLoading={isLoading}
                 />
-            </div>
+                </>
             )}
+            </div>
         </PaginasContainer>
     )
 }

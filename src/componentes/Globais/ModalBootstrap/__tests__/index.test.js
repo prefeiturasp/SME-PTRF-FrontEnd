@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { 
   ModalBootstrap, 
   ModalBootstrapAcoesExtras, 
@@ -65,6 +66,49 @@ it('aplica corretamente o atributo data-qa nos botões do ModalBootstrap se forn
 
     expect(btnPrimeiro).toHaveAttribute('data-qa', 'meu-modal-btn-Salvar');
     expect(btnSegundo).toHaveAttribute('data-qa', 'meu-modal-btn-Cancelar');
+  });
+
+  it('desabilita o segundo botão e renderiza o conteúdo extra', () => {
+    render(
+      <ModalBootstrap
+        show={true}
+        titulo="Assinaturas"
+        bodyText="<p>Texto</p>"
+        bodyContent={<p>Status do presidente</p>}
+        primeiroBotaoTexto="Ir para Membros"
+        primeiroBotaoOnclick={() => {}}
+        segundoBotaoTexto="Concluir período"
+        segundoBotaoOnclick={() => {}}
+        segundoBotaoClassName="btn-assinatura-concluir"
+        segundoBotaoDisabled={true}
+        onHide={() => {}}
+      />
+    );
+
+    expect(screen.getByText('Status do presidente')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /concluir período/i })).toBeDisabled();
+  });
+
+  it('deve chamar a ação de cancelar quando o usuário clica em Cancelar', async () => {
+    const user = userEvent.setup();
+    const onCancelar = jest.fn();
+    render(
+      <ModalBootstrap
+        show={true}
+        titulo="Assinaturas"
+        bodyText="<p>Texto</p>"
+        primeiroBotaoTexto="Ir para Membros"
+        primeiroBotaoOnclick={() => {}}
+        segundoBotaoTexto="Concluir período"
+        segundoBotaoOnclick={() => {}}
+        botaoCancelarTexto="Cancelar"
+        botaoCancelarOnclick={onCancelar}
+        onHide={() => {}}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(onCancelar).toHaveBeenCalled();
   });
 
   it('desabilita o primeiro botão quando primeiroBotaoDisabled é true', () => {

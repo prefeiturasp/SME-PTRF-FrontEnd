@@ -14,6 +14,7 @@ import JustificativaDeFaltaDeAjustes from "./JustificativaDeFaltaDeAjustes";
 import {RetornaSeTemPermissaoEdicaoAcompanhamentoDePc} from "../RetornaSeTemPermissaoEdicaoAcompanhamentoDePc";
 import { PendenciasRecebimento } from "../PendenciasRecebimento";
 import ConferenciaDespesasPeriodosAnteriores from "./ConferenciaDespesasPeriodosAnteriores";
+import { SituacaoPatrimonialPrestacaoConta } from "./SituacaoPatrimonial";
 import { visoesService } from "../../../../services/visoes.service";
 import { STATUS_PRESTACAO_CONTA } from "../../../../constantes/prestacaoConta";
 
@@ -71,6 +72,7 @@ export const GetComportamentoPorStatus = (
 
     const TEMPERMISSAO = RetornaSeTemPermissaoEdicaoAcompanhamentoDePc()
     const flagAjustesDespesasAnterioresAtiva = visoesService.featureFlagAtiva('ajustes-despesas-anteriores')
+    const flagSituacaoPatrimonialAtiva = visoesService.featureFlagAtiva('situacao-patrimonial')
     const [updateListaDeDocumentosParaConferencia, setUpdateListaDeDocumentosParaConferencia] = useState(0);
     const [carregaLancamentosParaConferencia, setCarregaLancamentosParaConferencia] = useState(0);
     const [carregaDespesasPeriodosAnterioresParaConferencia, setCarregaDespesasPeriodosAnterioresParaConferencia] = useState(0);
@@ -292,6 +294,12 @@ export const GetComportamentoPorStatus = (
                         editavel={TEMPERMISSAO}
                         onUpdateListaDeDocumentosParaConferencia={onUpdateListaDeDocumentosParaConferencia}
                     />
+
+                    {
+                        flagSituacaoPatrimonialAtiva ? (
+                            <SituacaoPatrimonialPrestacaoConta prestacaoDeContas={prestacaoDeContas} />
+                        ) : null
+                    }
 
                     <DevolucaoParaAcertos
                         prestacaoDeContas={prestacaoDeContas}

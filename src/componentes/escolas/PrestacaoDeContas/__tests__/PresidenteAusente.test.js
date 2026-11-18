@@ -1,70 +1,74 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { PresidenteAusente } from '../PresidenteAusente';
-import * as prestacaoService from '../../../../services/escolas/PrestacaoDeContas.service';
-import { barraMensagemCustom } from '../../../Globais/BarraMensagem';
 
-jest.mock('../../../../services/escolas/PrestacaoDeContas.service');
 jest.mock('../../../Globais/BarraMensagem', () => ({
   barraMensagemCustom: {
-    BarraMensagemSucessAzul: jest.fn((msg) => <div data-testid="mensagem">{msg}</div>),
+    BarraMensagemSucessAzul: (msg) => <div>{msg}</div>,
   },
 }));
-jest.mock('../../../../services/auth.service', () => ({
-  ASSOCIACAO_UUID: 'UUID_FAKE',
-}));
+
+const textoDaBarra = /O Presidente da Diretoria Executiva consta como ausente/;
+
+const renderBarra = (prestacaoContasStatus) => {
+  render(
+    <PresidenteAusente
+      statusPC={{
+        prestacao_contas_status: prestacaoContasStatus,
+      }}
+    />,
+  );
+};
 
 describe('PresidenteAusente', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    localStorage.setItem('UUID_FAKE', 'uuid-assoc');
-  });
+  describe('exibição', () => {
+    it('não deve exibir a barra quando o presidente está presente no período', () => {
+      renderBarra({
+        documentos_gerados: true,
+        status_presidente: 'PRESENTE',
+      });
 
-  const mockStatusPC = {
-    prestacao_contas_status: {
-      documentos_gerados: false,
-    },
-  };
-
-  it('não exibe a barra se o presidente não estiver ausente', async () => {
-    prestacaoService.getStatusPresidente.mockResolvedValue({
-      status_presidente: 'PRESENTE',
-      cargo_substituto_presidente_ausente_value: '',
+      expect(screen.queryByText(textoDaBarra)).not.toBeInTheDocument();
     });
 
-    render(<PresidenteAusente statusPC={mockStatusPC} />);
+    it('não deve exibir a barra antes da conclusão com sucesso', () => {
+      renderBarra({
+        documentos_gerados: false,
+        status_presidente: 'AUSENTE',
+        cargo_substituto_presidente_ausente_value: 'Vogal 3',
+      });
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('mensagem')).not.toBeInTheDocument();
-    });
-  });
-
-  it('não exibe a barra se documentos já foram gerados', async () => {
-    prestacaoService.getStatusPresidente.mockResolvedValue({
-      status_presidente: 'AUSENTE',
-      cargo_substituto_presidente_ausente_value: 'vice-presidente da diretoria executiva',
+      expect(screen.queryByText(textoDaBarra)).not.toBeInTheDocument();
     });
 
-    render(
-      <PresidenteAusente
-        statusPC={{ prestacao_contas_status: { documentos_gerados: true } }}
-      />
-    );
+    it('não deve exibir a barra quando o status do período não foi carregado', () => {
+      render(<PresidenteAusente statusPC={undefined} />);
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('mensagem')).not.toBeInTheDocument();
-    });
-  });
-
-  it('não exibe a barra se statusPC for undefined', async () => {
-    prestacaoService.getStatusPresidente.mockResolvedValue({
-      status_presidente: 'AUSENTE',
-      cargo_substituto_presidente_ausente_value: 'secretário',
+      expect(screen.queryByText(textoDaBarra)).not.toBeInTheDocument();
     });
 
-    render(<PresidenteAusente statusPC={undefined} />);
+    it('deve exibir a barra depois da conclusão, com Vogal sem número e sem a orientação da tela de membros', () => {
+      renderBarra({
+        documentos_gerados: true,
+        status_presidente: 'AUSENTE',
+        cargo_substituto_presidente_ausente_value: 'Vogal 3',
+      });
 
-    await waitFor(() => {
-      expect(screen.queryByTestId('mensagem')).not.toBeInTheDocument();
+      const mensagem = screen.getByText(textoDaBarra);
+      expect(mensagem).toHaveTextContent('habilitados para o Vogal da Diretoria Executiva.');
+      expect(mensagem).not.toHaveTextContent('Vogal 3');
+      expect(mensagem).not.toHaveTextContent('tela dos membros da Associação');
+    });
+
+    it('deve exibir o cargo do substituto quando ele não é vogal', () => {
+      renderBarra({
+        documentos_gerados: true,
+        status_presidente: 'AUSENTE',
+        cargo_substituto_presidente_ausente_value: 'Vice-Presidente da Diretoria Executiva',
+      });
+
+      expect(screen.getByText(textoDaBarra)).toHaveTextContent(
+        'habilitados para o Vice-Presidente da Diretoria Executiva.',
+      );
     });
   });
 });

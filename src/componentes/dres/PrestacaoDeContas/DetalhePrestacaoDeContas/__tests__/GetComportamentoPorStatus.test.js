@@ -73,6 +73,10 @@ jest.mock('../ConferenciaDeDocumentos', () => (props) => {
     return <div data-testid="mock-conferencia-documentos" />;
 });
 
+jest.mock('../SituacaoPatrimonial', () => ({
+    SituacaoPatrimonialPrestacaoConta: () => <div data-testid="mock-situacao-patrimonial" />,
+}));
+
 jest.mock('../DevolutivaDaAssociacao', () => (props) => <div data-testid="mock-devolutiva-da-associacao" />);
 
 jest.mock('../JustificativaDeFaltaDeAjustes', () => (props) => <div data-testid="mock-justificativa-falta-ajustes" />);
@@ -282,6 +286,20 @@ describe('GetComportamentoPorStatus', () => {
 
             expect(screen.getByTestId('mock-conferencia-despesas-anteriores')).toBeInTheDocument();
             expect(visoesService.featureFlagAtiva).toHaveBeenCalledWith('ajustes-despesas-anteriores');
+        });
+
+        it('renderiza a seção Situação Patrimonial quando a flag situacao-patrimonial está ativa', () => {
+            visoesService.featureFlagAtiva.mockImplementation((flag) => flag === 'situacao-patrimonial');
+            renderComponent({ prestacaoDeContas: statusEmAnalise });
+
+            expect(screen.getByTestId('mock-situacao-patrimonial')).toBeInTheDocument();
+        });
+
+        it('não renderiza a seção Situação Patrimonial quando a flag situacao-patrimonial está inativa', () => {
+            visoesService.featureFlagAtiva.mockReturnValue(false);
+            renderComponent({ prestacaoDeContas: statusEmAnalise });
+
+            expect(screen.queryByTestId('mock-situacao-patrimonial')).not.toBeInTheDocument();
         });
 
         it('propaga os contadores de atualização para DevolucaoParaAcertos ao carregar lançamentos/documentos/despesas', () => {

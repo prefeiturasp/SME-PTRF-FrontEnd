@@ -1,11 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAcoesPDDECategorias } from "../../../../../../services/sme/Parametrizacoes.service";
+import { getProgramasPDDESelect } from "../../../../../../services/sme/Parametrizacoes.service";
 
-export const useGetCategorias = () => {
+export const useGetProgramasSelect = () => {
     const { isFetching, isError, data = [], error, refetch } = useQuery({
-        queryKey: ['categorias'],
-        queryFn: ()=> getAcoesPDDECategorias(),
-        keepPreviousData: true,
+        queryKey: ['programas-pdde', 'select'],
+        queryFn: () => getProgramasPDDESelect(),
         staleTime: 5000, // 5 segundos
         refetchOnWindowFocus: true, // Caso saia da aba e voltar ele refaz a requisição
     });

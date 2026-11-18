@@ -101,10 +101,11 @@ import {
     postTipoDeTransacao,
     patchTipoDeTransacao,
     deleteTipoDeTransacao,
-    getAcoesPDDECategorias,
-    postAcoesPDDECategorias,
-    patchAcoesPDDECategorias,
-    deleteAcoesPDDECategorias,
+    getProgramasPDDESelect,
+    getProgramasPDDE,
+    postProgramaPDDE,
+    patchProgramaPDDE,
+    deleteProgramaPDDE,
     deleteAcoesPDDE,
     getAcoesPDDE,
     postAcoesPDDE,
@@ -441,11 +442,21 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
-    test('getAcoesPDDECategorias  deve chamar a API corretamente', async () => {
+    test('getProgramasPDDESelect deve chamar a API corretamente', async () => {
         api.get.mockResolvedValue({ data: mockData })
-        const result = await getAcoesPDDECategorias();
-        const url = `/api/programas-pdde/?page1&page_size=100`
+        const result = await getProgramasPDDESelect();
+        const url = `/api/programas-pdde/?page=1&page_size=100`
         expect(api.get).toHaveBeenCalledWith(url, authHeader())
+        expect(result).toEqual(mockData);
+    });
+
+    test('getProgramasPDDE deve chamar a API com filtros e paginação', async () => {
+        api.get.mockResolvedValue({ data: mockData })
+        const result = await getProgramasPDDE({nome: 'Qualidade'}, 2, 10);
+        expect(api.get).toHaveBeenCalledWith(`/api/programas-pdde/`, {
+            ...authHeader(),
+            params: {nome: 'Qualidade', page: 2, page_size: 10}
+        })
         expect(result).toEqual(mockData);
     });
 
@@ -1505,29 +1516,28 @@ describe('Testes para funções de análise', () => {
         expect(result).toEqual(mockData);
     });
 
-    test('postAcoesPDDECategorias deve chamar a API corretamente', async () => {
+    test('postProgramaPDDE deve chamar a API corretamente', async () => {
         api.post.mockResolvedValue({ data: mockData });
-        const result = await postAcoesPDDECategorias(payload);
+        const result = await postProgramaPDDE(payload);
         const url = `/api/programas-pdde/`;
         expect(api.post).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
 
-    test('patchAcoesPDDECategorias deve chamar a API corretamente', async () => {
-        const categoriaUuid = 'uuid-cat-pdde-patch';
+    test('patchProgramaPDDE deve chamar a API corretamente', async () => {
+        const programaUuid = 'uuid-programa-pdde-patch';
         api.patch.mockResolvedValue({ data: mockData });
-        const result = await patchAcoesPDDECategorias(categoriaUuid, payload);
-        const url = `/api/programas-pdde/${categoriaUuid}/`;
+        const result = await patchProgramaPDDE(programaUuid, payload);
+        const url = `/api/programas-pdde/${programaUuid}/`;
         expect(api.patch).toHaveBeenCalledWith(url, payload, authHeader());
         expect(result).toEqual(mockData);
     });
 
-    test('deleteAcoesPDDECategorias deve chamar a API corretamente', async () => {
+    test('deleteProgramaPDDE deve chamar a API corretamente', async () => {
         api.delete.mockResolvedValue({ data: mockData });
-        const categoriaUuid = '1234'
-        const acaoUuid = '1234'
-        const result = await deleteAcoesPDDECategorias(categoriaUuid, acaoUuid);
-        const url = `/api/programas-pdde/${categoriaUuid}/`;
+        const programaUuid = '1234'
+        const result = await deleteProgramaPDDE(programaUuid);
+        const url = `/api/programas-pdde/${programaUuid}/`;
         expect(api.delete).toHaveBeenCalledWith(url, authHeader());
         expect(result).toEqual(mockData);
     });

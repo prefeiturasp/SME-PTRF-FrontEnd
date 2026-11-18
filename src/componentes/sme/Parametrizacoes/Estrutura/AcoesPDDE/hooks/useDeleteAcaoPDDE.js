@@ -14,7 +14,8 @@ export const useDeleteAcao = (
             return deleteAcoesPDDE(uuid);
         },
         onSuccess: (response) => {
-            queryClient.invalidateQueries(['acoes']).then();
+            queryClient.invalidateQueries({queryKey: ['acoes-pdde']}).then();
+            queryClient.invalidateQueries({queryKey: ['programas-pdde']}).then();
             setModalForm({open: false})
             toastCustom.ToastCustomSuccess(
                 "Sucesso.", 

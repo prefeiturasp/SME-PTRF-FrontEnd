@@ -14,6 +14,11 @@ export const ModalAvisoAssinatura = (props) =>{
             segundoBotaoOnclick={props.segundoBotaoOnclick}
             segundoBotaoCss="success"
             segundoBotaoTexto={props.segundoBotaoTexto}
+            segundoBotaoDisabled={props.segundoBotaoDisabled}
+            segundoBotaoClassName="btn-assinatura-concluir"
+            botaoCancelarTexto="Cancelar"
+            botaoCancelarOnclick={props.handleClose}
+            bodyContent={props.bodyContent}
             dataQa={props.dataQa}
             size={"lg"}
         />
