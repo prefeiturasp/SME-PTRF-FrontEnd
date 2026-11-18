@@ -10,6 +10,7 @@ import {
   parseMoneyBRL,
 } from "../../../../../utils/money";
 import { visoesService } from "../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../utils/paaAtivoStorage";
 
 const initialValues = {
   saldo_capital: 0,
@@ -76,7 +77,7 @@ const ModalEdicaoReceitaPrevistaPDDE = ({ open, onClose, receitaPrevistaPDDE }) 
 
   const onSubmit = (values) => {
     const payload = {
-      paa: localStorage.getItem("PAA"),
+      paa: getPaaAtivoUuid(),
       acao_pdde: receitaPrevistaPDDE.uuid,
       saldo_custeio: values.saldo_custeio / 100,
       saldo_capital: values.saldo_capital  / 100,

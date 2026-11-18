@@ -23,6 +23,8 @@ import { parseISO, getYear } from "date-fns";
 import { visoesService } from "../../../../../../../services/visoes.service";
 import "./styles.scss";
 import { Spin } from "antd";
+import { getPaaAtivoUuid, getDadosPaaAtivo } from "../../../../../../../utils/paaAtivoStorage";
+
 
 const formatarMesAno = (valor) => {
     if (!valor) return "-";
@@ -65,7 +67,7 @@ export const AtividadesPrevistas = () => {
   const [modalExcluir, setModalExcluir] = useState({ aberto: false, atividade: null });
   const [isExcluindoAtividade, setIsExcluindoAtividade] = useState(false);
 
-  const paaUuid = localStorage.getItem("PAA");
+  const paaUuid = getPaaAtivoUuid();
 
   const tiposOptions = useMemo(() => {
     const tipos = tabelasAtividades?.tipo || [];
@@ -117,7 +119,7 @@ export const AtividadesPrevistas = () => {
       return mesAnoLabel;
     }
 
-    const dadosPaaLocalStorage = JSON.parse(localStorage.getItem("DADOS_PAA"));
+    const dadosPaaLocalStorage = getDadosPaaAtivo();
 
     if (dadosPaaLocalStorage) {
       const { periodo_paa_objeto } = dadosPaaLocalStorage;

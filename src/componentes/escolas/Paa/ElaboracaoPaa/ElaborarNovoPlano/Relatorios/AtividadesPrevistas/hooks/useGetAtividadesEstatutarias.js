@@ -4,8 +4,9 @@ import {
   getAtividadesEstatutariasDisponiveis,
   getAtividadesEstatutariasPrevistas,
 } from "../../../../../../../../services/escolas/Paa.service";
+import { getPaaAtivoUuid } from "../../../../../../../../utils/paaAtivoStorage";
 
-const getPaaUuid = () => localStorage.getItem("PAA");
+const getPaaUuid = () => getPaaAtivoUuid();
 
 const toArray = (payload) => {
   if (Array.isArray(payload?.results)) {

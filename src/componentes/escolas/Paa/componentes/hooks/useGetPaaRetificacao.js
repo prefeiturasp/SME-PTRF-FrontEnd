@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getPaaRetificacao } from "../../../../../services/escolas/Paa.service";
 import { useNavigate } from "react-router-dom";
 import { toastCustom } from "../../../../Globais/ToastCustom";
+import { gravarPaaAtivo } from "../../../../../utils/paaAtivoStorage";
 
 export const useGetPaaRetificacao = (paaUuid) => {
   const navigate = useNavigate();
@@ -41,9 +42,7 @@ export const useGetPaaRetificacao = (paaUuid) => {
 
   useEffect(() => {
       if (isSuccess) {
-        const response = data;
-        localStorage.setItem("PAA", response.uuid);
-        localStorage.setItem("DADOS_PAA", JSON.stringify(response));
+        gravarPaaAtivo(data);
       }
     }, [isSuccess, data]);
 

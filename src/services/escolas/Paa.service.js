@@ -1,6 +1,7 @@
 import api from "../api/index.js";
 import { TOKEN_ALIAS } from "../auth.service.js";
 import { addFiltersToQueryString } from "../../utils/Api.js";
+import { getPaaAtivoUuid } from "../../utils/paaAtivoStorage.js";
 
 
 const authHeader = () => ({
@@ -22,7 +23,12 @@ export const getPaaRetificacao = async (paa_uuid) => {
   const result = await api.get(`/api/paa/${paa_uuid}/paa-retificacao/`, authHeader());
   return result.data;
 };
-
+export const getVigenciaElaboracaoPaa = async (associacao_uuid, pagina = 1) => {
+  const PAGE_SIZE_VIGENCIA = 20
+  const url = `/api/paa/vigencia-elaboracao/?associacao_uuid=${associacao_uuid}`
+              + `&page=${pagina}&page_size=${PAGE_SIZE_VIGENCIA}`;
+  return (await api.get(url, authHeader())).data;
+};
 export const postIniciarRetificacaoPaa = async (paa_uuid, payload={}) => {
   const result = await api.post(`/api/paa/${paa_uuid}/iniciar-retificacao/`, payload, authHeader());
   return result.data;
@@ -255,14 +261,14 @@ export const getAcoesPTRFPrioridades = async (paa_uuid) => {
 };
 
 export const getResumoAcoesPddePorPrograma = async () => {
-  const url = `/api/acoes-pdde/resumo-por-programa/?paa_uuid=${localStorage.getItem("PAA")}`;
+  const url = `/api/acoes-pdde/resumo-por-programa/?paa_uuid=${getPaaAtivoUuid()}`;
   return (await api.get(url, authHeader())).data;
 };
 
 export const getAcoesPDDE = async (currentPage = 1, rowsPerPage = 20) => {
   return (
     await api.get(
-      `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=${localStorage.getItem("PAA")}`,
+      `/api/acoes-pdde/receitas-previstas-pdde/?page=${currentPage}&page_size=${rowsPerPage}&paa_uuid=${getPaaAtivoUuid()}`,
       authHeader()
     )
   ).data;
@@ -279,7 +285,7 @@ export const getAcoesPDDEPrioridades = async (paa_uuid) => {
 
 // PDDE
 export const getProgramasPddeTotais = async (paa_uuid) => {
-  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${paa_uuid || localStorage.getItem("PAA")}&pagination=false`, authHeader())).data;
+  return (await api.get(`api/programas-pdde/totais/?paa_uuid=${paa_uuid || getPaaAtivoUuid()}&pagination=false`, authHeader())).data;
 };
 
 export const postReceitaPrevistaPDDE = async (payload) => {
@@ -322,15 +328,13 @@ export const getPrioridadesTabelas = async (paa_uuid) => {
 };
 
 export const getPrioridades = async (filtros, page=1, page_size=20) => {
-  let queryString = `?paa__uuid=${localStorage.getItem(
-    "PAA"
-  )}&page=${page}&page_size=${page_size}`;
+  let queryString = `?paa__uuid=${getPaaAtivoUuid()}&page=${page}&page_size=${page_size}`;
   queryString = addFiltersToQueryString(queryString, filtros);
   return (await api.get(`api/prioridades-paa/${queryString}`, authHeader())).data;
 };
 
-export const getPrioridadesRelatorio = async (filtros = {}) => {
-  let queryString = `?paa__uuid=${localStorage.getItem("PAA")}`;
+export const getPrioridadesRelatorio = async (filtros = {}, paaUuid = getPaaAtivoUuid()) => {
+  let queryString = `?paa__uuid=${paaUuid}`;
   queryString = addFiltersToQueryString(queryString, filtros);
   return (await api.get(`api/prioridades-paa-relatorio/${queryString}`, authHeader())).data;
 };
@@ -344,7 +348,7 @@ export const postDuplicarPrioridade = async (uuid) => {
 }
 
 export const getResumoPrioridades = async () => {
-  return (await api.get(`api/paa/${localStorage.getItem("PAA")}/resumo-prioridades/`, authHeader())).data;
+  return (await api.get(`api/paa/${getPaaAtivoUuid()}/resumo-prioridades/`, authHeader())).data;
 }
 
 export const getAtividadesEstatutariasPrevistas = async (paaUuid) => {
@@ -452,7 +456,7 @@ export const deletePrioridadesEmLote = async (payload) => {
 }
 
 export const getObjetivosPaa = async () => {
-  return (await api.get(`api/paa/${localStorage.getItem("PAA")}/objetivos/`, authHeader())).data;
+  return (await api.get(`api/paa/${getPaaAtivoUuid()}/objetivos/`, authHeader())).data;
 }
 
 export const postGerarAtaPaa = async (paa_uuid, payload={}) => {

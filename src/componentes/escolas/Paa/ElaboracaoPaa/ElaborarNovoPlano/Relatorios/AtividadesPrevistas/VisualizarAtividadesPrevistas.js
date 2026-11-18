@@ -8,6 +8,8 @@ import { AtividadesPrevistas } from "./AtividadesPrevistas";
 import { RecursosProprios } from "./RecursosProprios";
 import "./styles.scss";
 import { visoesService } from "../../../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../../../utils/paaAtivoStorage";
+import { rotaElaboracaoPaa } from "../../../utils/rotasPaa";
 
 export const VisualizarAtividadesPrevistasContent = () => {
   const navigate = useNavigate();
@@ -18,7 +20,7 @@ export const VisualizarAtividadesPrevistasContent = () => {
 
   const handleVoltar = useCallback(() => {
 
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -64,7 +66,7 @@ export const VisualizarAtividadesPrevistasContent = () => {
 };
 
 export const VisualizarAtividadesPrevistas = () => {
-  const paa_uuid_storage = localStorage.getItem('PAA');
+  const paa_uuid_storage = getPaaAtivoUuid();
 
   const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
 

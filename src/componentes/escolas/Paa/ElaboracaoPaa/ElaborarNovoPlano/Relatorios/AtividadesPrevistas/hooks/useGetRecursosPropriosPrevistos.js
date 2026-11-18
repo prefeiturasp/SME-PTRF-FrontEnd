@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getRecursosPropriosPrevistos } from "../../../../../../../../services/escolas/Paa.service";
+import { getPaaAtivoUuid } from "../../../../../../../../utils/paaAtivoStorage";
 
-const getPaaUuid = () => localStorage.getItem("PAA");
+const getPaaUuid = () => getPaaAtivoUuid();
 
 export const useGetRecursosPropriosPrevistos = () => {
   const paaUuid = getPaaUuid();
