@@ -65,6 +65,12 @@ export const ModalAdicionarMembroComissao= (propriedades) => {
                         </div>
                     </div>
 
+                    <CamposContador
+                        estadoModal={propriedades.estadoModal}
+                        errosModal={propriedades.errosModal}
+                        handleOnChangeModal={propriedades.handleOnChangeModal}
+                    />
+
                     <div className="row">
                         <div className="form-group col-12">  
                             <label htmlFor="comissoes_modal">Comissões</label>
@@ -167,6 +173,12 @@ export const ModalEditarMembroComissao= (propriedades) => {
                         </div>
                     </div>
 
+                    <CamposContador
+                        estadoModal={propriedades.estadoModal}
+                        errosModal={propriedades.errosModal}
+                        handleOnChangeModal={propriedades.handleOnChangeModal}
+                    />
+
                     <div className="row">
                         <div className="form-group col-12">  
                             <label htmlFor="comissoes_modal">Comissões</label>
@@ -261,3 +273,73 @@ export const ModalConfirmaExclusaoMembroComissao= (propriedades) => {
         </Fragment>
     )
 }
+
+
+const CamposContador = ({ estadoModal, errosModal, handleOnChangeModal }) => {
+    const ehContador = Boolean(estadoModal.eh_contador_modal);
+    const erroCrc = errosModal?.contador_crc;
+    const mensagemErroCrc = Array.isArray(erroCrc) ? erroCrc[0] : erroCrc;
+
+    return (
+        <>
+            <div className="row">
+                <div className="form-group col-12">
+                    <label>O membro é contador?</label>
+                    <div className="d-flex align-items-center">
+                        <div className="form-check mr-4">
+                            <input
+                                className="form-check-input"
+                                type="radio"
+                                name="eh_contador_modal"
+                                id="eh_contador_sim_modal"
+                                checked={ehContador}
+                                onChange={() => handleOnChangeModal('eh_contador_modal', true)}
+                            />
+                            <label className="form-check-label" htmlFor="eh_contador_sim_modal">
+                                Sim
+                            </label>
+                        </div>
+                        <div className="form-check">
+                            <input
+                                className="form-check-input"
+                                type="radio"
+                                name="eh_contador_modal"
+                                id="eh_contador_nao_modal"
+                                checked={!ehContador}
+                                onChange={() => handleOnChangeModal('eh_contador_modal', false)}
+                            />
+                            <label className="form-check-label" htmlFor="eh_contador_nao_modal">
+                                Não
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {ehContador && (
+                <div className="row">
+                    <div className="form-group col-12">
+                        <label htmlFor="contador_crc_modal">Informe o CRC <span className="text-danger">*</span></label>
+                        <input
+                            name="contador_crc_modal"
+                            id="contador_crc_modal"
+                            type="text"
+                            maxLength={20}
+                            required
+                            className={`form-control${mensagemErroCrc ? ' is-invalid' : ''}`}
+                            placeholder="Informe o número do CRC"
+                            value={estadoModal.contador_crc_modal || ''}
+                            onChange={(e) => handleOnChangeModal('contador_crc_modal', e.target.value)}
+                            aria-invalid={Boolean(mensagemErroCrc)}
+                        />
+                        {mensagemErroCrc && (
+                            <span className="span_erro text-danger mt-1 d-block">
+                                {mensagemErroCrc}
+                            </span>
+                        )}
+                    </div>
+                </div>
+            )}
+        </>
+    );
+};

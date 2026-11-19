@@ -12,6 +12,20 @@ import { EditIconButton } from "../../../Globais/UI/Button";
 export const ListaComissoes = ({membrosComissao, loadingMembrosComissao, handleOnShowModalEdicao}) => {
     const rowsPerPage = 10;
 
+    const nomeTemplate = (rowData) => {
+        return (
+            <div className="text-left">
+                <div>{rowData.nome}</div>
+
+                {rowData.eh_contador && rowData.contador_crc && (
+                    <small className="d-block" style={{fontWeight: 'bold', fontSize: 14, color: 'var(--color-primary-lighten)'}}>
+                        Contador - CRC: {rowData.contador_crc}
+                    </small>
+                )}
+            </div>
+        )
+    }
+
     const comissoesTemplate = (rowData) => {
         let comissoes = rowData.comissoes
 
@@ -54,7 +68,7 @@ export const ListaComissoes = ({membrosComissao, loadingMembrosComissao, handleO
                             paginatorTemplate="PrevPageLink PageLinks NextPageLink"
                         >
                             <Column field='rf' header='RF' className="text-center" style={{width: '8em'}}/>
-                            <Column field='nome' header='Nome Completo' className="text-center"/>
+                            <Column field='nome' header='Nome Completo' body={nomeTemplate}/>
                             <Column field='email' header='Email' className="text-center"/>
                             <Column field='' header='Comissão pertencente' body={comissoesTemplate}/>
                             <Column field='' header='Ações' body={acoesTemplate} className="text-center" style={{width: '5em'}}/>
