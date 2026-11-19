@@ -264,3 +264,31 @@ describe("ListaComissoes Comissões DRE", () => {
     expect(screen.getByText("Maria")).toBeInTheDocument();
   });
 });
+
+
+
+it("deve exibir o CRC abaixo do nome quando o membro é contador", () => {
+  mockGetPermissoes.mockReturnValue(true);
+
+  const membros = [
+    {
+      rf: "1",
+      nome: "João",
+      email: "joao@email.com",
+      eh_contador: true,
+      contador_crc: "12345678",
+      comissoes: [],
+    },
+  ];
+
+  render(
+    <ListaComissoes     
+      membrosComissao={membros}
+    />
+  );
+
+  expect(screen.getByText("João")).toBeInTheDocument();
+  expect(
+    screen.getByText("Contador - CRC: 12345678")
+  ).toBeInTheDocument();
+});
