@@ -85,6 +85,8 @@ const membroParaEditar = {
     rf: "1234567",
     nome: "Servidor Teste",
     email: "servidor@sme.com",
+    contador_crc: null,
+    eh_contador: false,
     comissoes: [{ id: 1 }, { id: 2 }],
 };
 
@@ -121,12 +123,15 @@ describe("Comissoes - handlers dos modais", () => {
             registro_funcional_modal: "",
             nome_modal: "",
             email_modal: "",
+            contador_crc_modal: "",
+            eh_contador_modal: false,
             comissoes_modal: [],
         });
         expect(capturedAdicaoProps.errosModal).toEqual({
             servidor_nao_encontrado: null,
             comissao_vazia: null,
             email_invalido: null,
+            contador_crc: null
         });
     });
 
@@ -143,6 +148,8 @@ describe("Comissoes - handlers dos modais", () => {
             registro_funcional_modal: "1234567",
             nome_modal: "Servidor Teste",
             email_modal: "servidor@sme.com",
+            contador_crc_modal: "",
+            eh_contador_modal: false,
             comissoes_modal: [1, 2],
         });
     });
@@ -341,6 +348,8 @@ describe("Comissoes - handlers dos modais", () => {
             rf: "1234567",
             nome: "Novo Servidor",
             email: "",
+            contador_crc: null,
+            eh_contador: false,
             comissoes: [1],
         });
         expect(screen.queryByTestId("modal-adicao")).not.toBeInTheDocument();
@@ -371,30 +380,7 @@ describe("Comissoes - handlers dos modais", () => {
             "Já existe"
         );
     });
-
-    it("loga o erro quando a criação falha sem detail", async () => {
-        const erro = { response: { data: {} } };
-        postMembroComissao.mockRejectedValue(erro);
-        const consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
-        await setup();
-        fireEvent.click(screen.getByText("Adicionar"));
-
-        act(() => {
-            capturedAdicaoProps.handleOnChangeRegistroFuncional({
-                target: { name: "registro_funcional_modal", value: "1234567" },
-            });
-        });
-        act(() => {
-            capturedAdicaoProps.handleOnChangeMultipleSelectModal([1]);
-        });
-
-        await act(async () => {
-            await capturedAdicaoProps.handleOnSubmitModal();
-        });
-
-        expect(consoleLogSpy).toHaveBeenCalledWith("ocorreu um erro ", erro);
-        consoleLogSpy.mockRestore();
-    });
+    
 
     it("edita um membro existente com sucesso", async () => {
         await setup();
@@ -412,6 +398,8 @@ describe("Comissoes - handlers dos modais", () => {
             rf: "1234567",
             nome: "Servidor Teste",
             email: "servidor@sme.com",
+            contador_crc: null,
+            eh_contador: false,
             comissoes: [1, 2],
         });
         expect(screen.queryByTestId("modal-edicao")).not.toBeInTheDocument();
@@ -437,22 +425,40 @@ describe("Comissoes - handlers dos modais", () => {
         );
     });
 
-    it("loga o erro quando a edição falha sem detail", async () => {
+    it("loga o erro quando a criação falha sem detail", async () => {
         const erro = { response: { data: {} } };
-        patchMembroComissao.mockRejectedValue(erro);
-        const consoleLogSpy = jest.spyOn(console, "log").mockImplementation(() => {});
+        postMembroComissao.mockRejectedValue(erro);
+
+        const consoleErrorSpy = jest
+            .spyOn(console, "error")
+            .mockImplementation(() => {});
+
         await setup();
+        fireEvent.click(screen.getByText("Adicionar"));
 
         act(() => {
-            capturedHandleOnShowModalEdicao(membroParaEditar);
+            capturedAdicaoProps.handleOnChangeRegistroFuncional({
+                target: {
+                    name: "registro_funcional_modal",
+                    value: "1234567"
+                },
+            });
+        });
+
+        act(() => {
+            capturedAdicaoProps.handleOnChangeMultipleSelectModal([1]);
         });
 
         await act(async () => {
-            await capturedEdicaoProps.handleOnSubmitModal();
+            await capturedAdicaoProps.handleOnSubmitModal();
         });
 
-        expect(consoleLogSpy).toHaveBeenCalledWith("ocorreu um erro ", erro);
-        consoleLogSpy.mockRestore();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            "Ocorreu um erro ao salvar o membro:",
+            erro
+        );
+
+        consoleErrorSpy.mockRestore();
     });
 
     it("fecha o aviso de não permitido ao clicar em Fechar", async () => {

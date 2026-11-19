@@ -23,13 +23,16 @@ export const Comissoes = () => {
         registro_funcional_modal: "",
         nome_modal: "",
         email_modal: "",
-        comissoes_modal: []
+        comissoes_modal: [],
+        eh_contador_modal: false,
+        contador_crc_modal: ""
     };
 
     const estadoInicialErrosModal = {
         servidor_nao_encontrado: null,
         comissao_vazia: null,
-        email_invalido: null
+        email_invalido: null,
+        contador_crc: null
     }
 
     const [loading, setLoading] = useState(true);
@@ -129,6 +132,8 @@ export const Comissoes = () => {
             nome_modal: values.nome,
             email_modal: values.email ? values.email : '',
             comissoes_modal: lista_ids_comissoes,
+            eh_contador_modal: values.eh_contador ?? false,
+            contador_crc_modal: values.contador_crc ?? ''
         }
 
         setErrosModal(estadoInicialErrosModal);
@@ -141,11 +146,21 @@ export const Comissoes = () => {
     }
 
     const handleOnChangeModal = (name, value, edicao=false) => {
-        setEstadoModal({
-            ...estadoModal,
-            [name]: value
-        });
-    }
+        setEstadoModal(anterior => ({
+            ...anterior,
+            [name]: value,
+            ...(name === 'eh_contador_modal' && value === false
+                ? { contador_crc_modal: '' }
+                : {})
+        }));
+
+        if (name === 'contador_crc_modal' || name === 'eh_contador_modal') {
+            setErrosModal(anterior => ({
+                ...anterior,
+                contador_crc: null
+            }));
+        }
+    };
 
     const handleOnChangeMultipleSelectModal =  async (value) => {
         let name = "comissoes_modal"
@@ -210,7 +225,8 @@ export const Comissoes = () => {
         let erros_encontrados = {
             servidor_nao_encontrado: errosModal.servidor_nao_encontrado,
             comissao_vazia: null,
-            email_invalido: null
+            email_invalido: null,
+            contador_crc: null
         }
 
         // Valida campo RF
@@ -244,21 +260,61 @@ export const Comissoes = () => {
             validado = false;
         }
 
+
+        // Valida o CRC quando o membro é contador
+        if (
+            estadoModal.eh_contador_modal &&
+            !estadoModal.contador_crc_modal.trim()
+        ) {
+            erros_encontrados.contador_crc = "Informe o CRC do contador.";
+            validado = false;
+        }
+
         setErrosModal(erros_encontrados)
         return validado;
     }
 
+    const montarPayloadMembro = () => ({
+        dre: dadosDiretoria.uuid,
+        rf: estadoModal.registro_funcional_modal,
+        nome: estadoModal.nome_modal,
+        email: estadoModal.email_modal,
+        comissoes: estadoModal.comissoes_modal,
+        eh_contador: estadoModal.eh_contador_modal,
+        contador_crc: estadoModal.eh_contador_modal
+            ? estadoModal.contador_crc_modal.trim()
+            : null
+    });
+
+    const tratarErroSalvarMembro = (e) => {
+        const dadosErro = e.response?.data;
+
+        if (dadosErro?.contador_crc) {
+            const erroCrc = dadosErro.contador_crc;
+
+            setErrosModal(anterior => ({
+                ...anterior,
+                contador_crc: Array.isArray(erroCrc)
+                    ? erroCrc[0]
+                    : erroCrc
+            }));
+
+            return;
+        }
+
+        if (dadosErro?.detail) {
+            setShowModalInfoNaoPodeGravar(true);
+            setMensagemModalInfoNaoPodeGravar(dadosErro.detail);
+            return;
+        }
+
+        console.error("Ocorreu um erro ao salvar o membro:", e);
+    };
+
     const handleOnSubmitModal = async() => {
         if(validaCampos()){
             if(estadoModal.uuid){
-                let payload = {
-                    dre: dadosDiretoria.uuid,
-                    rf: estadoModal.registro_funcional_modal,
-                    nome: estadoModal.nome_modal,
-                    email: estadoModal.email_modal,
-                    comissoes: estadoModal.comissoes_modal
-                }
-
+                const payload = montarPayloadMembro();
                 try{
                     await patchMembroComissao(estadoModal.uuid, payload);
                     setLoadingMembrosComissao(true);
@@ -267,23 +323,11 @@ export const Comissoes = () => {
                     
                 }
                 catch (e){
-                    if(e.response.data && e.response.data.detail){
-                        setShowModalInfoNaoPodeGravar(true);
-                        setMensagemModalInfoNaoPodeGravar(e.response.data.detail);
-                    }
-                    else{
-                        console.log("ocorreu um erro ", e)
-                    }
+                    tratarErroSalvarMembro(e);                    
                 }
             }
             else{
-                let payload = {
-                    dre: dadosDiretoria.uuid,
-                    rf: estadoModal.registro_funcional_modal,
-                    nome: estadoModal.nome_modal,
-                    email: estadoModal.email_modal,
-                    comissoes: estadoModal.comissoes_modal
-                }
+                const payload = montarPayloadMembro();
                 
                 try{
                     await postMembroComissao(payload);
@@ -293,13 +337,7 @@ export const Comissoes = () => {
                     
                 }
                 catch (e){
-                    if(e.response.data && e.response.data.detail){
-                        setShowModalInfoNaoPodeGravar(true);
-                        setMensagemModalInfoNaoPodeGravar(e.response.data.detail);
-                    }
-                    else{
-                        console.log("ocorreu um erro ", e)
-                    }
+                    tratarErroSalvarMembro(e);
                 }
             }
         }
