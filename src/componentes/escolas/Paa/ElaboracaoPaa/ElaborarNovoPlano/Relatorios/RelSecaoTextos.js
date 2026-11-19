@@ -8,7 +8,7 @@ import EditorWysiwygCustom from '../../../../../Globais/EditorWysiwygCustom';
 
 
 export const RelSecaoTextos = ({
-    secaoKey, config, textosPaa, paaVigente, handleSalvarTexto, isSaving, podeEditar = true }) => {
+    secaoKey, config, textosPaa, paaAtual, handleSalvarTexto, isSaving, podeEditar = true }) => {
 
     const editorContainerRef = useRef(null);
     const tooltipIconRef = useRef(null);
@@ -74,7 +74,7 @@ export const RelSecaoTextos = ({
             <div className="editor-container" ref={editorContainerRef}>
                 <EditorWysiwygCustom
                     textoInicialEditor={(() => {
-                        const textoEditor = paaVigente?.[config.campoPaa] || '';
+                        const textoEditor = paaAtual?.[config.campoPaa] || '';
                         return textoEditor;
                     })()}
                     tituloEditor=""

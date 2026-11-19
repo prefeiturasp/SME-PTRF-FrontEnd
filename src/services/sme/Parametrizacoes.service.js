@@ -1,5 +1,6 @@
 import api from "../api";
 import { TOKEN_ALIAS } from "../auth.service.js";
+import { getPaaAtivoUuid } from "../../utils/paaAtivoStorage";
 
 const authHeader = ()=>({
   headers: {
@@ -409,7 +410,7 @@ export const getPaa = async (paa_uuid, associacao_uuid) => {
 };
 
 export const getPAAsAnteriores = async () => {
-  return (await api.get(`/api/paa/${localStorage.getItem('PAA')}/paas-anteriores/`, authHeader())).data;
+  return (await api.get(`/api/paa/${getPaaAtivoUuid()}/paas-anteriores/`, authHeader())).data;
 };
 
 export const getParametroPaa = async () => {

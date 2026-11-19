@@ -252,8 +252,8 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("onChange checkbox Para atualizacoes do Saldo", async () => {
-    localStorage.setItem("PAA", "fake-uuid-paa");
-    localStorage.setItem(
+    sessionStorage.setItem("PAA", "fake-uuid-paa");
+    sessionStorage.setItem(
       "DADOS_PAA",
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );
@@ -273,8 +273,8 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("Cancelar checkbox Para atualizacoes do Saldo", async () => {
-    localStorage.setItem("PAA", "fake-uuid-paa");
-    localStorage.setItem(
+    sessionStorage.setItem("PAA", "fake-uuid-paa");
+    sessionStorage.setItem(
       "DADOS_PAA",
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );
@@ -299,8 +299,8 @@ describe("ReceitasPrevistas Component", () => {
   });
 
   it("Submit checkbox Para atualizacoes do Saldo", async () => {
-    localStorage.setItem("PAA", "fake-uuid-paa");
-    localStorage.setItem(
+    sessionStorage.setItem("PAA", "fake-uuid-paa");
+    sessionStorage.setItem(
       "DADOS_PAA",
       JSON.stringify({ uuid: "fake-uuid-paa", saldo_congelado_em: null }),
     );

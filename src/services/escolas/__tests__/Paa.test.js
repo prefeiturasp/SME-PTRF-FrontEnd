@@ -63,6 +63,7 @@ import {
     getPlanoAplicacao,
 } from '../Paa.service.js';
 import { TOKEN_ALIAS } from '../../auth.service.js';
+import { visoesService } from '../../visoes.service';
 
 jest.mock('../../api', () => ({
     get: jest.fn(),
@@ -81,6 +82,8 @@ describe('Testes para funções de análise', () => {
     
     beforeEach(() => {
         localStorage.setItem(TOKEN_ALIAS, mockToken);
+        // com a flag paa-proxima-vigencia ligada, o PAA ativo fica no sessionStorage da aba
+        jest.spyOn(visoesService, 'featureFlagAtiva').mockReturnValue(true);
     });
 
     afterEach(() => {
@@ -223,7 +226,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getCategoriasPddeTotais deve chamar a API corretamente', async () => {
-        localStorage.setItem('PAA', '1234');
+        sessionStorage.setItem('PAA', '1234');
         api.get.mockResolvedValue({ data: mockData });
         const result = await getProgramasPddeTotais();
 
@@ -235,7 +238,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getAcoesPDDE deve chamar a API corretamente', async () => {
-        localStorage.setItem('PAA', '1234');
+        sessionStorage.setItem('PAA', '1234');
         api.get.mockResolvedValue({ data: mockData });
         const currentPage = 1;
         const rowsPerPage = 20;
@@ -704,7 +707,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getPrioridades deve chamar a API com parâmetros padrão', async () => {
-        localStorage.setItem('PAA', 'paa-uuid');
+        sessionStorage.setItem('PAA', 'paa-uuid');
         api.get.mockResolvedValue({ data: mockData });
         const result = await getPrioridades({});
 
@@ -720,7 +723,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getPrioridades deve incluir page e page_size na URL', async () => {
-        localStorage.setItem('PAA', 'paa-uuid');
+        sessionStorage.setItem('PAA', 'paa-uuid');
         api.get.mockResolvedValue({ data: mockData });
         await getPrioridades({}, 2, 10);
 
@@ -731,7 +734,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getPrioridadesRelatorio deve chamar a API corretamente', async () => {
-        localStorage.setItem('PAA', 'paa-uuid');
+        sessionStorage.setItem('PAA', 'paa-uuid');
         api.get.mockResolvedValue({ data: mockData });
         const result = await getPrioridadesRelatorio();
 
@@ -773,7 +776,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getResumoPrioridades deve chamar a API corretamente', async () => {
-        localStorage.setItem('PAA', 'paa-uuid');
+        sessionStorage.setItem('PAA', 'paa-uuid');
         api.get.mockResolvedValue({ data: mockData });
         const result = await getResumoPrioridades();
 
@@ -961,7 +964,7 @@ describe('Testes para funções de análise', () => {
     });
 
     test('getObjetivosPaa deve chamar a API corretamente', async () => {
-        localStorage.setItem('PAA', 'paa-uuid');
+        sessionStorage.setItem('PAA', 'paa-uuid');
         api.get.mockResolvedValue({ data: mockData });
         const result = await getObjetivosPaa();
 

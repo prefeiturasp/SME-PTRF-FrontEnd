@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { toastCustom } from "../../../../Globais/ToastCustom";
 import { getPaa } from "../../../../../services/sme/Parametrizacoes.service";
+import { gravarPaaAtivo } from "../../../../../utils/paaAtivoStorage";
 
 export const useGetPaa = (paaUuid) => {
   const query = useQuery({
@@ -27,10 +28,7 @@ export const useGetPaa = (paaUuid) => {
 
   useEffect(() => {
     if (isSuccess) {
-      // OBS: código legado, terá que ser removido quando a componentização estiver completa.
-      const response = data;
-      localStorage.setItem("PAA", response.uuid);
-      localStorage.setItem("DADOS_PAA", JSON.stringify(response));
+      gravarPaaAtivo(data);
     }
   }, [isSuccess, data]);
 

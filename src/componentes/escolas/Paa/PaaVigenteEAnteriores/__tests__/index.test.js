@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
-import { PaaVigenteEAnteriores } from '../index';
+import { PaaVigenteEAnterioresNovo as PaaVigenteEAnteriores } from '../index_novo';
 import { usePaaVigenteEAnteriores } from '../hooks/usePaaVigenteEAnteriores';
 import { ASSOCIACAO_UUID } from '../../../../../services/auth.service';
 
@@ -147,6 +147,42 @@ describe('PaaVigenteEAnteriores', () => {
       const toggleButton = screen.getAllByAltText(/Abrir|Fechar/)[1];
       await userEvent.click(toggleButton);
       expect(screen.getByText(/PAA 2023\/2024/)).toBeInTheDocument();
+    });
+  });
+
+  describe('PAA da Próxima Vigência', () => {
+    const mockProximaVigencia = {
+      ...mockVigente,
+      uuid: 'proxima-uuid',
+      referencia: '2026 a 2027',
+    };
+
+    it('exibe o Plano da próxima vigência quando há PAA com Plano gerado', () => {
+      usePaaVigenteEAnteriores.mockReturnValue(createMockHookReturn({
+        data: { vigente: mockVigente, proxima_vigencia: mockProximaVigencia, anteriores: mockAnteriores },
+      }));
+
+      renderComponent();
+
+      const secao = screen.getByTestId('secao-proxima-vigencia');
+      expect(secao).toHaveTextContent('Plano da próxima vigência');
+      expect(secao).toHaveTextContent('PAA 2026/2027');
+    });
+
+    it('não exibe a seção quando não há PAA da próxima vigência', () => {
+      renderComponent();
+
+      expect(screen.queryByTestId('secao-proxima-vigencia')).not.toBeInTheDocument();
+    });
+
+    it('exibe a próxima vigência mesmo sem PAA vigente', () => {
+      usePaaVigenteEAnteriores.mockReturnValue(createMockHookReturn({
+        data: { vigente: null, proxima_vigencia: mockProximaVigencia, anteriores: [] },
+      }));
+
+      renderComponent();
+
+      expect(screen.getByTestId('secao-proxima-vigencia')).toBeInTheDocument();
     });
   });
 });

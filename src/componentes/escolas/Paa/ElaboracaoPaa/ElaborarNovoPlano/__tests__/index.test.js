@@ -1,7 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { ElaborarNovoPlano } from "../index";
-import { MemoryRouter } from "react-router-dom";
+import { ElaborarNovoPlanoNovo as ElaborarNovoPlano } from "../index_novo";
+import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
+
 import { useGetPaa } from "../../../componentes/hooks/useGetPaa";
+import { visoesService } from "../../../../../../services/visoes.service";
+
+jest.mock("../../../../../../services/visoes.service", () => ({
+  visoesService: { featureFlagAtiva: jest.fn() },
+}));
 
 jest.mock("../../../componentes/hooks/useGetPaa", () => ({
   useGetPaa: jest.fn(),
@@ -37,49 +44,65 @@ describe("ElaborarNovoPlano", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
-    localStorage.setItem("PAA", "paa-uuid-123");
-    localStorage.setItem("UUID", "assoc-uuid-123");
-    useGetPaa.mockReturnValue({
-      data: defaultPaa,
-      refetch: mockRefetch,
-      isFetching: false,
-    });
+    sessionStorage.clear();
+    visoesService.featureFlagAtiva.mockReturnValue(true);
+    useGetPaa.mockReturnValue({ data: defaultPaa, refetch: mockRefetch, isFetching: false });
   });
 
-  const renderComponent = () =>
+  const renderComponent = (uuid = "paa-uuid-123") =>
     render(
-      <MemoryRouter>
-        <ElaborarNovoPlano />
+      <MemoryRouter initialEntries={[`/elaborar-novo-paa/${uuid}`]}>
+        <Routes>
+          <Route path="/elaborar-novo-paa/:uuid_paa" element={<ElaborarNovoPlano />} />
+        <Route path="/paa" element={<div data-testid="escolha-do-paa" />} />
+        </Routes>
       </MemoryRouter>,
     );
 
-  describe("Chamada ao useGetPaa", () => {
-    it("chama useGetPaa com o uuid do PAA do localStorage", () => {
-      renderComponent();
+  describe("PAA da rota", () => {
+    it("carrega o PAA pelo uuid da rota", () => {
+      renderComponent("paa-uuid-123");
       expect(useGetPaa).toHaveBeenCalledWith("paa-uuid-123");
     });
 
-    it("chama useGetPaa com null quando PAA não está no localStorage", () => {
-      localStorage.removeItem("PAA");
+    it("torna o PAA da rota o ativo da aba antes de exibir as telas", () => {
+      sessionStorage.setItem("PAA", "outro-paa");
       renderComponent();
-      expect(useGetPaa).toHaveBeenCalledWith(null);
+      expect(getPaaAtivoUuid()).toBe("paa-uuid-123");
+      expect(screen.getByTestId("paa-base")).toBeInTheDocument();
+    });
+
+    it("não exibe o PAA anterior ainda em cache enquanto o da rota carrega", () => {
+      useGetPaa.mockReturnValue({ data: { ...defaultPaa, uuid: "outro-paa" }, refetch: mockRefetch, isFetching: true });
+      sessionStorage.setItem("PAA", "outro-paa");
+      renderComponent("paa-uuid-123");
+      expect(screen.queryByTestId("paa-base")).not.toBeInTheDocument();
+      expect(getPaaAtivoUuid()).toBe("outro-paa");
+    });
+  });
+
+  describe("PAA inexistente ou sem acesso", () => {
+    it("volta para a escolha do PAA quando o carregamento falha", () => {
+      useGetPaa.mockReturnValue({ data: undefined, isError: true, refetch: mockRefetch, isFetching: false });
+      renderComponent("uuid-inexistente");
+      expect(screen.getByTestId("escolha-do-paa")).toBeInTheDocument();
+      expect(screen.queryByTestId("paa-base")).not.toBeInTheDocument();
+    });
+
+    it("não redireciona quando o PAA carrega", () => {
+      renderComponent();
+      expect(screen.queryByTestId("escolha-do-paa")).not.toBeInTheDocument();
     });
   });
 
   describe("Renderização condicional", () => {
-    it("não renderiza PaaBase quando paa é null", () => {
-      useGetPaa.mockReturnValue({ data: null, refetch: mockRefetch, isFetching: false });
+    it.each([[null], [undefined]])("não renderiza PaaBase quando paa é %s", (data) => {
+      useGetPaa.mockReturnValue({ data, refetch: mockRefetch, isFetching: false });
       renderComponent();
       expect(screen.queryByTestId("paa-base")).not.toBeInTheDocument();
     });
 
-    it("não renderiza PaaBase quando paa é undefined", () => {
-      useGetPaa.mockReturnValue({ data: undefined, refetch: mockRefetch, isFetching: false });
-      renderComponent();
-      expect(screen.queryByTestId("paa-base")).not.toBeInTheDocument();
-    });
-
-    it("renderiza PaaBase quando paa está disponível", () => {
+    it("renderiza PaaBase quando o paa da rota está disponível", () => {
       renderComponent();
       expect(screen.getByTestId("paa-base")).toBeInTheDocument();
     });
@@ -88,9 +111,7 @@ describe("ElaborarNovoPlano", () => {
   describe("itemsBreadCrumb passados ao PaaBase", () => {
     it("passa os dois itens corretos de breadcrumb ao PaaBase", () => {
       renderComponent();
-      const breadcrumb = JSON.parse(
-        screen.getByTestId("paa-base").dataset.breadcrumb,
-      );
+      const breadcrumb = JSON.parse(screen.getByTestId("paa-base").dataset.breadcrumb);
       expect(breadcrumb).toEqual([
         { label: "Plano Anual de Atividades", url: "/paa" },
         { label: "Elaborar novo plano", active: true },
@@ -101,27 +122,13 @@ describe("ElaborarNovoPlano", () => {
   describe("PaaContext fornecido ao PaaBase", () => {
     it("fornece o paa correto no contexto", () => {
       renderComponent();
-      expect(screen.getByTestId("paa-base")).toHaveAttribute(
-        "data-paa-uuid",
-        "paa-uuid-123",
-      );
+      expect(screen.getByTestId("paa-base")).toHaveAttribute("data-paa-uuid", "paa-uuid-123");
     });
 
-    it("fornece isFetching=false no contexto quando não está carregando", () => {
+    it.each([[false], [true]])("fornece isFetching=%s no contexto", (isFetching) => {
+      useGetPaa.mockReturnValue({ data: defaultPaa, refetch: mockRefetch, isFetching });
       renderComponent();
-      expect(screen.getByTestId("paa-base")).toHaveAttribute(
-        "data-is-fetching",
-        "false",
-      );
-    });
-
-    it("fornece isFetching=true no contexto quando está carregando", () => {
-      useGetPaa.mockReturnValue({ data: defaultPaa, refetch: mockRefetch, isFetching: true });
-      renderComponent();
-      expect(screen.getByTestId("paa-base")).toHaveAttribute(
-        "data-is-fetching",
-        "true",
-      );
+      expect(screen.getByTestId("paa-base")).toHaveAttribute("data-is-fetching", String(isFetching));
     });
   });
 });

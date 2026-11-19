@@ -3,4 +3,5 @@ export const FEATURE_FLAGS = {
   PREMIO_EXCELENCIA_PRESTACAO_CONTAS: 'premio-excelencia-prestacao-contas',
   PREMIO_EXCELENCIA_ACOMPANHAMENTO_PRESTACAO_CONTAS: 'premio-excelencia-acompanhamento-pc',
   DESPESAS_PIPELINE: 'despesas-pipeline',
+  PAA_PROXIMA_VIGENCIA: 'paa-proxima-vigencia',
 };

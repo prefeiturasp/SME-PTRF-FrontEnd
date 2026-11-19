@@ -5,12 +5,12 @@ import { IconButton } from "../../../../../Globais/UI/Button/IconButton";
 import "./styles.css";
 import { EditIconButton } from "../../../../../Globais/UI/Button";
 
-export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, podeEditar = true }) => {
+export const RelSecaoObjetivos = ({ paaAtual, onSalvarObjetivos, isSaving, podeEditar = true }) => {
   const { data, isLoading } = useGetObjetivosPaa();
   const [items, setItems] = useState(data);
 
   useEffect(() => {
-    const selecionados = paaVigente?.objetivos?.map((o) => o.uuid) || [];
+    const selecionados = paaAtual?.objetivos?.map((o) => o.uuid) || [];
 
     const novosItems = data.map((item) => ({
       ...item,
@@ -18,7 +18,7 @@ export const RelSecaoObjetivos = ({ paaVigente, onSalvarObjetivos, isSaving, pod
     }));
 
     setItems(novosItems);
-  }, [data, paaVigente?.objetivos]);
+  }, [data, paaAtual?.objetivos]);
 
   const getPayload = useCallback(() => {
     // Desconsiderar itens adicionados e removidos localmente (antes de salvar)

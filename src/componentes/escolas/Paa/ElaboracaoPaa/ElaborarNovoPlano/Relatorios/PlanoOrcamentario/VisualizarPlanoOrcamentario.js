@@ -13,6 +13,8 @@ import { useGetPlanoOrcamentario } from "./hooks/useGetPlanoOrcamentario";
 import { TagRetificacao } from "../../../../componentes/TagRetificacao";
 import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
 import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
+import { getPaaAtivoUuid } from "../../../../../../../utils/paaAtivoStorage";
+import { rotaElaboracaoPaa } from "../../../utils/rotasPaa";
 
 const formatResumo = (
   valores,
@@ -206,7 +208,7 @@ const VisualizarPlanoOrcamentarioContent = () => {
   const navigate = useNavigate();
   const { paa, isFetching: isLoadingPaa } = usePaaContext();
   
-  const paaUUID = localStorage.getItem("PAA");
+  const paaUUID = getPaaAtivoUuid();
   const colunas = useMemo(montarColunas, []);
   
   const { 
@@ -222,7 +224,7 @@ const VisualizarPlanoOrcamentarioContent = () => {
   }, [planoOrcamentarioData]);
 
   const handleVoltar = () => {
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -239,7 +241,7 @@ const VisualizarPlanoOrcamentarioContent = () => {
   };
 
   const handleIrParaReceitas = (destino) => {
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -255,7 +257,7 @@ const VisualizarPlanoOrcamentarioContent = () => {
 
   const handleIrParaPrioridades = () => {
     
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -364,7 +366,7 @@ const VisualizarPlanoOrcamentarioContent = () => {
 };
 
 export const VisualizarPlanoOrcamentario = () => {
-  const paa_uuid_storage = localStorage.getItem('PAA');
+  const paa_uuid_storage = getPaaAtivoUuid();
   
   const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
 

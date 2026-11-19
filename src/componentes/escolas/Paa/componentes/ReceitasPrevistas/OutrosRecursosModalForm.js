@@ -6,6 +6,7 @@ import { usePostReceitasPrevistasOutrosRecursos } from "./hooks/usePostReceitasP
 import { usePatchReceitasPrevistasOutrosRecursosPeriodo } from "./hooks/usePatchReceitasPrevistasOutrosRecursosPeriodo";
 import { formatMoneyBRL, formatMoneyByCentsBRL, parseMoneyBRL } from "../../../../../utils/money";
 import { visoesService } from "../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../utils/paaAtivoStorage";
 import "./style.css";
 
 const initialValues = {
@@ -83,7 +84,7 @@ const OutrosRecursosModalForm = ({ open, onClose, data }) => {
 
   const onSubmit = (values) => {
     const payload = {
-      paa: localStorage.getItem("PAA"),
+      paa: getPaaAtivoUuid(),
       outro_recurso_periodo: data?.uuid,
       saldo_custeio: values.saldo_custeio / 100,
       saldo_capital: values.saldo_capital / 100,

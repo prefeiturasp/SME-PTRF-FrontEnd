@@ -11,6 +11,7 @@ import { deleteRecursoProprioPaa } from "../../../../../../../services/escolas/P
 import { ModalConfirmarExclusao } from "../../../../../../sme/Parametrizacoes/componentes/ModalConfirmarExclusao";
 import { visoesService } from "../../../../../../../services/visoes.service";
 import { getErrorMessage } from "../../../../../../../utils/obtemMsgErroAxios";
+import { rotaElaboracaoPaa } from "../../../utils/rotasPaa";
 import "./styles.scss";
 
 
@@ -57,7 +58,7 @@ export const RecursosProprios = ({paa}) => {
   }, [recursosProprios, isLoadingRecursos]);
 
   const handleEditarRecursosProprios = useCallback(() => {
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;

@@ -1,4 +1,4 @@
-import { memo, useState, useMemo, useEffectseRef } from "react";
+import { memo } from "react";
 import { useDispatch } from "react-redux";
 import { Form, Row, Col, Flex, Spin, Typography, Select } from 'antd';
 import { ModalFormBodyText } from "../../../../../Globais/ModalBootstrap";
@@ -7,6 +7,7 @@ import { importaPrioridadesValidationSchema } from "./validationSchema";
 import { CustomModalConfirm } from "../../../../../Globais/Modal/CustomModalConfirm";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 import { visoesService } from "../../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
 
 const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) => {
   const [form] = Form.useForm();
@@ -32,7 +33,7 @@ const ModalImportarPrioridades = ({ open, onClose, paas, podeEditar = true }) =>
       const validationSchema = importaPrioridadesValidationSchema();
       await validationSchema.validate(values, { abortEarly: false });
 
-      const uuid_paa_atual = localStorage.getItem("PAA")
+      const uuid_paa_atual = getPaaAtivoUuid();
       const uuid_paa_anterior = values.uuid_paa_anterior
       
       mutationImportarPrioridades.mutate(

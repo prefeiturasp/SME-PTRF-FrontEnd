@@ -1,4 +1,3 @@
-import React from "react";
 import "../../geracao-da-ata.scss"
 import { Spin } from "antd";
 import {TopoComBotoes} from "./TopoComBotoes";
@@ -23,6 +22,7 @@ import { getErrorMessage } from "../../../../../utils/obtemMsgErroAxios";
 
 // Hooks Personalizados
 import {useCarregaRepassesPendentesPorPeriodoAteAgora} from "../../../../../hooks/Globais/useCarregaRepassesPendentesPorPeriodoAteAgora";
+import { rotaElaboracaoPaa } from "../../../Paa/ElaboracaoPaa/utils/rotasPaa";
 
 moment.updateLocale('pt', {
     months: [
@@ -225,7 +225,7 @@ export const EdicaoAtaPaa = () => {
             window.location.assign(returnUrl);
             return;
         }
-        let path = `/elaborar-novo-paa`;
+        let path = rotaElaboracaoPaa(uuid_paa);
         window.location.assign(path)
     };
 

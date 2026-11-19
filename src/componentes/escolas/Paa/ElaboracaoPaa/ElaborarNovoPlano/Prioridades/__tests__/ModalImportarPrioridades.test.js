@@ -40,7 +40,7 @@ describe('ModalImportarPrioridades', () => {
 
   beforeEach(() => {
     useDispatch.mockReturnValue(mockDispatch);
-    localStorage.setItem("PAA", "uuid-atual-123");
+    sessionStorage.setItem("PAA", "uuid-atual-123");
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },

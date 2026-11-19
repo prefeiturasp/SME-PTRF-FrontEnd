@@ -20,7 +20,7 @@ export const RenderSecao = ({
   isLoading,
   isError,
   isLoadingPaa,
-  paaVigente,
+  paaAtual,
   podeEditar = true,
 }) => {
   const { patchPaa, isLoading: isSaving } = usePatchPaa();
@@ -32,14 +32,14 @@ export const RenderSecao = ({
   }
 
   const handleSalvarObjetivos = async (objetivos) => {
-    if (!podeEditar || !paaVigente?.uuid) {
+    if (!podeEditar || !paaAtual?.uuid) {
       return;
     }
-    patchPaa({ uuid: paaVigente.uuid, payload: { objetivos } });
+    patchPaa({ uuid: paaAtual.uuid, payload: { objetivos } });
   };
 
   const handleSalvarTexto = async (campoPaa, texto) => {
-    if (!podeEditar || !paaVigente?.uuid) {
+    if (!podeEditar || !paaAtual?.uuid) {
       return;
     }
 
@@ -47,7 +47,7 @@ export const RenderSecao = ({
       [campoPaa]: texto,
     };
 
-    patchPaa({ uuid: paaVigente.uuid, payload });
+    patchPaa({ uuid: paaAtual.uuid, payload });
   };
 
   const contentClassName = `expanded-item-content`;
@@ -93,7 +93,7 @@ export const RenderSecao = ({
                         secaoKey={secaoKey}
                         config={config}
                         textosPaa={textosPaa}
-                        paaVigente={paaVigente}
+                        paaAtual={paaAtual}
                         handleSalvarTexto={handleSalvarTexto}
                         isSaving={isSaving}
                         podeEditar={podeEditar}
@@ -106,7 +106,7 @@ export const RenderSecao = ({
 
                 {config.chave === "objetivos" && (
                   <RelSecaoObjetivos
-                    paaVigente={paaVigente}
+                    paaAtual={paaAtual}
                     onSalvarObjetivos={handleSalvarObjetivos}
                     isSaving={isSaving}
                     podeEditar={podeEditar}

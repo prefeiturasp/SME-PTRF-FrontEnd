@@ -14,6 +14,9 @@ import { useGetPaa } from "../../../../componentes/hooks/useGetPaa";
 import { PaaContext, usePaaContext } from "../../../../componentes/PaaContext";
 import { TagRetificacao } from "../../../../componentes/TagRetificacao";
 import { visoesService } from "../../../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../../../utils/paaAtivoStorage";
+import { rotaElaboracaoPaa } from "../../../utils/rotasPaa";
+
 const { Text } = Typography;
 
 const columnsDefinition = (ehOutrosRecursos = false) => {
@@ -94,7 +97,7 @@ const VisualizarPlanoAplicacaoContent = () => {
   );
 
   const handleVoltar = () => {
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -111,7 +114,8 @@ const VisualizarPlanoAplicacaoContent = () => {
   };
 
   const handleEditarInformacoes = () => {
-    let voltarRota = "/elaborar-novo-paa";
+    let voltarRota = rotaElaboracaoPaa(paa?.uuid);
+
 
     if (paa?.status === "EM_RETIFICACAO") {
       voltarRota =`/retificacao-paa/${paa?.uuid}`;
@@ -194,7 +198,7 @@ const VisualizarPlanoAplicacaoContent = () => {
 };
 
 export const VisualizarPlanoAplicacao = () => {
-  const paa_uuid_storage = localStorage.getItem('PAA');
+  const paa_uuid_storage = getPaaAtivoUuid();
   
   const { data: paa, refetch, isFetching } = useGetPaa(paa_uuid_storage);
 

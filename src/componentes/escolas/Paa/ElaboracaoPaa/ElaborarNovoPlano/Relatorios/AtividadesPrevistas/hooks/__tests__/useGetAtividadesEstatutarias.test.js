@@ -6,6 +6,13 @@ import {
 } from "../../../../../../../../../services/escolas/Paa.service";
 import { useGetAtividadesEstatutarias } from "../useGetAtividadesEstatutarias";
 
+jest.mock("../../../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
+  },
+}));
+
 jest.mock("../../../../../../../../../services/escolas/Paa.service", () => ({
   getAtividadesEstatutariasDisponiveis: jest.fn(),
   getAtividadesEstatutariasPrevistas: jest.fn(),
@@ -52,6 +59,7 @@ describe("useGetAtividadesEstatutarias", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
     queryClient = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
@@ -70,7 +78,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("não executa a query quando PAA está vazio no localStorage", () => {
-      localStorage.setItem("PAA", "");
+      sessionStorage.setItem("PAA", "");
 
       renderHook(() => useGetAtividadesEstatutarias(), { wrapper });
 
@@ -78,7 +86,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("chama ambos os serviços com o paaUuid do localStorage", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
 
@@ -91,7 +99,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna isLoading true enquanto a requisição está em andamento", () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockReturnValue(new Promise(() => {}));
       getAtividadesEstatutariasPrevistas.mockReturnValue(new Promise(() => {}));
 
@@ -103,7 +111,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna isError true quando a API falha", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockRejectedValueOnce(
         new Error("Erro ao buscar disponíveis")
       );
@@ -119,7 +127,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna atividades vazia e quantidade 0 quando não há dados", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
 
@@ -134,7 +142,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("expõe a função refetch", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
 
@@ -150,7 +158,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("toArray — formatos de payload aceitos", () => {
     it("aceita payload com `results` (formato paginado)", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel();
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce({
         results: [disp],
@@ -165,7 +173,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("aceita payload como array direto", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel();
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -178,7 +186,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna array vazio para payload null", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce(null);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce(null);
 
@@ -192,7 +200,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna array vazio para payload que não é array nem tem results", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce({
         data: "formato-desconhecido",
       });
@@ -210,7 +218,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("normalizaDisponivel", () => {
     it("mapeia campos corretamente para atividade disponível com paa", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ paa: "paa-uuid-abc" });
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -240,7 +248,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("marca isGlobal=true e origem=global quando paa é falsy", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ paa: null });
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -257,7 +265,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa string vazia para campos ausentes (nome, tipo_label, mes_label, status_label)", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = { uuid: "disp-sem-campos", paa: null };
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -281,7 +289,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("normalizaPrevista", () => {
     it("mapeia campos de atividade_estatutaria corretamente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = makePrevista();
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([prev]);
@@ -303,7 +311,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("marca isGlobal=true quando atividade_estatutaria.paa é falsy", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = makePrevista({
         atividade_estatutaria: {
@@ -331,7 +339,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa uuid da prevista quando não há atividade_estatutaria (isGlobal=false)", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-direto",
@@ -361,7 +369,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa data_prevista quando data está ausente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-data-prevista",
@@ -381,7 +389,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa dataPrevista quando data e data_prevista estão ausentes", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-dataPrevista",
@@ -401,7 +409,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa nome quando descricao está ausente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-nome",
@@ -421,7 +429,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa descricao_atividade quando descricao e nome estão ausentes", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-descricao-atividade",
@@ -441,7 +449,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa tipoAtividade quando tipo_label está ausente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-tipo-atividade",
@@ -461,7 +469,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa tipoAtividadeKey quando tipo está ausente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = {
         uuid: "prev-tipo-key",
@@ -483,7 +491,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("mergeAtividades — lógica de mesclagem", () => {
     it("mescla disponível com prevista correspondente pelo uuid", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ uuid: "disp-1" });
       const prev = makePrevista();
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
@@ -502,7 +510,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("mantém disponível sem prevista correspondente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ uuid: "disp-sem-prevista" });
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -518,7 +526,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("adiciona prevista órfã que não tem disponível correspondente", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([]);
       const prev = makePrevista();
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([prev]);
@@ -533,7 +541,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("resultado contém disponíveis + previstas órfãs sem duplicatas", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp1 = makeDisponivel({ uuid: "disp-1" });
       const disp2 = makeDisponivel({ uuid: "disp-2", nome: "Atividade 2" });
       const prev1 = makePrevista();
@@ -568,7 +576,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa campos do disponível como fallback quando campos da prevista são vazios", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({
         uuid: "disp-fallback",
         nome: "Descrição do Disp",
@@ -609,7 +617,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna quantidade igual ao número de atividades mescladas", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disponiveis = [
         makeDisponivel({ uuid: "d1" }),
         makeDisponivel({ uuid: "d2", nome: "D2" }),
@@ -630,7 +638,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("montarMesAno", () => {
     it("constrói mesAno no formato 'MesLabel/Ano' quando há data válida", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ uuid: "disp-1", mes_label: "Março" });
       const prev = makePrevista({ data: "2024-03-15" });
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
@@ -646,7 +654,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa só o mesLabel quando não há data", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({
         uuid: "disp-sem-prevista",
         mes_label: "Abril",
@@ -664,7 +672,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("retorna string vazia quando não há mesLabel nem data", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = { uuid: "disp-vazio", paa: null };
       getAtividadesEstatutariasDisponiveis.mockResolvedValueOnce([disp]);
       getAtividadesEstatutariasPrevistas.mockResolvedValueOnce([]);
@@ -679,7 +687,7 @@ describe("useGetAtividadesEstatutarias", () => {
     });
 
     it("usa só o mesLabel quando a data é inválida (NaN no getFullYear)", async () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       const disp = makeDisponivel({ uuid: "disp-1", mes_label: "Maio" });
       const prev = makePrevista({
         data: "data-invalida",
@@ -710,7 +718,7 @@ describe("useGetAtividadesEstatutarias", () => {
 
   describe("atividades no estado inicial (sem dado ainda)", () => {
     it("retorna atividades=[] e quantidade=0 antes da query completar", () => {
-      localStorage.setItem("PAA", PAA_UUID);
+      sessionStorage.setItem("PAA", PAA_UUID);
       getAtividadesEstatutariasDisponiveis.mockReturnValue(new Promise(() => {}));
       getAtividadesEstatutariasPrevistas.mockReturnValue(new Promise(() => {}));
 

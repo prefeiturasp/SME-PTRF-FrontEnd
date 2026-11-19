@@ -15,6 +15,7 @@ import {
 } from "../../../../../../utils/money";
 import { RECURSOS_PRIORIDADE } from "../../../../../../constantes/prioridades";
 import { usePaaContext } from "../../../componentes/PaaContext";
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
 
 const ModalFormAdicionarPrioridade = (
     {
@@ -35,7 +36,7 @@ const ModalFormAdicionarPrioridade = (
 
   const exibeFlagAtivada = visoesService.featureFlagAtiva('paa-receitas-prevista');
   const paaContext = usePaaContext();
-  const paa_uuid = useMemo(() =>localStorage.getItem("PAA"), [])
+  const paa_uuid = useMemo(() => getPaaAtivoUuid(), [])
 
   const { data: acoesAssociacao, isLoading: isLoadingAcoes } = useGetAcoesPTRFPrioridades(
     {
@@ -168,7 +169,7 @@ const ModalFormAdicionarPrioridade = (
       const tiposDespesaCusteioUuid = tabelas?.tipos_despesa_custeio?.find(item => item.id === values.tipo_despesa_custeio);
 
       let payload = {
-        paa: localStorage.getItem("PAA"),
+        paa: getPaaAtivoUuid(),
         ...values,
         ...(values.tipo_despesa_custeio && { tipo_despesa_custeio: tiposDespesaCusteioUuid.uuid }),
         recurso: getRecurso(values.recurso),
