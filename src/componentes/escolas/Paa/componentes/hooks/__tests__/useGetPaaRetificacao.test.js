@@ -4,6 +4,13 @@ import { useGetPaaRetificacao } from "../useGetPaaRetificacao";
 import { getPaaRetificacao } from "../../../../../../services/escolas/Paa.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
+jest.mock("../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
+  },
+}));
+
 jest.mock("../../../../../../services/escolas/Paa.service", () => ({
   getPaaRetificacao: jest.fn(),
 }));
@@ -29,6 +36,7 @@ describe("useGetPaaRetificacao", () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
     localStorage.clear();
+    sessionStorage.clear();
 
     queryClient = new QueryClient({
       defaultOptions: {
@@ -88,7 +96,7 @@ describe("useGetPaaRetificacao", () => {
       renderHook(() => useGetPaaRetificacao("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("PAA")).toBe("paa-uuid-123")
+        expect(sessionStorage.getItem("PAA")).toBe("paa-uuid-123")
       );
     });
 
@@ -99,7 +107,7 @@ describe("useGetPaaRetificacao", () => {
       renderHook(() => useGetPaaRetificacao("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("DADOS_PAA")).toBe(JSON.stringify(mockData))
+        expect(sessionStorage.getItem("DADOS_PAA")).toBe(JSON.stringify(mockData))
       );
     });
 
@@ -109,7 +117,7 @@ describe("useGetPaaRetificacao", () => {
       renderHook(() => useGetPaaRetificacao("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("PAA")).toBe("paa-uuid-123")
+        expect(sessionStorage.getItem("PAA")).toBe("paa-uuid-123")
       );
 
       expect(toastCustom.ToastCustomError).not.toHaveBeenCalled();
@@ -121,7 +129,7 @@ describe("useGetPaaRetificacao", () => {
       renderHook(() => useGetPaaRetificacao("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("PAA")).toBe("paa-uuid-123")
+        expect(sessionStorage.getItem("PAA")).toBe("paa-uuid-123")
       );
 
       jest.runAllTimers();
@@ -186,8 +194,8 @@ describe("useGetPaaRetificacao", () => {
 
       await waitFor(() => expect(toastCustom.ToastCustomError).toHaveBeenCalled());
 
-      expect(localStorage.getItem("PAA")).toBeNull();
-      expect(localStorage.getItem("DADOS_PAA")).toBeNull();
+      expect(sessionStorage.getItem("PAA")).toBeNull();
+      expect(sessionStorage.getItem("DADOS_PAA")).toBeNull();
     });
   });
 

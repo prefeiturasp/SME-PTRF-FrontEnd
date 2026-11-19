@@ -5,6 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { useGetPlanoOrcamentario } from "../hooks/useGetPlanoOrcamentario";
 import { useGetPaa } from "../../../../../componentes/hooks/useGetPaa";
 
+jest.mock("../../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
+  },
+}));
+
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useNavigate: jest.fn(),
@@ -123,7 +130,7 @@ describe("VisualizarPlanoOrcamentario", () => {
     expect(botoesEditarPrioridades.length).toBeGreaterThan(0);
 
     fireEvent.click(botoesEditarReceitas[0]);
-    expect(navigateMock).toHaveBeenNthCalledWith(1, "/elaborar-novo-paa", {
+    expect(navigateMock).toHaveBeenNthCalledWith(1, "/elaborar-novo-paa/paa-123", {
       state: {
         activeTab: "receitas",
         receitasDestino: "ptrf",
@@ -132,7 +139,7 @@ describe("VisualizarPlanoOrcamentario", () => {
     });
 
     fireEvent.click(botoesEditarReceitas[1]);
-    expect(navigateMock).toHaveBeenNthCalledWith(2, "/elaborar-novo-paa", {
+    expect(navigateMock).toHaveBeenNthCalledWith(2, "/elaborar-novo-paa/paa-123", {
       state: {
         activeTab: "receitas",
         receitasDestino: "pdde",
@@ -141,7 +148,7 @@ describe("VisualizarPlanoOrcamentario", () => {
     });
 
     fireEvent.click(botoesEditarReceitas[2]);
-    expect(navigateMock).toHaveBeenNthCalledWith(3, "/elaborar-novo-paa", {
+    expect(navigateMock).toHaveBeenNthCalledWith(3, "/elaborar-novo-paa/paa-123", {
       state: {
         activeTab: "receitas",
         receitasDestino: "outros-recursos",
@@ -150,7 +157,7 @@ describe("VisualizarPlanoOrcamentario", () => {
     });
 
     fireEvent.click(botoesEditarPrioridades[0]);
-    expect(navigateMock).toHaveBeenNthCalledWith(4, "/elaborar-novo-paa", {
+    expect(navigateMock).toHaveBeenNthCalledWith(4, "/elaborar-novo-paa/paa-123", {
       state: {
         activeTab: "prioridades-list",
         fromPlanoOrcamentario: true,
@@ -161,7 +168,7 @@ describe("VisualizarPlanoOrcamentario", () => {
   it("redireciona para aba de relatórios ao clicar em Voltar", () => {
     render(<VisualizarPlanoOrcamentario />);
     fireEvent.click(screen.getByRole("button", { name: /voltar/i }));
-    expect(navigateMock).toHaveBeenCalledWith("/elaborar-novo-paa", {
+    expect(navigateMock).toHaveBeenCalledWith("/elaborar-novo-paa/paa-123", {
       state: {
         activeTab: "relatorios",
         expandedSections: {

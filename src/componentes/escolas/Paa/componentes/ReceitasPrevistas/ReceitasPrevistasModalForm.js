@@ -7,6 +7,7 @@ import { usePatchReceitasPrevistasPaa } from "./hooks/usePatchReceitasPrevistasP
 import { formataData } from "../../../../../utils/FormataData";
 import { formatMoneyBRL, formatMoneyByCentsBRL, parseMoneyBRL } from "../../../../../utils/money";
 import { visoesService } from "../../../../../services/visoes.service";
+import { getPaaAtivoUuid, getDadosPaaAtivo } from "../../../../../utils/paaAtivoStorage";
 import "./style.css";
 
 const initialValues = {
@@ -22,7 +23,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
   const [form] = Form.useForm();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
 
-  const dadosPaaLocalStorage = () => JSON.parse(localStorage.getItem("DADOS_PAA"));
+  const dadosPaaLocalStorage = () => getDadosPaaAtivo();
 
   const data = acaoAssociacao.saldos;
   const isLoading = false;
@@ -90,7 +91,7 @@ const ReceitasPrevistasModalForm = ({ open, onClose, acaoAssociacao }) => {
 
   const onSubmit = (values) => {
     const payload = {
-      paa: localStorage.getItem("PAA"),
+      paa: getPaaAtivoUuid(),
       acao_associacao: acaoAssociacao.uuid,
       previsao_valor_custeio: values.valor_custeio / 100,
       previsao_valor_capital: values.valor_capital / 100,

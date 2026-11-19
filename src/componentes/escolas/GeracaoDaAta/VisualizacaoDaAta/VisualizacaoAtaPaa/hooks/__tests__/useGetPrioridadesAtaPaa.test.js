@@ -29,6 +29,7 @@ describe("useGetPrioridadesAtaPaa", () => {
     beforeEach(() => {
         jest.clearAllMocks();
         localStorage.clear();
+        sessionStorage.clear();
     });
 
     it("não deve executar a query se o uuid_paa não for fornecido (enabled: false)", () => {
@@ -45,9 +46,9 @@ describe("useGetPrioridadesAtaPaa", () => {
         });
     });
 
-    it("deve gerenciar o localStorage corretamente e retornar os dados agrupados com sucesso se a API responder com .results", async () => {
+    it("consulta as prioridades do PAA da ata sem mexer no PAA ativo da aba e agrupa os dados (API com .results)", async () => {
         const mockUuid = "123-abc";
-        localStorage.setItem("PAA", "paa-antigo");
+        sessionStorage.setItem("PAA", "paa-antigo");
 
         const mockData = {
             results: [
@@ -68,7 +69,8 @@ describe("useGetPrioridadesAtaPaa", () => {
         await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
         expect(getPrioridadesRelatorio).toHaveBeenCalledTimes(1);
-        expect(localStorage.getItem("PAA")).toBe("paa-antigo");
+        expect(getPrioridadesRelatorio).toHaveBeenCalledWith({}, mockUuid);
+        expect(sessionStorage.getItem("PAA")).toBe("paa-antigo");
 
         const { PTRF, PDDE, RECURSO_PROPRIO } = result.current.prioridadesAgrupadas;
 
@@ -83,7 +85,7 @@ describe("useGetPrioridadesAtaPaa", () => {
         expect(RECURSO_PROPRIO.total).toBe(1500);
     });
 
-    it("deve restaurar o localStorage corretamente removendo a chave caso ela não existisse previamente", async () => {
+    it("não cria um PAA ativo na aba ao consultar as prioridades de um PAA", async () => {
         getPrioridadesRelatorio.mockResolvedValueOnce({ results: [] });
 
         const { result } = renderHook(() => useGetPrioridadesAtaPaa("novo-paa"), {
@@ -92,7 +94,7 @@ describe("useGetPrioridadesAtaPaa", () => {
 
         await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-        expect(localStorage.getItem("PAA")).toBeNull();
+        expect(sessionStorage.getItem("PAA")).toBeNull();
     });
 
     it("deve mapear corretamente o formato alternativo onde a API retorna um array direto", async () => {
@@ -112,8 +114,8 @@ describe("useGetPrioridadesAtaPaa", () => {
         expect(result.current.prioridadesAgrupadas.RECURSO_PROPRIO.total).toBe(300);
     });
 
-    it("deve lidar com falhas na API mantendo a integridade do localStorage e retornando erro", async () => {
-        localStorage.setItem("PAA", "preservado");
+    it("mantém o PAA ativo da aba intacto e retorna o erro quando a API falha", async () => {
+        sessionStorage.setItem("PAA", "preservado");
         const apiError = new Error("Erro de conexão");
         getPrioridadesRelatorio.mockRejectedValueOnce(apiError);
 
@@ -125,7 +127,7 @@ describe("useGetPrioridadesAtaPaa", () => {
 
         expect(result.current.error).toEqual(apiError);
 
-        expect(localStorage.getItem("PAA")).toBe("preservado");
+        expect(sessionStorage.getItem("PAA")).toBe("preservado");
     });
 
     describe("Ramos de identificação de recursos (identificarRecursoPrioridade)", () => {

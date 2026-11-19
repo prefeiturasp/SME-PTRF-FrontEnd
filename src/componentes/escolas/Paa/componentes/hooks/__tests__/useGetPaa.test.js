@@ -4,6 +4,13 @@ import { useGetPaa } from "../useGetPaa";
 import { getPaa } from "../../../../../../services/sme/Parametrizacoes.service";
 import { toastCustom } from "../../../../../Globais/ToastCustom";
 
+jest.mock("../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
+  },
+}));
+
 jest.mock("../../../../../../services/sme/Parametrizacoes.service", () => ({
   getPaa: jest.fn(),
 }));
@@ -22,6 +29,7 @@ describe("useGetPaa", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
 
     queryClient = new QueryClient({
       defaultOptions: {
@@ -75,7 +83,7 @@ describe("useGetPaa", () => {
       renderHook(() => useGetPaa("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("PAA")).toBe("paa-uuid-123")
+        expect(sessionStorage.getItem("PAA")).toBe("paa-uuid-123")
       );
     });
 
@@ -86,7 +94,7 @@ describe("useGetPaa", () => {
       renderHook(() => useGetPaa("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("DADOS_PAA")).toBe(JSON.stringify(mockData))
+        expect(sessionStorage.getItem("DADOS_PAA")).toBe(JSON.stringify(mockData))
       );
     });
 
@@ -96,7 +104,7 @@ describe("useGetPaa", () => {
       renderHook(() => useGetPaa("paa-uuid-123"), { wrapper });
 
       await waitFor(() =>
-        expect(localStorage.getItem("PAA")).toBe("paa-uuid-123")
+        expect(sessionStorage.getItem("PAA")).toBe("paa-uuid-123")
       );
 
       expect(toastCustom.ToastCustomError).not.toHaveBeenCalled();
@@ -147,8 +155,8 @@ describe("useGetPaa", () => {
       await waitFor(() => expect(getPaa).toHaveBeenCalled());
       await waitFor(() => expect(toastCustom.ToastCustomError).toHaveBeenCalled());
 
-      expect(localStorage.getItem("PAA")).toBeNull();
-      expect(localStorage.getItem("DADOS_PAA")).toBeNull();
+      expect(sessionStorage.getItem("PAA")).toBeNull();
+      expect(sessionStorage.getItem("DADOS_PAA")).toBeNull();
     });
   });
 

@@ -57,7 +57,7 @@ describe("RenderSecao", () => {
     isLoading: false,
     isError: false,
     isLoadingPaa: false,
-    paaVigente: { uuid: "123" },
+    paaAtual: { uuid: "123" },
   };
 
   beforeEach(() => {
@@ -99,7 +99,7 @@ describe("RenderSecao", () => {
 
     const props = {
       ...baseProps,
-      paaVigente: { uuid: "uuid-123" },
+      paaAtual: { uuid: "uuid-123" },
     };
 
     render(<RenderSecao {...props} />);
@@ -124,7 +124,7 @@ describe("RenderSecao", () => {
         temEditor: false,
       },
       secaoKey: "objetivos",
-      paaVigente: { uuid: "uuid-123" },
+      paaAtual: { uuid: "uuid-123" },
     };
 
     render(<RenderSecao {...props} />);
@@ -139,12 +139,12 @@ describe("RenderSecao", () => {
     });
   });
 
-  it("não tenta salvar quando paaVigente não possui uuid", async () => {
+  it("não tenta salvar quando paaAtual não possui uuid", async () => {
     mockPatchPaa.mockResolvedValueOnce({});
 
     const props = {
       ...baseProps,
-      paaVigente: {},
+      paaAtual: {},
     };
 
     render(<RenderSecao {...props} />);

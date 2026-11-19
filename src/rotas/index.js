@@ -117,6 +117,7 @@ import { AcoesPTRFPaa } from "../componentes/sme/Parametrizacoes/PAA/AcoesPTRF";
 import { ElaboracaoPaa } from "../componentes/escolas/Paa/ElaboracaoPaa";
 import { PaaVigenteEAnteriores } from "../componentes/escolas/Paa/PaaVigenteEAnteriores";
 import { ElaborarNovoPlano } from "../componentes/escolas/Paa/ElaboracaoPaa/ElaborarNovoPlano";
+import { RedirecionarParaPaaAtivo } from "../componentes/escolas/Paa/componentes/RedirecionarParaPaaAtivo";
 import { RetificacaoPaa } from "../componentes/escolas/Paa/RetificacaoPaa";
 import { ExecucaoDoPaa } from "../componentes/escolas/Paa/ExecucaoDoPaa";
 import { CadastroTipoReceitaPage } from "../paginas/SME/Parametrizacoes/TiposReceita/CadastroTipoReceita";
@@ -143,6 +144,11 @@ import { ParametrizacoesDetalhesTiposCredito } from "../componentes/sme/Parametr
 import { ParametrizacoesComissoes } from "../componentes/sme/Parametrizacoes/Dre/Comissoes";
 import { FormualarioAssociacao } from "../componentes/sme/Parametrizacoes/Estrutura/Associacoes/FormualarioAssociacao";
 import { ReordenarAcoes } from "../componentes/sme/Parametrizacoes/Estrutura/Acoes/components/ReordenarAcoes";
+
+const ElaborarNovoPaaSemUuid = () =>
+  visoesService.featureFlagAtiva(FEATURE_FLAGS.PAA_PROXIMA_VIGENCIA)
+    ? <RedirecionarParaPaaAtivo />
+    : <ElaborarNovoPlano />;
 
 const routesConfig = [
   {
@@ -890,9 +896,16 @@ const routesConfig = [
   {
     exact: true,
     path: "/elaborar-novo-paa",
-    component: ElaborarNovoPlano,
+    component: ElaborarNovoPaaSemUuid,
     permissoes: ["access_paa"],
     featureFlag: "paa",
+  },
+  {
+    exact: true,
+    path: "/elaborar-novo-paa/:uuid_paa",
+    component: ElaborarNovoPlano,
+    permissoes: ["access_paa"],
+    featureFlag: "paa-proxima-vigencia",
   },
   {
     exact: true,

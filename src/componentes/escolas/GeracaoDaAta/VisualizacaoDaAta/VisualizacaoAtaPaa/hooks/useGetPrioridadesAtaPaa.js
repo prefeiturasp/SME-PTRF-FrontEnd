@@ -37,24 +37,7 @@ const mapPrioridade = (item) => {
 export const useGetPrioridadesAtaPaa = (uuid_paa) => {
   const query = useQuery({
     queryKey: ["prioridades-ata-paa", uuid_paa],
-    queryFn: async () => {
-      // Salvar temporariamente o PAA no localStorage para o serviço funcionar
-      const paaAnterior = localStorage.getItem("PAA");
-      try {
-        if (uuid_paa) {
-          localStorage.setItem("PAA", uuid_paa);
-        }
-        const resultado = await getPrioridadesRelatorio({});
-        return resultado;
-      } finally {
-        // Restaurar o valor anterior do localStorage
-        if (paaAnterior) {
-          localStorage.setItem("PAA", paaAnterior);
-        } else {
-          localStorage.removeItem("PAA");
-        }
-      }
-    },
+    queryFn: () => getPrioridadesRelatorio({}, uuid_paa),
     staleTime: 0,
     cacheTime: 0,
     refetchOnWindowFocus: false,

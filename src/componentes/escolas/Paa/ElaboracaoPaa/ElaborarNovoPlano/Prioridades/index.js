@@ -20,6 +20,7 @@ import ModalImportarPrioridades from './ModalImportarPrioridades';
 import ModalConfirmaPararAtualizacaoSaldo from './ModalConfirmarPararAtualizacaoSaldo';
 import { visoesService } from "../../../../../../services/visoes.service";
 import { usePaaContext } from "../../../componentes/PaaContext";
+import { getPaaAtivoUuid } from '../../../../../../utils/paaAtivoStorage';
 
 const filtroInicial = {
   prioridade: "",
@@ -44,7 +45,7 @@ const Prioridades = () => {
   const flagAtividadesPrevistas = visoesService.featureFlagAtiva("paa-receitas-prevista");
   const tabelaRef = useRef(null);
 
-  const paa_uuid = useMemo(() => localStorage.getItem("PAA"), []);
+  const paa_uuid = useMemo(() => getPaaAtivoUuid(), []);
 
   const { prioridadesTabelas, recursos, tipos_aplicacao, outros_recursos } = useGetPrioridadeTabelas({
     paa_uuid

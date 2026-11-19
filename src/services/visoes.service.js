@@ -510,8 +510,10 @@ const alternaVisoes = (visao, uuid_unidade, uuid_associacao, nome_associacao, un
         localStorage.removeItem(STORAGE_KEY_PERIODO_CONTA_GERACAO_DOCUMENTOS);
         localStorage.removeItem(PERIODO_RELATORIO_CONSOLIDADO_DRE);
         localStorage.removeItem(PERIODO_SELECIONADO_DRE_ACOMPANHAMENTO);
-        localStorage.removeItem('PAA');
-        localStorage.removeItem('DADOS_PAA');
+        ['PAA', 'DADOS_PAA'].forEach(key => {
+            localStorage.removeItem(key);
+            sessionStorage.removeItem(key);
+        });
 
         notificaDevolucaoPCStorageService.atualizaNotificarDevolucaoLocalStorage(recursoSelecionado?.uuid, notificar_devolucao_por_recurso);
 

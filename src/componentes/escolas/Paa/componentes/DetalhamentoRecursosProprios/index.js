@@ -24,6 +24,7 @@ import { usePostRecursoProprio } from "./hooks/usePostRecursoProprio";
 import { useGetTotalizadorRecursoProprio } from "./hooks/useGetTotalizarRecursoProprio";
 import { EditIconButton } from "../../../../Globais/UI/Button";
 import { visoesService } from "../../../../../services/visoes.service";
+import { getPaaAtivoUuid } from "../../../../../utils/paaAtivoStorage";
 
 const DatePickerCustom = DatePicker.generatePicker(momentGenerateConfig);
 const { TextArea } = Input;
@@ -32,7 +33,7 @@ const DetalhamentoRecursosProprios = ({tituloMenu="Recursos Próprios"}) => {
   const dispatch = useDispatch();
   const podeEditar = visoesService.getPermissoes(["custom_change_paa"]);
   const associacaoUUID = localStorage.getItem(ASSOCIACAO_UUID);
-  const paaUUID = localStorage.getItem("PAA");
+  const paaUUID = getPaaAtivoUuid();
 
   const [items, setItems] = useState([]);
   const [currentItem, setCurrentItem] = useState(null);
@@ -129,7 +130,7 @@ const DetalhamentoRecursosProprios = ({tituloMenu="Recursos Próprios"}) => {
   const handleSave = (rowData) => {
     if (!podeEditar) return;
     const payload = {
-      paa: localStorage.getItem("PAA"),
+      paa: getPaaAtivoUuid(),
       associacao: associacaoUUID,
       fonte_recurso: rowData?.fonte_recurso?.uuid,
       data_prevista: rowData?.data_prevista,

@@ -56,6 +56,39 @@ describe("Hook usePost", () => {
         });
 
         expect(postPaa).toHaveBeenCalled();
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Ops!", "Erro ao deletar");
+    });
+
+    it("exibe a mensagem de validação devolvida pelo backend em non_field_errors", async () => {
+        const erros = ["Só é possível elaborar o PAA do período vigente ou da próxima vigência."];
+        postPaa.mockRejectedValueOnce({ response: { data: { non_field_errors: erros } } });
+
+        const { result } = renderHook(() => usePostPaa(), { wrapper });
+
+        await waitFor(async () => {
+            try {
+                await result.current.mutationPost.mutateAsync({ payload: { associacao: 'fake-uuid', periodo: 'p-1' } });
+            } catch (e) {
+                // erro esperado
+            }
+        });
+
+        expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Ops!", erros);
+    });
+
+    it("usa a mensagem padrão quando o erro não traz mensagem", async () => {
+        postPaa.mockRejectedValueOnce(new Error("rede"));
+
+        const { result } = renderHook(() => usePostPaa(), { wrapper });
+
+        await waitFor(async () => {
+            try {
+                await result.current.mutationPost.mutateAsync({ payload: { associacao: 'fake-uuid' } });
+            } catch (e) {
+                // erro esperado
+            }
+        });
+
         expect(toastCustom.ToastCustomError).toHaveBeenCalledWith("Ops!", "Não foi possível criar o PAA");
     });
 

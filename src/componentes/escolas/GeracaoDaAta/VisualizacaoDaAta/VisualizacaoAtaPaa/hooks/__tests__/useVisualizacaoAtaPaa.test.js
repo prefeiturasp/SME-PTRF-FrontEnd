@@ -10,6 +10,13 @@ const mockNavigate = jest.fn();
 let mockLocation = { pathname: '/', state: {} };
 let mockParams = { uuid_paa: '123' };
 
+jest.mock("../../../../../../../services/visoes.service", () => ({
+  visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
+  },
+}));
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockNavigate,
@@ -174,7 +181,7 @@ describe('useVisualizacaoAtaPaa', () => {
       result.current.handleClickFecharAta();
     });
 
-    expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa', expect.any(Object));
+    expect(mockNavigate).toHaveBeenCalledWith('/elaborar-novo-paa/123', expect.any(Object));
   });
 
   it('deve navegar para retificacao-paa quando o tipo da ata for RETIFICACAO ao fechar', async () => {

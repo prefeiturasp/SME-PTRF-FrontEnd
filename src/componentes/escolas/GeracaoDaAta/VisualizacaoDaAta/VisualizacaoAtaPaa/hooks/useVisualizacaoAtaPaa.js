@@ -8,6 +8,7 @@ import { ASSOCIACAO_NOME_ESCOLA, ASSOCIACAO_TIPO_ESCOLA } from "../../../../../.
 import { useGetPrioridadesAtaPaa } from "./useGetPrioridadesAtaPaa";
 import { useGetPaa } from "../../../../Paa/componentes/hooks/useGetPaa";
 import { useGetAtividadesEstatutarias } from "../../../../Paa/ElaboracaoPaa/ElaborarNovoPlano/Relatorios/AtividadesPrevistas/hooks/useGetAtividadesEstatutarias";
+import { rotaElaboracaoPaa } from "../../../../Paa/ElaboracaoPaa/utils/rotasPaa";
 
 const numero = require('numero-por-extenso');
 
@@ -90,7 +91,7 @@ export const useVisualizacaoAtaPaa = () => {
                 },
             });
         } else {
-            navigate("/elaborar-novo-paa", {
+            navigate(rotaElaboracaoPaa(uuid_paa), {
                 state: {
                     activeTab: "relatorios",
                     expandedSections: {

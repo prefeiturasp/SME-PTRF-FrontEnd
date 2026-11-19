@@ -37,6 +37,8 @@ jest.mock("../hooks/usePostReceitasPrevistasOutrosRecursosPeriodo", () => {
 
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: jest.fn(() => true),
   },
 }));
@@ -80,7 +82,7 @@ describe("OutrosRecursosModalForm", () => {
       value: jest.fn().mockImplementation((query) => ({ matches: false })),
     });
 
-    localStorage.setItem("PAA", "paa-123");
+    sessionStorage.setItem("PAA", "paa-123");
   });
 
   it("chama POST ao salvar quando não há receitas_previstas", async () => {

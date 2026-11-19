@@ -137,13 +137,14 @@ describe('ModalFormAdicionarPrioridade', () => {
       addListener: jest.fn(),
       removeListener: jest.fn(),
     }));
-    localStorage.setItem('PAA', 'paa-uuid-123');
+    sessionStorage.setItem('PAA', 'paa-uuid-123');
     setupDefaultMocks();
   });
 
   afterEach(() => {
     jest.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
   });
 
   // ==================

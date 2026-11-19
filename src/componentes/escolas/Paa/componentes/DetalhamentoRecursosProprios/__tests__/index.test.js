@@ -21,6 +21,8 @@ jest.mock("../hooks/usePatchRecursoProprio");
 jest.mock("../hooks/useGetFontesRecursos");
 jest.mock("../../../../../../services/visoes.service", () => ({
   visoesService: {
+    // a flag decide onde o PAA ativo é guardado (sessionStorage com a flag paa-proxima-vigencia ligada)
+    featureFlagAtiva: () => true,
     getPermissoes: () => true,
   },
 }));
@@ -44,7 +46,7 @@ describe("DetalhamentoRecursosProprios Component", () => {
       },
     });
     localStorage.setItem("ASSOCIACAO_UUID", "assoc-test");
-    localStorage.setItem("PAA", "paa-test");
+    sessionStorage.setItem("PAA", "paa-test");
 
     usePostRecursoProprio.mockReturnValue({
       mutationPost: { mutate: mockMutatePost },

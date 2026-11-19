@@ -1,8 +1,9 @@
 import { getReceitasPrevistasOutrosRecursosPeriodo } from "../../../../../../services/escolas/Paa.service";
 import { useQuery } from "@tanstack/react-query";
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
 
 export const useGetTodos = () => {
-  const getPaaUUID = () => localStorage.getItem("PAA");
+  const getPaaUUID = () => getPaaAtivoUuid();
   const { isFetching, isError, data, error, refetch } = useQuery({
     queryKey: ["receitas-previstas-outros-recursos-periodo"],
     queryFn: () =>

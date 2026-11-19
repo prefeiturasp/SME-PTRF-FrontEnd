@@ -27,7 +27,7 @@ describe('RelSecaoTextos', () => {
             introducao_do_paa_1: '<p>Texto fixo</p>',
             introducao_do_paa_2: '<p>Mensagem padrão</p>',
         },
-        paaVigente: {
+        paaAtual: {
             texto_introducao: '<p>Texto editor Introdução</p>',
             texto_conclusao: '<p>Texto editor conclusão</p>',
         },

@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPaaReceitasPrevistas } from "../../../../../../services/escolas/Paa.service";
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
 
 
 export const useGetReceitasPrevistas = (options = {}) => {
-  const getPaaUUID = () => localStorage.getItem("PAA");
+  const getPaaUUID = () => getPaaAtivoUuid();
   const {
     isFetching,
     isError,

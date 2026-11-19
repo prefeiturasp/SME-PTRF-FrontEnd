@@ -4,6 +4,7 @@ import { useGetAcoesPTRFPrioridades } from './hooks/useGetAcoesPTRFPrioridades';
 import { useGetAcoesPDDEPrioridades } from './hooks/useGetAcoesPDDEPrioridades';
 import { useGetEspecificacoes } from './hooks/useGetEspecificacoes';
 import { RECURSOS_PRIORIDADE } from '../../../../../../constantes/prioridades';
+import { getPaaAtivoUuid } from "../../../../../../utils/paaAtivoStorage";
 
 export const FormFiltros = ({
   tabelas= {},
@@ -18,7 +19,7 @@ export const FormFiltros = ({
   const [selectedTipoDespesaCusteio, setSelectedTipoDespesaCusteio] = useState('');
   const [selectedProgramaPdde, setSelectedProgramaPdde] = useState('');
 
-  const paa_uuid = useMemo(() =>localStorage.getItem("PAA"), [])
+  const paa_uuid = useMemo(() => getPaaAtivoUuid(), [])
 
   const { data: acoesAssociacao } = useGetAcoesPTRFPrioridades(
     {

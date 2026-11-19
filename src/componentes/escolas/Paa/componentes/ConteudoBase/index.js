@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { iniciarAtaPaa } from "../../../../../services/escolas/AtasPaa.service";
 import { visoesService } from "../../../../../services/visoes.service";
 import { usePaaContext } from "../PaaContext";
+import { getPaaAtivoUuid } from "../../../../../utils/paaAtivoStorage";
 
 const ConteudoBase = ({ itemsBreadCrumb }) => {
   const navigate = useNavigate();
@@ -97,7 +98,7 @@ const ConteudoBase = ({ itemsBreadCrumb }) => {
     const temPermissaoIniciar = Boolean(
       visoesService.getPermissoes(["custom_change_paa"]),
     );
-    const temPaaEmAndamento = Boolean(localStorage.getItem("PAA"));
+    const temPaaEmAndamento = Boolean(getPaaAtivoUuid());
     if (!temPermissaoIniciar && !temPaaEmAndamento) {
       navigate("/paa", { replace: true });
       return;
